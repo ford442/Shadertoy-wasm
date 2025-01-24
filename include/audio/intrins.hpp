@@ -1,13 +1,6 @@
 #pragma once
 
-// #include <wasm_simd128.h>
 
-// #include <tmmintrin.h> // ssse 3
-// #include <smmintrin.h>  // sse 4.1
-// #include <mmintrin.h>  //  experimental
-// #include <xmmintrin.h>
-// #include <emmintrin.h> // SSE3
-// #include <avxintrin.h>  // AVX
 #include <immintrin.h> // Intel x86
 
 // #include <mm3dnow.h>  //  experimental
