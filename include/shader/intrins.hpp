@@ -7,7 +7,7 @@
 // #include <mmintrin.h>  //  experimental
 // #include <xmmintrin.h>
 #include <emmintrin.h> // SSE3
-##include <avxintrin.h>  // AVX
+// #include <avxintrin.h>  // AVX
 #include <immintrin.h> // Intel x86
 
 // #include <mm3dnow.h>  //  experimental
