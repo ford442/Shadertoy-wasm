@@ -1220,7 +1220,7 @@ return EM_TRUE;
 extern"C"{
 
 void pauseRendering(bool pause) {
-isRenderingPaused = true;
+isRenderingPaused = pause;
 return;
 }
 
