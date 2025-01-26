@@ -239,7 +239,7 @@ passDesc2.timestampWrites=renderTimestampWrites;
 wrpd.at(1,1)=passDesc2;
       
 // if(on_b.at(4,4)==1){
-if (!isRenderingPaused) {
+if (isRenderingPaused==True) {
 
 INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
 wtv.at(6,6)=INVTextureView;
