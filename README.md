@@ -1,10 +1,8 @@
 # Shadertoy WASM
 
-
 An OpenGLES, WebAssembly based web shader loader PWA.
 
 Shadertoy WASM uses Javascript to read from a randomly selected Shadertoy compatible GLSL program. Also creates an EGL context for image enhancing effects.
-
 
 ----
 
