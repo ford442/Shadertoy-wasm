@@ -280,6 +280,7 @@ Store(f, d, &floatData[i]);
 */
 
 on_b.at(4,4)=0;
+isRenderingPaused = true;
 }   // end if on 4,4
 // void wgpu_queue_copy_external_image_to_texture(WGpuQueue queue, const WGpuImageCopyExternalImage *source NOTNULL, const WGpuImageCopyTextureTagged *destination NOTNULL, uint32_t copyWidth, uint32_t copyHeight _WGPU_DEFAULT_VALUE(1), uint32_t copyDepthOrArrayLayers _WGPU_DEFAULT_VALUE(1));
 // wgpu_queue_copy_external_image_to_texture(WGPU_Queue.at(0,0,0), ,&wictt.at(0,0) ,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
