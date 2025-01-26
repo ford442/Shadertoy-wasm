@@ -68,7 +68,9 @@ let fileStream=FS.open('/video/frame.gl','w');
     if (pause === 'ready') {
       gl3.clearRect(0, 0, w$, h$);
       gl3.drawImage(vvic, 0, 0, SiZ, SiZ, 0, 0, w$, h$);
-    }
+    }else{
+        console.log('frames stopped');
+        }
     const image = gl3.getImageData(0, 0, w$, h$);
     const imageData = image.data;
     const pixelData = new Float64Array(imageData);
@@ -822,7 +824,7 @@ imageStart();
 
 document.querySelector('#moveFwdb').addEventListener('click',function(){
 Module.ccall('frmsOff');
-// console.log('stopping frames for move');
+console.log('stopping frames for move');
 pause = 'loading';
 setTimeout(function(){
 pause = 'ready';
