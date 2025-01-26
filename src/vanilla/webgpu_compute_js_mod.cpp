@@ -824,7 +824,7 @@ document.querySelector('#moveFwd').addEventListener('click',function(){
 Module.ccall('frmsOff'); // Assuming this stops processing new frames
 pause = 'loading';
 const moveForwardPromise = new Promise(resolve => {
-        setTimeout(() => {
+        setTimeout(function(){
             pause = 'ready';
             Module.ccall('frmsOn');
             resolve();
