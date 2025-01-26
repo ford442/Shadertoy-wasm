@@ -82,6 +82,7 @@ return EM_TRUE;
 
 EM_BOOL texOn(){
 if(on.at(3,3)==1){
+isRenderingPaused = false;
 on_b.at(4,4)=1;
 }
 return EM_TRUE;
@@ -90,15 +91,13 @@ return EM_TRUE;
 EM_BOOL framesOff(){
 on.at(3,3)=0;
 on_b.at(4,4)=0;
-      isRenderingPaused = true;
-
+isRenderingPaused = true;
 return EM_TRUE;
 }
 
 EM_BOOL framesOn(){
 on.at(3,3)=1;
-      isRenderingPaused = false;
-
+isRenderingPaused = false;
 return EM_TRUE;
 }
 
