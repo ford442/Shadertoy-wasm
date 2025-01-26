@@ -820,14 +820,14 @@ imageStart();
 },1000);
 });
 
-document.querySelector('#moveFwd').addEventListener('click',function(){
+document.querySelector('#moveFwdb').addEventListener('click',function(){
 Module.ccall('frmsOff');
-console.log('stopping frames for move');
+// console.log('stopping frames for move');
 pause = 'loading';
 setTimeout(function(){
 pause = 'ready';
 Module.ccall('frmsOn');
-console.log('restarting frames for move');
+// console.log('restarting frames for move');
 }, 1900);
 });
 
