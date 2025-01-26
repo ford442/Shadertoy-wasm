@@ -821,16 +821,14 @@ imageStart();
 });
 
 document.querySelector('#moveFwd').addEventListener('click',function(){
-Module.ccall('frmsOff'); // Assuming this stops processing new frames
+Module.ccall('frmsOff');
+console.log('stopping frames for move');
 pause = 'loading';
-const moveForwardPromise = new Promise(resolve => {
-        setTimeout(function(){
-            pause = 'ready';
-            Module.ccall('frmsOn');
-            resolve();
-        }, 1900);
-});
-moveForwardPromise();
+setTimeout(function(){
+pause = 'ready';
+Module.ccall('frmsOn');
+console.log('restarting frames for move');
+}, 1900);
 });
 
 document.querySelector('#sizeUp').addEventListener('click',function(){
