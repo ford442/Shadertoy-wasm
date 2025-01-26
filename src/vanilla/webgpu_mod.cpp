@@ -4,8 +4,6 @@
 
 namespace fsm = boost::filesystem;
 
-bool isRenderingPaused = false;
-
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
 if(eventType==EMSCRIPTEN_EVENT_MOUSEDOWN&&e->buttons!=0){
@@ -82,7 +80,6 @@ return EM_TRUE;
 
 EM_BOOL texOn(){
 if(on.at(3,3)==1){
-isRenderingPaused = false;
 on_b.at(4,4)=1;
 }
 return EM_TRUE;
@@ -91,13 +88,11 @@ return EM_TRUE;
 EM_BOOL framesOff(){
 on.at(3,3)=0;
 on_b.at(4,4)=0;
-isRenderingPaused = true;
 return EM_TRUE;
 }
 
 EM_BOOL framesOn(){
 on.at(3,3)=1;
-isRenderingPaused = false;
 return EM_TRUE;
 }
 
@@ -241,8 +236,7 @@ passDesc2.occlusionQuerySet=0;
 passDesc2.timestampWrites=renderTimestampWrites;
 wrpd.at(1,1)=passDesc2;
       
-// if(on_b.at(4,4)==1){
-if (isRenderingPaused==false) {
+if(on_b.at(4,4)==1){
 
 INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
 wtv.at(6,6)=INVTextureView;
@@ -280,7 +274,6 @@ Store(f, d, &floatData[i]);
 */
 
 on_b.at(4,4)=0;
-isRenderingPaused = true;
 }   // end if on 4,4
 // void wgpu_queue_copy_external_image_to_texture(WGpuQueue queue, const WGpuImageCopyExternalImage *source NOTNULL, const WGpuImageCopyTextureTagged *destination NOTNULL, uint32_t copyWidth, uint32_t copyHeight _WGPU_DEFAULT_VALUE(1), uint32_t copyDepthOrArrayLayers _WGPU_DEFAULT_VALUE(1));
 // wgpu_queue_copy_external_image_to_texture(WGPU_Queue.at(0,0,0), ,&wictt.at(0,0) ,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
@@ -1218,11 +1211,6 @@ return EM_TRUE;
 #include "../../src/vanilla/webgpu_compute_js_mod.cpp"
 
 extern"C"{
-
-void pauseRendering(bool pause) {
-isRenderingPaused = pause;
-return;
-}
 
 void panRight(){
 PanRight();
