@@ -147,6 +147,20 @@ powerPreference:"high-performance",
 premultipliedAlpha:true,
 preserveDrawingBuffer:false
 });
+
+
+document.querySelector('#moveFwdb').addEventListener('click',function(){
+Module.ccall('frmsOff');
+console.log('stopping frames for move');
+pause = 'loading';
+setTimeout(function(){
+pause = 'ready';
+Module.ccall('frmsOn');
+// console.log('restarting frames for move');
+}, 1900);
+});
+
+
 // gl3.imageSmoothingEnabled=false;
 const fileStream=FS.open('/video/frame.gl','w');
 function drawFrame() {
@@ -820,17 +834,6 @@ getShader(pth4,'vert.wgsl');
 setTimeout(function(){
 imageStart();
 },1000);
-});
-
-document.querySelector('#moveFwdb').addEventListener('click',function(){
-Module.ccall('frmsOff');
-console.log('stopping frames for move');
-pause = 'loading';
-setTimeout(function(){
-pause = 'ready';
-Module.ccall('frmsOn');
-// console.log('restarting frames for move');
-}, 1900);
 });
 
 document.querySelector('#sizeUp').addEventListener('click',function(){
