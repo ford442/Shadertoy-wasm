@@ -250,7 +250,7 @@ b3_wasm_loader_lto_32_test2:
 
 b3_wasm_loader_lto_32_test3:
 	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -m64 -flto -flto=thin -pipe -ffp-contract=fast \
-	 -fexcess-precision=fast -fno-exceptions -fexperimental-new-pass-manager -fforce-enable-int128 \
+	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -fno-omit-frame-pointer \
 	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64=1 -c -fno-rounding-math -fcx-limited-range \
@@ -584,7 +584,7 @@ b3_compute_mod_test:
 
 b3_compute_mod_test2:
 	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
-	 -fexcess-precision=fast -fexperimental-new-pass-manager \
+	 -fexcess-precision=fast \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -fno-omit-frame-pointer \
 	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
