@@ -48,7 +48,11 @@
 
 // This macro allows structs that contain pointers to be explicitly aligned up to 8 bytes so that
 // even in 32-bit pointer builds, struct alignments are checked to match against Wasm64 builds.
+#if __cplusplus >= 201103L
+#define _WGPU_ALIGN_TO_64BITS alignas(8)
+#else
 #define _WGPU_ALIGN_TO_64BITS __attribute__((aligned(8)))
+#endif
 
 // The _WGPU_PTR_PADDING() macro pads pointers in 32-bit builds up to 64-bits so that memory layout
 // of WebGPU structures is identical in 32-bit and 64-bit builds. This way the JS side marshalling
@@ -70,7 +74,8 @@ extern "C" {
 #endif
 
 
-// Returns the number of WebGPU objects referenced by the WebGPU JS library.
+// Returns the number of WebGPU objects referenced by the WebGPU JS library. N.b. aim to use this function only for debugging purposes, as it
+// takes O(n) time to enumerate through all live objects.
 uint32_t wgpu_get_num_live_objects(void);
 
 // Calls .destroy() on the given WebGPU object (if it has such a member function) and releases the JS side reference to it. Use this function
@@ -354,7 +359,13 @@ WGpuAdapter navigator_gpu_request_adapter_sync(const WGpuRequestAdapterOptions *
 void navigator_gpu_request_adapter_async_simple(WGpuRequestAdapterCallback adapterCallback);
 WGpuAdapter navigator_gpu_request_adapter_sync_simple(void);
 
+#ifdef __EMSCRIPTEN__
 WGPU_TEXTURE_FORMAT navigator_gpu_get_preferred_canvas_format(void);
+#else
+// Dawn requires the adapter and canvas context to get the preferred format.
+WGPU_TEXTURE_FORMAT navigator_gpu_get_preferred_canvas_format(WGpuAdapter adapter, WGpuCanvasContext canvasContext);
+#endif
+
 
 // Returns an array of strings representing supported WGSL language features. The array of strings is terminated by a null string.
 // If you do not need to enumerate though all supported language features, you can use the simpler navigator_gpu_is_wgsl_language_feature_supported()
@@ -2772,7 +2783,7 @@ enum GPUErrorFilter {
 };
 */
 typedef int WGPU_ERROR_FILTER;
-#define WGPU_ERROR_FILTER_INVALID       0
+#define WGPU_ERROR_FILTER_NO_ERROR      0
 #define WGPU_ERROR_FILTER_OUT_OF_MEMORY 1
 #define WGPU_ERROR_FILTER_VALIDATION    2
 #define WGPU_ERROR_FILTER_INTERNAL      3
@@ -2785,9 +2796,17 @@ partial interface GPUDevice {
 */
 void wgpu_device_push_error_scope(WGpuDevice device, WGPU_ERROR_FILTER filter);
 
-typedef void (*WGpuDeviceErrorCallback)(WGpuDevice device, WGPU_ERROR_TYPE errorType, const char *errorMessage NOTNULL, void *userData);
+// Callback type for popped error scopes.
+// errorType: The type of error that occurred, or WGPU_ERROR_FILTER_NO_ERROR.
+// errorMessage: Points to string message of the error, or null pointer if no error occurred.
+typedef void (*WGpuDeviceErrorCallback)(WGpuDevice device, WGPU_ERROR_TYPE errorType, const char *errorMessage, void *userData);
 void wgpu_device_pop_error_scope_async(WGpuDevice device, WGpuDeviceErrorCallback callback, void *userData);
 
+// Synchronously pop an error scope.
+// Returns the type of an error that occurred, or WGPU_ERROR_FILTER_NO_ERROR if no error.
+// dstErrorMessage: A pointer to a buffer area to receive the error message, if one exists.
+// errorMessageLength: Number of bytes that can be written to dstErrorMessage.
+WGPU_ERROR_TYPE wgpu_device_pop_error_scope_sync(WGpuDevice device, char *dstErrorMessage, int errorMessageLength);
 /*
 [
     Exposed=(Window, DedicatedWorker)
