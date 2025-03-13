@@ -8,7 +8,7 @@ neLDFLAGS = -Wl,-O3,--lto-O3
 wLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-ldl
  
 oldLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl
-SIMD_FLAGS = -DSIMD=AVX -msimd128 -mavx2
+SIMD_FLAGS = -DSIMD=AVX -msimd128 -mavx
 SIMD_FLAGS_old = -DSIMD=AVX -msimd128 -mavx
 
 STDS = -std=gnu++2b
