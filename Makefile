@@ -318,7 +318,7 @@ b3_wasm_loader_lto_32_test4:
 	 em++ -O3 -sEVAL_CTORS=2 -sEXIT_RUNTIME=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
-	 -sDEFAULT_TO_CXX=0 -stdlib=libc++abi-noexcept -sUSE_ES6_IMPORT_META=0 -fno-rounding-math -fassociative-math \
+	 -sDEFAULT_TO_CXX=0 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
 	 -freciprocal-math -fno-signed-zeros \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
 	 -fno-strict-aliasing \
