@@ -9,6 +9,7 @@ wLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-ldl
  
 oldLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl
 SIMD_FLAGS = -DSIMD=AVX -msimd128 -mavx2
+SIMD_FLAGS_old = -DSIMD=AVX -msimd128 -mavx
 
 STDS = -std=gnu++2b
 
@@ -589,7 +590,7 @@ b3_compute_mod_test2:
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -fno-omit-frame-pointer \
 	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
-	 -I/content/RAMDRIVE2/b3/boost_1_86_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS)
+	 -I/content/RAMDRIVE2/b3/boost_1_86_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
 	 em++ $(mLDFLAGS) -O3 -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=2 \
 	 -sEXIT_RUNTIME=0 -ffast-math -mextended-const -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE \
