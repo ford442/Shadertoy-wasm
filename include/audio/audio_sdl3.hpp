@@ -36,7 +36,7 @@ typedef ResultType result_type;
 #define BOOST_UBLAS_TYPE_CHECK 0
 
 #include <cstdint>
-// #include <SDL2/SDL.h>
+#include <SDL3/SDL_Audio.h>
 #include <GL/gl.h>
 #include <iostream>
 #include <algorithm>
