@@ -111,7 +111,7 @@ b3_audio_sdl:
 
 b3_audio_sdl3:
 	em++ $(STDS) -c src/audio/main.cpp $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -O2
-	em++ $(STDS) -c src/audio/audio_sdl.cpp $(COMMON_FLAGS) -O2 \
+	em++ $(STDS) -c src/audio/audio_sdl3.cpp $(COMMON_FLAGS) -O2 \
 	-Wno-incompatible-function-pointer-types $(SIMD_FLAGS) $(BOOST_FLAGS) \
 	-sUSE_SDL=3
 	em++ $(STDS) -o $(BIN_NAME).js $(COMMON_FLAGS) $(LINK_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) \
