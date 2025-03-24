@@ -1,4 +1,4 @@
-BIN_NAME += v0-003
+BIN_NAME += v0-004
 
 TIMESTAMP := $(shell date +%m%y)
 
