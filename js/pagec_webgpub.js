@@ -97,6 +97,7 @@ $shds[i+1]='https://glsl.1ink.us/shaders/'+txxt;
 var randShade=Math.random();
 randShade=Math.floor($shds[0]*randShade)+5;
 // document.getElementById('path').innerHTML=$shds[randShade];
+  console.log('getting shader');
 document.getElementById('path').innerHTML='https://glsl.1ink.us/shaders/1littlefluffyclouds';
 var pth=document.getElementById('path').innerHTML;
 const ff=new XMLHttpRequest();
@@ -150,6 +151,7 @@ dxhttp.send();
 scanSongs();
 scanShaders();
 scanVideos();
+  console.log('done getting shader');
 
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
