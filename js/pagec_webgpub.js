@@ -99,7 +99,9 @@ randShade=Math.floor($shds[0]*randShade)+5;
 // document.getElementById('path').innerHTML=$shds[randShade];
   console.log('getting shader');
 document.getElementById('path').innerHTML='https://glsl.1ink.us/shaders/1littlefluffyclouds';
-var pth=document.getElementById('path').innerHTML;
+// var pth=document.getElementById('path').innerHTML;
+var pth='https://glsl.1ink.us/shaders/1littlefluffyclouds';
+  
 const ff=new XMLHttpRequest();
 ff.open('GET',pth,true);
 ff.responseType='arraybuffer';
