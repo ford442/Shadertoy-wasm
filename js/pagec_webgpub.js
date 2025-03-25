@@ -108,6 +108,7 @@ ff.responseType='arraybuffer';
 ff.onload=function(oEvent){
 const sarrayBuffer=ff.response;
 if(sarrayBuffer){
+  console.log('got shader');
 const sfil=new Uint8ClampedArray(sarrayBuffer);
 setTimeout(function(){
 FS.writeFile('/shader/shader1.toy',sfil);
