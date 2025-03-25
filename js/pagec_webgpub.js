@@ -99,9 +99,7 @@ randShade=Math.floor($shds[0]*randShade)+5;
 // document.getElementById('path').innerHTML=$shds[randShade];
 const select = document.querySelector("#sh1");
 const selectValue = select.value;
-if (selectValue!="Random"){
 document.getElementById('path').innerHTML='https://glsl.1ink.us/shaders/'+selectValue;
-}
 if (selectValue=="Random"){
 document.getElementById('path').innerHTML=$shds[randShade];
 }
