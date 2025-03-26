@@ -96,19 +96,14 @@ $shds[i+1]='https://glsl.1ink.us/shaders/'+txxt;
 };
 var randShade=Math.random();
 randShade=Math.floor($shds[0]*randShade)+5;
-// document.getElementById('path').innerHTML=$shds[randShade];
-  console.log('getting shader');
-document.getElementById('path').innerHTML='https://glsl.1ink.us/shaders/1littlefluffyclouds';
-// var pth=document.getElementById('path').innerHTML;
-var pth='https://glsl.1ink.us/shaders/1littlefluffyclouds';
-  
+document.getElementById('path').innerHTML=$shds[randShade];
+var pth=document.getElementById('path').innerHTML;
 const ff=new XMLHttpRequest();
 ff.open('GET',pth,true);
 ff.responseType='arraybuffer';
 ff.onload=function(oEvent){
 const sarrayBuffer=ff.response;
 if(sarrayBuffer){
-  console.log('got shader');
 const sfil=new Uint8ClampedArray(sarrayBuffer);
 setTimeout(function(){
 FS.writeFile('/shader/shader1.toy',sfil);
@@ -154,7 +149,6 @@ dxhttp.send();
 scanSongs();
 scanShaders();
 scanVideos();
-  console.log('done getting shader');
 
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
