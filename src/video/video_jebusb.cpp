@@ -588,7 +588,7 @@ T=true;
 });
 
 EM_BOOL mouse_call(int eventType,const EmscriptenMouseEvent *e,void *userData);
-static const char8_t *read_file(const char *filename);
+static const char *read_file_c(const char *filename);
   
 SDL_AudioDeviceID dev;
 struct{Uint8* snd;int pos;Uint32 slen;SDL_AudioSpec spec;}wave;
@@ -762,6 +762,33 @@ return nullptr;
 result=static_cast<char8_t*>(malloc((length+1)*sizeof(char8_t)));
 if(result){
 size_t actual_length=fread(result,sizeof(char8_t),length,file);
+result[actual_length++]={'\0'};
+} 
+fclose(file);
+return result;
+}
+return nullptr;
+}
+
+static const char *read_file_c(const char *filename){
+char *result=NULL;
+long length=0;
+FILE *file=fopen(filename,"r");
+if(file){
+int status=fseek(file,0,SEEK_END);
+if(status!=0){
+fclose(file);
+return nullptr;
+}
+length=ftell(file);
+status=fseek(file,0,SEEK_SET);
+if(status!=0){
+fclose(file);
+return nullptr;
+}
+result=static_cast<char*>(malloc((length+1)*sizeof(char)));
+if(result){
+size_t actual_length=fread(result,sizeof(char),length,file);
 result[actual_length++]={'\0'};
 } 
 fclose(file);
@@ -1117,7 +1144,7 @@ glGenBuffers(1,&EBO);
 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,EBO);
 glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indc),indc,GL_DYNAMIC_DRAW);
 // nanosleep(&req,&rem);
-static const char* default_fragment_shader=(char*)read_file(fileloc);
+static const char* default_fragment_shader=(char*)read_file_c(fileloc);
 // nanosleep(&req,&rem);
 // nanosleep(&req,&rem);
 sources[0]=common_shader_header;
@@ -1207,10 +1234,10 @@ return;
 
 }
 
-int main(void){
+int main(){
 EM_ASM({
 FS.mkdir("/snd");
 FS.mkdir("/shader");
 });
-return 1;
+return 0;
 }
