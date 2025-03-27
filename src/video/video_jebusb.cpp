@@ -1219,7 +1219,7 @@ glBlendEquationSeparate(GL_FUNC_SUBTRACT,GL_MIN);
  
 glEnable(GL_BLEND);
 // glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-glBlendColor(.5,.5,.5,F);
+glBlendColor(F,F,F,F);
  
 // glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
 glDisable(GL_DITHER);
