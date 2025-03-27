@@ -489,13 +489,19 @@ let R=g2.createKernel(function(tv){
 var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setOptimizeFloatMemory(true).setOutput([sz]);
-
+if(document.querySelector('#b3').value='B3'){
 let t=g.createKernel(function(v){
 var P=v[this.thread.y][this.thread.x+this.constants.blnk];
 var av$=Ave(P[0],P[1],P[2]);
 return[P[0],P[1],P[2],av$];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-
+}else if(document.querySelector('#b3').value='Video'){
+let t=g.createKernel(function(v){
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+return[P[0],P[1],P[2],P[3]];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
+}
+if(document.querySelector('#b3').value='B3'){
 let r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 var $fmax=this.constants.fmax;
@@ -511,7 +517,12 @@ var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
 }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-
+}else if(document.querySelector('#b3').value='Video'){
+let r=g.createKernel(function(f){
+var p=f[this.thread.y][this.thread.x];
+this.color(p[0],p[1],p[2],p[3]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+}
 w$=parseInt(document.querySelector("#wid").innerHTML,10);
 h$=parseInt(document.querySelector("#hig").innerHTML,10);
 blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
