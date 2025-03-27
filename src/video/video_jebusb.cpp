@@ -506,7 +506,7 @@ var $favg=this.constants.favg;
 var $aavg=this.constants.aavg;
 // var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
 var alph=AlpheV2($amax,$amin,$aavg,p[3]);
-var Min=4.0*(($amax-($aavg-$fmin))/2.0);
+var Min=4.0*(($fmax-($aavg-$fmin))/2.0);
 var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
@@ -1204,7 +1204,7 @@ glBlendEquationSeparate(GL_FUNC_SUBTRACT,GL_MIN);
  
 glEnable(GL_BLEND);
 // glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-glBlendColor(F,F,F,0.5);
+glBlendColor(F,F,F,F);
  
 // glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
 glDisable(GL_DITHER);
