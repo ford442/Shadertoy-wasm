@@ -229,7 +229,7 @@ const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
 
 function loada(){
-if(lockVid!=1){
+if(lockVid==0){
 // document.getElementById('ldv').height=document.innerHeight;
 loadV.addEventListener('canplay',function(){
 loadV.width=this.videoWidth;
@@ -288,7 +288,7 @@ document.getElementById('ldv').currentTime=document.getElementById('itim').inner
 // document.getElementById('ldv').height=he;
 // document.getElementById('ldv').width=wi;
 document.getElementById('di').click();
-};
+}
 setTimeout(function(){
 loada();
 },$ldt);
