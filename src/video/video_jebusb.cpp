@@ -216,7 +216,9 @@ agav.fill(avag,0,33);
 agav.fill(min,100,33);
 agav.fill(max,200,33);
 const bcanvas=document.querySelector("#bcanvas");
+const scanvas=document.querySelector("#scanvas");
 const contx=bcanvas.getContext("webgl2",{colorType:'float32',precision:'highp',colorSpace:'display-p3',alpha:true,depth:true,stencil:true,preserveDrawingBuffer:false,premultipliedAlpha:false,desynchronized:false,lowLatency:false,powerPreference:'high-performance',antialias:true,willReadFrequently:false});
+const contx2=scanvas.getContext("webgl2",{colorType:'float32',precision:'highp',colorSpace:'display-p3',alpha:true,depth:true,stencil:true,preserveDrawingBuffer:false,premultipliedAlpha:false,desynchronized:false,lowLatency:false,powerPreference:'high-performance',antialias:true,willReadFrequently:false});
 /*  new ext list
 contx.getExtension('ARB_robust_buffer_access_behavior');
 // contx.getExtension('ARB_ES3_compatibility');
@@ -459,7 +461,7 @@ contx.disable(gl.DITHER);
 // contx.drawingBufferColorSpace='display-p3';
 
 const g=new GPUX({canvas:bcanvas,context:contx});
-const g2=new GPUX();
+const g2=new GPUX({canvas:scanvas,context:contx2});
 const glslAve=`float Ave(float a,float b,float c){return(a+b+c)/3.0;}`;
 const glslSilver=`float Silver(float a){return((a+0.75+0.75+((a+0.75)/2.0))/4.0);}`;
 const glslGoldR=`float GoldR(float a){return((a+0.831+0.831+0.831+((a+0.831)/2.0))/5.0);}`;
