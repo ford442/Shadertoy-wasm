@@ -96,8 +96,13 @@ $shds[i+1]='https://glsl.1ink.us/shaders/'+txxt;
 };
 var randShade=Math.random();
 randShade=Math.floor($shds[0]*randShade)+5;
-document.getElementById('path').innerHTML=$shds[randShade];
-var pth=document.getElementById('path').innerHTML;
+var select=document.querySelector('#sh1').value;
+if (select=='Random'){
+document.querySelector('#path').innerHTML=$shds[randShade];
+}else if(select!='Default'){
+document.querySelector('#path').innerHTML='https://glsl.1ink.us/shaders/'+select;
+}
+var pth=document.querySelector('#path').innerHTML;
 const ff=new XMLHttpRequest();
 ff.open('GET',pth,true);
 ff.responseType='arraybuffer';
