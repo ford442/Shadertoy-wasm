@@ -132,11 +132,10 @@ let stp,a,b,f;
 
 function backForth(stp,strt,rate){
 f=true;
-var frm=rate*0.001;
 intervalLoop=setInterval(function(){
 if(f==true){
 if(vv.currentTime>=strt*1000){
-vv.currentTime+=0.016;
+vv.currentTime-=0.016;
 }else{
 f=false;
 }}else if(vv.currentTime<=stp*1000){
