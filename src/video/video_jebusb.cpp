@@ -135,11 +135,11 @@ f=true;
 intervalLoop=setInterval(function(){
 if(f==true){
 if(vv.currentTime>=strt*1000){
-vv.currentTime-=0.016;
+vv.currentTime-=0.032;
 }else{
 f=false;
 }}else if(vv.currentTime<=stp*1000){
-vv.currentTime+=0.016;
+vv.currentTime+=0.032;
 }else{
 f=true;
 }
