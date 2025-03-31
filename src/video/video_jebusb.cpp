@@ -136,13 +136,13 @@ function backForth(stp, strt, rate) {
     clearInterval(intervalLoop);
     intervalLoop = requestAnimationFrame(function loop() {
         if (f) {
-            if ((video.currentTime-0.032) >= strt * 1000.0) {
+            if (video.currentTime >= strt * 1000.0) {
                 video.currentTime -= 0.032;
             } else {
                 video.currentTime = strt * 1000.0;
                 f = false;
             }
-        } else if ((video.currentTime+0.032) <= stp * 1000.0) {
+        } else if (video.currentTime <= stp * 1000.0) {
             video.currentTime += 0.032;
         } else {
             video.currentTime = stp * 1000.0;
