@@ -133,24 +133,19 @@ function forward() {
 
 function backForth(stp, strt, rate) {
     let f = true;
-    let timept = stp * 1000.0;
     clearInterval(intervalLoop);
     intervalLoop = requestAnimationFrame(function loop() {
         if (f) {
             if (video.currentTime >= strt * 1000.0) {
-                timept -= 0.032;
-                video.currentTime = timept;
+                video.currentTime -= 0.032;
             } else {
-                timept = strt * 1000.0;
-                video.currentTime = timept;
+                video.currentTime = strt * 1000.0;
                 f = false;
             }
         } else if (video.currentTime <= stp * 1000.0) {
-            timept += 0.032;
-            video.currentTime = timept;
+            video.currentTime += 0.032;
         } else {
-            timept = stp * 1000.0;
-            video.currentTime = timept;
+            video.currentTime = stp * 1000.0;
             f = true;
         }
         setTimeout(() => requestAnimationFrame(loop), rate);
