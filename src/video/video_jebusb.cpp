@@ -184,9 +184,9 @@ function handleKeydown(e) {
         back();
     } else if (e.code === 'KeyZ') {
         video.pause();
-        const ends = video.currentTime / 1000.0;
-        const begins = (video.currentTime - 2.5) / 1000.0;
-        const fps = 1000.0 / video.frameRate;
+        let ends = video.currentTime / 1000.0;
+        let begins = (video.currentTime - 2.5) / 1000.0;
+        let fps = 1000.0 / video.frameRate;
         backForth(ends, begins, fps);
     } else if (e.code === 'KeyX') {
         video.play();
