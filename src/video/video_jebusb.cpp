@@ -139,11 +139,13 @@ function backForth(stp, strt, rate) {
             if (video.currentTime >= strt * 1000) {
                 video.currentTime -= 0.032;
             } else {
+                video.currentTime = strt * 1000;
                 f = false;
             }
         } else if (video.currentTime <= stp * 1000) {
             video.currentTime += 0.032;
         } else {
+            video.currentTime = stp * 1000;
             f = true;
         }
         setTimeout(() => requestAnimationFrame(loop), rate);
@@ -183,7 +185,7 @@ function handleKeydown(e) {
     } else if (e.code === 'KeyZ') {
         video.pause();
         const ends = video.currentTime / 1000.0;
-        const begins = (video.currentTime - 3.0) / 1000.0;
+        const begins = (video.currentTime - 4.0) / 1000.0;
         const fps = 1000 / video.frameRate;
         backForth(ends, begins, fps);
     } else if (e.code === 'KeyX') {
