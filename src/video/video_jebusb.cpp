@@ -105,88 +105,106 @@ avgFrmD(Fnum,leng,ptr,aptr);
 
 EM_JS(void,ma,(),{
 "use strict";
-const pnnl=document.body;
-let vv=document.querySelector("#mv");
+const body = document.body;
+let video = document.querySelector("#mv");
 let intervalBackward;
-
-function back(){
-intervalBackward=setInterval(function(){
-if(vv.currentTime==0){
-clearInterval(intervalBackward);
-}else{
-vv.currentTime+=-0.032;
-}
-},16);
-};
-
 let intervalForward;
-
-function forward(){
-intervalForward=setInterval(function(){
-vv.currentTime+=-0.032;
-},16);
-};
-
 let intervalLoop;
-let stp,a,b,f;
 
-function backForth(stp,strt,rate){
-f=true;
-intervalLoop=setInterval(function(){
-if(f==true){
-if(vv.currentTime>=strt*1000){
-vv.currentTime-=0.032;
-}else{
-f=false;
-}}else if(vv.currentTime<=stp*1000){
-vv.currentTime+=0.032;
-}else{
-f=true;
-}
-},rate);
-};
-
-function stpForward(){
-clearInterval(intervalForward);
+function back() {
+    clearInterval(intervalBackward);
+    intervalBackward = requestAnimationFrame(function loop() {
+        if (video.currentTime <= 0) {
+            cancelAnimationFrame(intervalBackward);
+        } else {
+            video.currentTime -= 0.032;
+            intervalBackward = requestAnimationFrame(loop);
+        }
+    });
 }
 
-function stpBack(){
-clearInterval(intervalBackward);
+function forward() {
+    clearInterval(intervalForward);
+    intervalForward = requestAnimationFrame(function loop() {
+        video.currentTime += 0.032;
+        intervalForward = requestAnimationFrame(loop);
+    });
 }
 
-function stpBackForth(){
-clearInterval(intervalLoop);
+function backForth(stp, strt, rate) {
+    let f = true;
+    clearInterval(intervalLoop);
+    intervalLoop = requestAnimationFrame(function loop() {
+        if (f) {
+            if (video.currentTime >= strt * 1000) {
+                video.currentTime -= 0.032;
+            } else {
+                f = false;
+            }
+        } else if (video.currentTime <= stp * 1000) {
+            video.currentTime += 0.032;
+        } else {
+            f = true;
+        }
+        setTimeout(() => requestAnimationFrame(loop), rate);
+    });
 }
 
-let Mov=1;
-
-function doKey(e){
-if(e.code=='Space'){
-e.preventDefault();
-if(Mov==1){vv=document.querySelector("#mv");Mov=0;vv.pause();}
-else if(Mov==0){vv=document.querySelector("#mv");Mov=1;vv.play();}
-}
-if (e.code=='KeyW'){vv=document.querySelector("#mv");Mov=1;vv.pause();forward();}
-if (e.code=='KeyS'){vv=document.querySelector("#mv");Mov=1;vv.pause();back();}
-if (e.code=='KeyZ'){
-vv=document.querySelector("#mv");
-Mov=1;
-vv.pause();
-var ends=vv.currentTime/1000.0;
-var begins=(vv.currentTime-3.0)/1000.0;
-var fps=1000/vv.frameRate;
-backForth(ends,begins,fps);
-}
-if (e.code=='KeyX'){vv=document.querySelector("#mv");stpBackForth();vv.play();}
+function stopForward() {
+    clearInterval(intervalForward);
 }
 
-function doKeyUp(e){
-if (e.code=='KeyS'){Mov=0;stpBack();vv.pause();}
-if (e.code=='KeyW'){Mov=0;stpForward();vv.pause();}
+function stopBack() {
+    clearInterval(intervalBackward);
 }
 
-pnnl.addEventListener('keydown',doKey);
-pnnl.addEventListener('keydown',doKeyUp);
+function stopBackForth() {
+    clearInterval(intervalLoop);
+}
+
+let playing = true;
+
+function handleKeydown(e) {
+    e.preventDefault();
+    if (e.code === 'Space') {
+        if (playing) {
+            video.pause();
+            playing = false;
+        } else {
+            video.play();
+            playing = true;
+        }
+    } else if (e.code === 'KeyW') {
+        video.pause();
+        forward();
+    } else if (e.code === 'KeyS') {
+        video.pause();
+        back();
+    } else if (e.code === 'KeyZ') {
+        video.pause();
+        const ends = video.currentTime / 1000.0;
+        const begins = (video.currentTime - 3.0) / 1000.0;
+        const fps = 1000 / video.frameRate;
+        backForth(ends, begins, fps);
+    } else if (e.code === 'KeyX') {
+        video.play();
+        stopBackForth();
+    }
+}
+
+function handleKeyup(e) {
+    if (e.code === 'KeyS') {
+        stopBack();
+        video.pause();
+    } else if (e.code === 'KeyW') {
+        stopForward();
+        video.pause();
+    }
+}
+
+body.addEventListener('keydown', handleKeydown);
+body.addEventListener('keyup', handleKeyup);
+
 let w$=parseInt(document.querySelector("#wid").innerHTML,10);
 let h$=parseInt(document.querySelector("#hig").innerHTML,10);
 let blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
