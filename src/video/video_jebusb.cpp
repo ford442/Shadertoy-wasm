@@ -106,10 +106,10 @@ avgFrmD(Fnum,leng,ptr,aptr);
 EM_JS(void,ma,(),{
 "use strict";
 const body = document.body;
-let video = document.querySelector("#mv");
-let intervalBackward;
-let intervalForward;
-let intervalLoop;
+var video = document.querySelector("#mv");
+var intervalBackward;
+var intervalForward;
+var intervalLoop;
 
 function back() {
     clearInterval(intervalBackward);
@@ -132,7 +132,7 @@ function forward() {
 }
 
 function backForth(stp, strt, rate) {
-    let f = true;
+    var f = true;
     clearInterval(intervalLoop);
     intervalLoop = requestAnimationFrame(function loop() {
         if (f) {
