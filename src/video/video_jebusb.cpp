@@ -220,7 +220,7 @@ let h$=parseInt(document.querySelector("#hig").innerHTML,10);
 let blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
 let ch$=parseInt(window.innerHeight,10);
 let vv=document.querySelector("#mv");
-let $H=Module.HEAPF64.buffer;
+let $H=Module.HEAPF32.buffer;
 
 function nearestPowerOf2(n){
 if(n&(n-1)){
@@ -232,7 +232,7 @@ return n;
 
 let la=nearestPowerOf2((((h$+(blank$$*2))*h$*4)/4)*4);
 let pointa=77*la;
-const agav=new Float64Array($H,pointa,300);
+const agav=new Float32Array($H,pointa,300);
 let sz=(h$*h$)/8;
 let blank$=Math.max((w$-h$)/4,0);
 let nblank$=Math.max((h$-w$)/2,0);
@@ -593,10 +593,10 @@ pointa=77*la;
 R.setOutput([sz]);
 for(i=0;i<65;i++){
 var j=i+1;
-eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
+eval("var point"+j+"="+i+"*la;var $"+j+"=new Float32Array($H,point"+j+",la);");
 }
 var pointb=77*la;
-var $B=new Float64Array($H,pointb,sz);
+var $B=new Float32Array($H,pointb,sz);
 var $F=1;
 var $Bu=33;
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
@@ -619,10 +619,10 @@ pointa=77*la;
 R.setOutput([sz]);
 for(i=0;i<65;i++){
 var j=i+1;
-eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
+eval("var point"+j+"="+i+"*la;var $"+j+"=new Float32Array($H,point"+j+",la);");
 }
 pointb=66*la;
-$B=new Float64Array($H,pointb,sz);
+$B=new Float32Array($H,pointb,sz);
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
 t.setConstants({nblnk:nblank$,blnk:blank$$});
 var T=false;
