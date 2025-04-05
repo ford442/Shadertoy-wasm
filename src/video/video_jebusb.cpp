@@ -170,31 +170,31 @@ function handleKeydown(e) {
     e.preventDefault();
     if (e.code === 'Space') {
         if (playing) {
-            video=document.querySelector("#mv")
+            video=document.querySelector("#mv");
             video.pause();
             playing = false;
         } else {
-            video=document.querySelector("#mv")
+            video=document.querySelector("#mv");
             video.play();
             playing = true;
         }
     } else if (e.code === 'KeyW') {
-        video=document.querySelector("#mv")
+        video=document.querySelector("#mv");
         video.pause();
         forward();
     } else if (e.code === 'KeyS') {
-        video=document.querySelector("#mv")
+        video=document.querySelector("#mv");
         video.pause();
         back();
     } else if (e.code === 'KeyZ') {
-        video=document.querySelector("#mv")
+        video=document.querySelector("#mv");
         video.pause();
         let ends = video.currentTime / 1000.0;
         let begins = (video.currentTime - 2.5) / 1000.0;
         let fps = 1000.0 / video.frameRate;
         backForth(ends, begins, fps);
     } else if (e.code === 'KeyX') {
-        video=document.querySelector("#mv")
+        video=document.querySelector("#mv");
         video.play();
         stopBackForth();
     }
@@ -203,11 +203,11 @@ function handleKeydown(e) {
 function handleKeyup(e) {
     if (e.code === 'KeyS') {
         stopBack();
-        video=document.querySelector("#mv")
+        video=document.querySelector("#mv");
         video.pause();
     } else if (e.code === 'KeyW') {
         stopForward();
-        video=document.querySelector("#mv")
+        video=document.querySelector("#mv");
         video.pause();
     }
 }
