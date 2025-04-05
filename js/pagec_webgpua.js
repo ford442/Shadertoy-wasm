@@ -96,8 +96,13 @@ $shds[i+1]='https://glsl.1ink.us/shaders/'+txxt;
 };
 var randShade=Math.random();
 randShade=Math.floor($shds[0]*randShade)+5;
-document.getElementById('path').innerHTML=$shds[randShade];
-var pth=document.getElementById('path').innerHTML;
+var select=document.querySelector('#sh1').value;
+if (select=='Random'){
+document.querySelector('#path').innerHTML=$shds[randShade];
+}else if(select!='Default'){
+document.querySelector('#path').innerHTML='https://glsl.1ink.us/shaders/'+select;
+}
+var pth=document.querySelector('#path').innerHTML;
 const ff=new XMLHttpRequest();
 ff.open('GET',pth,true);
 ff.responseType='arraybuffer';
@@ -208,7 +213,7 @@ document.getElementById('wrap').style.pointerEvents='auto';
 document.getElementById('isrc').innerHTML=adr;
 mV.play();
 var vv=document.getElementById('mv');
-var lockVid=0;
+let lockVid;
 
 function spKey(e){
 if(e.code=='Space'){
@@ -283,7 +288,7 @@ document.getElementById('ldv').currentTime=document.getElementById('itim').inner
 // document.getElementById('ldv').height=he;
 // document.getElementById('ldv').width=wi;
 document.getElementById('di').click();
-};
+}
 setTimeout(function(){
 loada();
 },$ldt);
