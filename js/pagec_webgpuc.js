@@ -96,8 +96,13 @@ $shds[i+1]='https://glsl.1ink.us/shaders/'+txxt;
 };
 var randShade=Math.random();
 randShade=Math.floor($shds[0]*randShade)+5;
-document.getElementById('path').innerHTML=$shds[randShade];
-var pth=document.getElementById('path').innerHTML;
+var select=document.querySelector('#sh1').value;
+if (select=='Random'){
+document.querySelector('#path').innerHTML=$shds[randShade];
+}else if(select!='Default'){
+document.querySelector('#path').innerHTML='https://glsl.1ink.us/shaders/'+select;
+}
+var pth=document.querySelector('#path').innerHTML;
 const ff=new XMLHttpRequest();
 ff.open('GET',pth,true);
 ff.responseType='arraybuffer';
@@ -208,7 +213,7 @@ document.getElementById('wrap').style.pointerEvents='auto';
 document.getElementById('isrc').innerHTML=adr;
 mV.play();
 var vv=document.getElementById('mv');
-var lockVid=0;
+let lockVid;
 
 function spKey(e){
 if(e.code=='Space'){
@@ -225,7 +230,7 @@ pnnl.addEventListener('keydown',spKey);
 
 function loada(){
 if(lockVid!=1){
-document.getElementById('ldv').height=document.innerHeight;
+// document.getElementById('ldv').height=document.innerHeight;
 loadV.addEventListener('canplay',function(){
 loadV.width=this.videoWidth;
 loadV.height=this.videoHeight;
@@ -271,19 +276,19 @@ lo=vide[1].id;
 vide[0].id=lo;
 vide[1].id=mv;
 document.getElementById('mv').play();
-document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
-document.getElementById('mv').height=document.innerHeight;
-document.getElementById('ldv').currentTime=document.getElementById('itim').innerHTML;
-document.getElementById('ldv').load();
-document.getElementById('ldv').height=he;
-document.getElementById('ldv').width=wi;
 $iwid.innerHTML=parseInt($w,10);
-$ihig.innerHTML=parseInt(window.innerHeight,10);
+$ihig.innerHTML=parseInt(window.innerHeight,10);  
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('circle').height=parseInt(window.innerHeight,10);
 document.getElementById('circle').width=parseInt(window.innerWidth,10);
+document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
+// document.getElementById('mv').height=document.innerHeight;
+document.getElementById('ldv').load();
+document.getElementById('ldv').currentTime=document.getElementById('itim').innerHTML;
+// document.getElementById('ldv').height=he;
+// document.getElementById('ldv').width=wi;
 document.getElementById('di').click();
-};
+}
 setTimeout(function(){
 loada();
 },$ldt);
