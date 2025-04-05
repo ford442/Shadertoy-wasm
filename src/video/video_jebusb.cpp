@@ -481,8 +481,8 @@ contx.blendFuncSeparate(gl.DST_COLOR,gl.SRC_COLOR,gl.SRC_ALPHA,gl.ONE_MINUS_SRC_
 // contx.blendEquationSeparate(gl.FUNC_SUBTRACT,gl.MAX);
   // contx.blendFuncSeparate(gl.DST_COLOR,gl.SRC_COLOR,gl.ONE_MINUS_SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
 // contx.blendEquationSeparate(gl.FUNC_ADD,gl.MAX);
-// contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_SUBTRACT);
-contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_REVERSE_SUBTRACT);
+contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_SUBTRACT);
+// contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_REVERSE_SUBTRACT);
 contx.disable(gl.DITHER);
 // contx.drawingBufferColorMetadata={mode:'extended'};
 // contx.drawingBufferColorSpace='display-p3';
