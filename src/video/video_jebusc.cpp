@@ -527,6 +527,13 @@ var av$=Ave(P[0],P[1],P[2]);
 return[P[0],P[1],P[2],av$];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
+if(vid_mode=='B3_B'){
+t=g.createKernel(function(v){
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+var av$=Ave(P[0],P[1],P[2]);
+return[P[0],P[1],P[2],av$];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
+}
 if(vid_mode=='Video'){
 t=g.createKernel(function(v){
 var P=v[this.thread.y][this.thread.x+this.constants.blnk];
