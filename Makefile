@@ -106,7 +106,7 @@ video_resurection_webgpua:
 	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) $(STATIC_LINK_FLAGS) -static
 	 em++ lib/lib_webgpu.cpp $(STDS) $(STATIC_LINK_FLAGS) -static
 	 emcc src/video/video_jebusa.cpp -I/content/RAMDRIVE2/b3/include/vanilla/ -o video_jebusa.o -c $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS) $(COMMON_FLAGS)
-	 emcc video_jebusa.o -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resA.js $(STDS) $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) \
+	 emcc video_jebusa.o -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resA.js $(STDS) $(GL_FLAGS) $(BOOST_FLAGS)  $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -sFORCE_FILESYSTEM=1 -sUSE_SDL=2 \
 	 -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
 	 -sEXPORTED_FUNCTIONS='["_main","_str","_pl","_b3","_nano","_nanoD"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
