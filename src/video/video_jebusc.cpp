@@ -105,95 +105,122 @@ avgFrmD(Fnum,leng,ptr,aptr);
 
 EM_JS(void,ma,(),{
 "use strict";
-const pnnl=document.body;
-let vv=document.querySelector("#mv");
+const body = document.body;
+let video = document.querySelector("#mv");
 let intervalBackward;
-
-function back(){
-intervalBackward=setInterval(function(){
-if(vv.currentTime==0){
-clearInterval(intervalBackward);
-}else{
-vv.currentTime+=-0.032;
-}
-},16);
-};
-
 let intervalForward;
-
-function forward(){
-intervalForward=setInterval(function(){
-vv.currentTime+=-0.032;
-},16);
-};
-
 let intervalLoop;
-let stp,a,b,f;
 
-function backForth(stp,strt,rate){
-f=true;
-var frm=rate*0.001;
-intervalLoop=setInterval(function(){
-if(f==true){
-if(vv.currentTime>=strt*1000){
-vv.currentTime+=0.016;
-}else{
-f=false;
-}}else if(vv.currentTime<=stp*1000){
-vv.currentTime+=0.016;
-}else{
-f=true;
-}
-},rate);
-};
-
-function stpForward(){
-clearInterval(intervalForward);
+function back() {
+    clearInterval(intervalBackward);
+    intervalBackward = requestAnimationFrame(function loop() {
+        if (video.currentTime <= 0) {
+            cancelAnimationFrame(intervalBackward);
+        } else {
+            video.currentTime -= 0.032;
+            intervalBackward = requestAnimationFrame(loop);
+        }
+    });
 }
 
-function stpBack(){
-clearInterval(intervalBackward);
+function forward() {
+    clearInterval(intervalForward);
+    intervalForward = requestAnimationFrame(function loop() {
+        video.currentTime += 0.032;
+        intervalForward = requestAnimationFrame(loop);
+    });
 }
 
-function stpBackForth(){
-clearInterval(intervalLoop);
+function backForth(stp, strt, rate) {
+    let f = true;
+    clearInterval(intervalLoop);
+    intervalLoop = requestAnimationFrame(function loop() {
+        if (f) {
+            if (video.currentTime >= strt * 1000.0) {
+                video.currentTime -= 0.016;
+            } else {
+                video.currentTime = strt * 1000.0;
+                f = false;
+            }
+        } else if (video.currentTime <= stp * 1000.0) {
+            video.currentTime += 0.016;
+        } else {
+            video.currentTime = stp * 1000.0;
+            f = true;
+        }
+        setTimeout(() => requestAnimationFrame(loop), rate);
+    });
 }
 
-let Mov=1;
-
-function doKey(e){
-if(e.code=='Space'){
-e.preventDefault();
-if(Mov==1){vv=document.querySelector("#mv");Mov=0;vv.pause();}
-else if(Mov==0){vv=document.querySelector("#mv");Mov=1;vv.play();}
-}
-if (e.code=='KeyW'){vv=document.querySelector("#mv");Mov=1;vv.pause();forward();}
-if (e.code=='KeyS'){vv=document.querySelector("#mv");Mov=1;vv.pause();back();}
-if (e.code=='KeyZ'){
-vv=document.querySelector("#mv");
-Mov=1;
-vv.pause();
-var ends=vv.currentTime/1000.0;
-var begins=(vv.currentTime-3.0)/1000.0;
-var fps=1000/vv.frameRate;
-backForth(ends,begins,fps);
-}
-if (e.code=='KeyX'){vv=document.querySelector("#mv");stpBackForth();vv.play();}
+function stopForward() {
+    clearInterval(intervalForward);
 }
 
-function doKeyUp(e){
-if (e.code=='KeyS'){Mov=0;stpBack();vv.pause();}
-if (e.code=='KeyW'){Mov=0;stpForward();vv.pause();}
+function stopBack() {
+    clearInterval(intervalBackward);
 }
 
-pnnl.addEventListener('keydown',doKey);
-pnnl.addEventListener('keydown',doKeyUp);
+function stopBackForth() {
+    clearInterval(intervalLoop);
+}
+
+let playing = true;
+
+function handleKeydown(e) {
+    e.preventDefault();
+    if (e.code === 'Space') {
+        if (playing) {
+            video=document.querySelector("#mv");
+            video.pause();
+            playing = false;
+        } else {
+            video=document.querySelector("#mv");
+            video.play();
+            playing = true;
+        }
+    } else if (e.code === 'KeyW') {
+        video=document.querySelector("#mv");
+        video.pause();
+        forward();
+    } else if (e.code === 'KeyS') {
+        video=document.querySelector("#mv");
+        video.pause();
+        back();
+    } else if (e.code === 'KeyZ') {
+        video=document.querySelector("#mv");
+        video.pause();
+        let ends = video.currentTime / 1000.0;
+        let begins = (video.currentTime - 2.5) / 1000.0;
+        let fps = 1000.0 / video.frameRate;
+        backForth(ends, begins, fps);
+    } else if (e.code === 'KeyX') {
+        video=document.querySelector("#mv");
+        video.play();
+        stopBackForth();
+    }
+}
+
+function handleKeyup(e) {
+    if (e.code === 'KeyS') {
+        stopBack();
+        video=document.querySelector("#mv");
+        video.pause();
+    } else if (e.code === 'KeyW') {
+        stopForward();
+        video=document.querySelector("#mv");
+        video.pause();
+    }
+}
+
+body.addEventListener('keydown', handleKeydown);
+body.addEventListener('keyup', handleKeyup);
+
 let w$=parseInt(document.querySelector("#wid").innerHTML,10);
 let h$=parseInt(document.querySelector("#hig").innerHTML,10);
 let blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
 let ch$=parseInt(window.innerHeight,10);
-vv=document.querySelector("#mv");
-let $H=Module.HEAPF32.buffer;
+let vv=document.querySelector("#mv");
+let $H=Module.HEAPF64.buffer;
 
 function nearestPowerOf2(n){
 if(n&(n-1)){
@@ -204,8 +231,8 @@ return n;
 }
 
 let la=nearestPowerOf2((((h$+(blank$$*2))*h$*4)/4)*4);
-var pointa=77*la;
-var agav=new Float32Array($H,pointa,300);
+let pointa=77*la;
+const agav=new Float64Array($H,pointa,300);
 let sz=(h$*h$)/8;
 let blank$=Math.max((w$-h$)/4,0);
 let nblank$=Math.max((h$-w$)/2,0);
@@ -216,7 +243,7 @@ agav.fill(avag,0,33);
 agav.fill(min,100,33);
 agav.fill(max,200,33);
 const bcanvas=document.querySelector("#bcanvas");
-const contx=bcanvas.getContext("webgl2",{colorType:'float32',precision:'highp',colorSpace:'display-p3',alpha:true,depth:true,stencil:true,preserveDrawingBuffer:false,premultipliedAlpha:false,desynchronized:false,lowLatency:false,powerPreference:'high-performance',antialias:true,willReadFrequently:false});
+const contx=bcanvas.getContext("webgl2",{colorType:'float64',precision:'highp',colorSpace:'display-p3',alpha:true,depth:true,stencil:true,preserveDrawingBuffer:false,premultipliedAlpha:false,desynchronized:false,lowLatency:false,powerPreference:'high-performance',antialias:true,willReadFrequently:false});
 /*  new ext list
 contx.getExtension('ARB_robust_buffer_access_behavior');
 // contx.getExtension('ARB_ES3_compatibility');
@@ -484,19 +511,28 @@ g.addNativeFunction('GoldB',glslGoldB,{returnType:'Number'});
 g.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
 g2.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
 g2.addNativeFunction('Ave',glslAve,{returnType:'Number'});
-
+let t, r;
 let R=g2.createKernel(function(tv){
 var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setOptimizeFloatMemory(true).setOutput([sz]);
-
-let t=g.createKernel(function(v){
+var select=document.querySelector('#b3');
+var vid_mode=select.value;
+if(vid_mode=='B3'){
+t=g.createKernel(function(v){
 var P=v[this.thread.y][this.thread.x+this.constants.blnk];
 var av$=Ave(P[0],P[1],P[2]);
 return[P[0],P[1],P[2],av$];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-
-let r=g.createKernel(function(f){
+}
+if(vid_mode=='Video'){
+t=g.createKernel(function(v){
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+return[P[0],P[1],P[2],P[3]];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
+}
+if(vid_mode=='B3'){
+r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 var $fmax=this.constants.fmax;
 var $fmin=this.constants.fmin;
@@ -511,7 +547,13 @@ var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
 }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-
+}
+if(vid_mode=='Video'){
+r=g.createKernel(function(f){
+var p=f[this.thread.y][this.thread.x];
+this.color(p[0],p[1],p[2],p[3]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+}
 w$=parseInt(document.querySelector("#wid").innerHTML,10);
 h$=parseInt(document.querySelector("#hig").innerHTML,10);
 blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
@@ -525,10 +567,10 @@ pointa=77*la;
 R.setOutput([sz]);
 for(i=0;i<65;i++){
 var j=i+1;
-eval("var point"+j+"="+i+"*la;var $"+j+"=new Float32Array($H,point"+j+",la);");
+eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
 }
 var pointb=77*la;
-var $B=new Float32Array($H,pointb,sz);
+var $B=new Float64Array($H,pointb,sz);
 var $F=1;
 var $Bu=33;
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
@@ -551,10 +593,10 @@ pointa=77*la;
 R.setOutput([sz]);
 for(i=0;i<65;i++){
 var j=i+1;
-eval("var point"+j+"="+i+"*la;var $"+j+"=new Float32Array($H,point"+j+",la);");
+eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
 }
 pointb=66*la;
-$B=new Float32Array($H,pointb,sz);
+$B=new Float64Array($H,pointb,sz);
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
 t.setConstants({nblnk:nblank$,blnk:blank$$});
 var T=false;
@@ -1204,7 +1246,7 @@ glBlendEquationSeparate(GL_FUNC_SUBTRACT,GL_MIN);
  
 glEnable(GL_BLEND);
 // glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-// glBlendColor(F0,F0,F0,0.5);
+glBlendColor(F,F,F,F);
  
 // glBlendFuncSeparate(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA,GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
 glDisable(GL_DITHER);
