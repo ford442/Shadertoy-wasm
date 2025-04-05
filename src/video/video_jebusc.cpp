@@ -106,10 +106,10 @@ avgFrmD(Fnum,leng,ptr,aptr);
 EM_JS(void,ma,(),{
 "use strict";
 const body = document.body;
-let video = document.querySelector("#mv");
-let intervalBackward;
-let intervalForward;
-let intervalLoop;
+var video = document.querySelector("#mv");
+var intervalBackward;
+var intervalForward;
+var intervalLoop;
 
 function back() {
     clearInterval(intervalBackward);
@@ -132,7 +132,7 @@ function forward() {
 }
 
 function backForth(stp, strt, rate) {
-    let f = true;
+    var f = true;
     clearInterval(intervalLoop);
     intervalLoop = requestAnimationFrame(function loop() {
         if (f) {
@@ -480,7 +480,9 @@ contx.hint(gl.GENERATE_MIPMAP_HINT,gl.NICEST);
 contx.blendFuncSeparate(gl.DST_COLOR,gl.SRC_COLOR,gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
 // contx.blendEquationSeparate(gl.FUNC_SUBTRACT,gl.MAX);
   // contx.blendFuncSeparate(gl.DST_COLOR,gl.SRC_COLOR,gl.ONE_MINUS_SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-contx.blendEquationSeparate(gl.FUNC_ADD,gl.MAX);
+// contx.blendEquationSeparate(gl.FUNC_ADD,gl.MAX);
+contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_SUBTRACT);
+// contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_REVERSE_SUBTRACT);
 contx.disable(gl.DITHER);
 // contx.drawingBufferColorMetadata={mode:'extended'};
 // contx.drawingBufferColorSpace='display-p3';
@@ -542,7 +544,24 @@ var $favg=this.constants.favg;
 var $aavg=this.constants.aavg;
 // var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
 var alph=AlpheV2($amax,$amin,$aavg,p[3]);
-var Min=3.0*(($amax-($aavg-$fmin))/2.0);
+var Min=3.0*(($amax-($aavg-$amin))/2.0);
+var ouT=Math.max(Min,alph);
+var aveg=Aveg(p[3],ouT);
+this.color(p[0],p[1],p[2],aveg);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+}
+if(vid_mode=='B3_B'){
+r=g.createKernel(function(f){
+var p=f[this.thread.y][this.thread.x];
+var $fmax=this.constants.fmax;
+var $fmin=this.constants.fmin;
+var $amax=this.constants.amax;
+var $amin=this.constants.amin;
+var $favg=this.constants.favg;
+var $aavg=this.constants.aavg;
+var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
+// var alph=AlpheV2($amax,$amin,$aavg,p[3]);
+var Min=2.0*(($amax-($aavg-$amin))/2.0);
 var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
