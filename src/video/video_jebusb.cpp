@@ -544,7 +544,24 @@ var $favg=this.constants.favg;
 var $aavg=this.constants.aavg;
 // var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
 var alph=AlpheV2($amax,$amin,$aavg,p[3]);
-var Min=4.0*(($amax-($aavg-$amin))/2.0);
+var Min=3.0*(($amax-($aavg-$amin))/2.0);
+var ouT=Math.max(Min,alph);
+var aveg=Aveg(p[3],ouT);
+this.color(p[0],p[1],p[2],aveg);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+}
+if(vid_mode=='B3_B'){
+r=g.createKernel(function(f){
+var p=f[this.thread.y][this.thread.x];
+var $fmax=this.constants.fmax;
+var $fmin=this.constants.fmin;
+var $amax=this.constants.amax;
+var $amin=this.constants.amin;
+var $favg=this.constants.favg;
+var $aavg=this.constants.aavg;
+var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
+// var alph=AlpheV2($amax,$amin,$aavg,p[3]);
+var Min=3.0*(($amax-($aavg-$amin))/2.0);
 var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
