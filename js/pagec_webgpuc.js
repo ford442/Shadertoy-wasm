@@ -227,7 +227,7 @@ if(e.code=='KeyX'){lockVid=0;};
 
 const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
-
+const media_mode = document.querySelector('#media').value;
 function loada(){
 if(lockVid!=1){
 document.getElementById('ldv').height=document.innerHeight;
@@ -275,7 +275,9 @@ mv=vide[0].id;
 lo=vide[1].id;
 vide[0].id=lo;
 vide[1].id=mv;
+  if(media_mode=='vid'){
 document.getElementById('mv').play();
+  }
 $iwid.innerHTML=parseInt($w,10);
 $ihig.innerHTML=parseInt(window.innerHeight,10);  
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
