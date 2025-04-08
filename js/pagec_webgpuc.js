@@ -161,10 +161,10 @@ document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('scanvas').height=parseInt(window.innerHeight,10);
 document.getElementById('scanvas').width=parseInt(window.innerHeight,10);
-  if(media_mode=='vid'){
+if(media_mode=='vid'){
 document.getElementById('mv').load();
 document.getElementById('ldv').load();
-  }
+}
 
 function snd(){
 const randSong=Math.floor(($sngs[0]-5)*Math.random());
@@ -200,16 +200,16 @@ document.getElementById('menu').addEventListener('click',function(){
 $ll=tsl.getValue();$ll=$ll*100;$ll=Math.round($ll);$ll=$ll/100;$ll=($ll*1000);tem.innerHTML=$ll;
 });
 setTimeout(function(){slt=tem.innerHTML;},8);},16);});
-  if(media_mode=='vid'){
+if(media_mode=='vid'){
 var adr='./intro.mp4';
 wi=1280;
 he=720;
-  }
-  if(media_mode=='img'){
+}
+if(media_mode=='img'){
 var adr='./bezel.jpg';
 wi=1920;
 he=1080;
-  }
+}
 var hii=window.innerHeight;
 document.getElementById('ihid').innerHTML=hii;
 r$=hii/he;
@@ -222,9 +222,9 @@ $iwid.innerHTML=parseInt($w,10);
 document.getElementById('wrap').style.lineheight=$hg;
 document.getElementById('wrap').style.pointerEvents='auto';
 document.getElementById('isrc').innerHTML=adr;
-  if(media_mode=='vid'){
+if(media_mode=='vid'){
 mV.play();
-  }
+}
 var vv=document.getElementById('mv');
 let lockVid;
 
@@ -276,9 +276,10 @@ mV.addEventListener('load',function(){
 loadV.addEventListener('load',function(){
 // loadV.width=this.naturalWidth;
 // loadV.height=this.naturalHeight;
-document.getElementById('wid').innerHTML=this.naturalWidth;
-document.getElementById('hig').innerHTML=this.naturalHeight;
-document.getElementById('blnnk').innerHTML=Math.max((this.naturalWidth-this.naturalHeight)/2.0,0);
+document.getElementById('wid').innerHTML=this.width; //this.naturalWidth;
+document.getElementById('hig').innerHTML=this.height; //naturalHeight;
+// document.getElementById('blnnk').innerHTML=Math.max((this.naturalWidth-this.naturalHeight)/2.0,0);
+document.getElementById('blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
 // document.getElementById('wid').innerHTML=parseInt(window.innerHeight,10);
 //document.getElementById('hig').innerHTML=parseInt(window.innerHeight,10);
 });
