@@ -236,6 +236,8 @@ pnnl.addEventListener('keydown',spKey);
 function loada(){
 if(lockVid!=1){
 document.getElementById('ldv').height=document.innerHeight;
+  
+if(media_mode=='vid'){
 loadV.addEventListener('canplay',function(){
 loadV.width=this.videoWidth;
 loadV.height=this.videoHeight;
@@ -254,6 +256,29 @@ $pt=$pt/1000000;
 document.getElementById('idur').innerHTML=mic/1000000;
 document.getElementById('itim').innerHTML=$pt;
 });
+  }
+if(media_mode=='img'){
+loadV.addEventListener('load',function(){
+loadV.width=this.nativeWidth;
+loadV.height=this.nativeHeight;
+document.getElementById('wid').innerHTML=this.nativeWidth;
+document.getElementById('hig').innerHTML=this.nativeHeight;
+document.getElementById('blnnk').innerHTML=Math.max((this.nativeWidth-this.nativeHeight)/2.0,0);
+// document.getElementById('wid').innerHTML=parseInt(window.innerHeight,10);
+//document.getElementById('hig').innerHTML=parseInt(window.innerHeight,10);
+var $sc=this.duration;
+var mic=Math.round($sc*1000000);
+$pt=Math.random()*mic;
+$pt=$pt*1000000;
+$pt=$pt/1000000;
+$pt=Math.round($pt);
+$pt=$pt/1000000;
+document.getElementById('idur').innerHTML=mic/1000000;
+document.getElementById('itim').innerHTML=$pt;
+});
+  }
+
+  
   if(media_mode=='vid'){
 
 var vide=document.querySelectorAll('video');
