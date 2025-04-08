@@ -254,7 +254,14 @@ $pt=$pt/1000000;
 document.getElementById('idur').innerHTML=mic/1000000;
 document.getElementById('itim').innerHTML=$pt;
 });
+  if(media_mode=='vid'){
+
 var vide=document.querySelectorAll('video');
+  }
+    if(media_mode=='img'){
+var vide=document.querySelector('#images').querySelectorAll('img');
+    }
+      
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 hii=window.innerHeight;
 document.getElementById('ihid').innerHTML=hii;
