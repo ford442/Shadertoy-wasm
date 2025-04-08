@@ -155,6 +155,8 @@ scanSongs();
 scanShaders();
 scanVideos();
 
+const media_mode = document.querySelector('#media').value;
+
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('scanvas').height=parseInt(window.innerHeight,10);
@@ -213,7 +215,6 @@ $iwid.innerHTML=parseInt($w,10);
 document.getElementById('wrap').style.lineheight=$hg;
 document.getElementById('wrap').style.pointerEvents='auto';
 document.getElementById('isrc').innerHTML=adr;
-const media_mode = document.querySelector('#media').value;
   if(media_mode=='vid'){
 mV.play();
   }
