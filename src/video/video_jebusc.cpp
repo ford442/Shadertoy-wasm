@@ -572,13 +572,15 @@ var Min=2.0101*(($amax-($aavg-$fmin))/2.0);
 var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
-}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+// }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setDynamicOutput(true).setOutput([h$,h$]);
 }
 if(vid_mode=='Video'){
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 this.color(p[0],p[1],p[2],p[3]);
-}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+// }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setDynamicOutput(true).setOutput([h$,h$]);
 }
 w$=parseInt(document.querySelector("#wid").innerHTML,10);
 h$=parseInt(document.querySelector("#hig").innerHTML,10);
