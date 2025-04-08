@@ -270,12 +270,12 @@ document.getElementById('itim').innerHTML=$pt;
   }
 if(media_mode=='img'){
 mV.addEventListener('load',function(){
-mV.width=this.naturalWidth;
-mV.height=this.naturalHeight;
+// mV.width=this.naturalWidth;
+// mV.height=this.naturalHeight;
 });
 loadV.addEventListener('load',function(){
-loadV.width=this.naturalWidth;
-loadV.height=this.naturalHeight;
+// loadV.width=this.naturalWidth;
+// loadV.height=this.naturalHeight;
 document.getElementById('wid').innerHTML=this.naturalWidth;
 document.getElementById('hig').innerHTML=this.naturalHeight;
 document.getElementById('blnnk').innerHTML=Math.max((this.naturalWidth-this.naturalHeight)/2.0,0);
