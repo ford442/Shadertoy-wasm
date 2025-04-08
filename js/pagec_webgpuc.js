@@ -268,9 +268,9 @@ if(media_mode=='img'){
 loadV.addEventListener('load',function(){
 loadV.width=this.nativeWidth;
 loadV.height=this.nativeHeight;
-document.getElementById('wid').innerHTML=this.nativeWidth;
-document.getElementById('hig').innerHTML=this.nativeHeight;
-document.getElementById('blnnk').innerHTML=Math.max((this.nativeWidth-this.nativeHeight)/2.0,0);
+document.getElementById('wid').innerHTML=this.naturalWidth;
+document.getElementById('hig').innerHTML=this.naturalHeight;
+document.getElementById('blnnk').innerHTML=Math.max((this.naturalWidth-this.naturalHeight)/2.0,0);
 // document.getElementById('wid').innerHTML=parseInt(window.innerHeight,10);
 //document.getElementById('hig').innerHTML=parseInt(window.innerHeight,10);
 var $sc=this.duration;
