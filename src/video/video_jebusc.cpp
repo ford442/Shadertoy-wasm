@@ -514,33 +514,21 @@ g.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
 g2.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
 g2.addNativeFunction('Ave',glslAve,{returnType:'Number'});
 let t, r;
+var select=document.querySelector('#b3');
+var vid_mode=select.value;
+var select2=document.querySelector('#media');
+var media_mode=select2.value;
+    
+if(vid_mode=='B3'){
 let R=g2.createKernel(function(tv){
 var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setOptimizeFloatMemory(true).setOutput([sz]);
-var select=document.querySelector('#b3');
-var vid_mode=select.value;
-if(vid_mode=='B3'){
 t=g.createKernel(function(v){
 var P=v[this.thread.y][this.thread.x+this.constants.blnk];
 var av$=Ave(P[0],P[1],P[2]);
 return[P[0],P[1],P[2],av$];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-}
-if(vid_mode=='B3_B'){
-t=g.createKernel(function(v){
-var P=v[this.thread.y][this.thread.x+this.constants.blnk];
-var av$=Ave(P[0],P[1],P[2]);
-return[P[0],P[1],P[2],av$];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-}
-if(vid_mode=='Video'){
-t=g.createKernel(function(v){
-var P=v[this.thread.y][this.thread.x+this.constants.blnk];
-return[P[0],P[1],P[2],P[3]];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-}
-if(vid_mode=='B3'){
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 var $fmax=this.constants.fmax;
@@ -557,7 +545,17 @@ var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
 }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }
+    
 if(vid_mode=='B3_B'){
+let R=g2.createKernel(function(tv){
+var Pa=tv[this.thread.y][this.thread.x*4];
+return Ave(Pa[0],Pa[1],Pa[2]);
+}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setOptimizeFloatMemory(true).setOutput([sz]);
+t=g.createKernel(function(v){
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+var av$=Ave(P[0],P[1],P[2]);
+return[P[0],P[1],P[2],av$];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 var $fmax=this.constants.fmax;
@@ -575,13 +573,23 @@ this.color(p[0],p[1],p[2],aveg);
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }).setImmutable(true).setTactic("precision").setGraphical(true).setDynamicOutput(true).setOutput([h$,h$]);
 }
+    
 if(vid_mode=='Video'){
+let R=g2.createKernel(function(tv){
+var Pa=tv[this.thread.y][this.thread.x*4];
+return Ave(Pa[0],Pa[1],Pa[2]);
+}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setOptimizeFloatMemory(true).setOutput([sz]);
+t=g.createKernel(function(v){
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+return[P[0],P[1],P[2],P[3]];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 this.color(p[0],p[1],p[2],p[3]);
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }).setImmutable(true).setTactic("precision").setGraphical(true).setDynamicOutput(true).setOutput([h$,h$]);
 }
+       
 w$=parseInt(document.querySelector("#wid").innerHTML,10);
 h$=parseInt(document.querySelector("#hig").innerHTML,10);
 blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
