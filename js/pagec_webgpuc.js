@@ -200,9 +200,16 @@ document.getElementById('menu').addEventListener('click',function(){
 $ll=tsl.getValue();$ll=$ll*100;$ll=Math.round($ll);$ll=$ll/100;$ll=($ll*1000);tem.innerHTML=$ll;
 });
 setTimeout(function(){slt=tem.innerHTML;},8);},16);});
+  if(media_mode=='vid'){
 var adr='./intro.mp4';
 wi=1280;
 he=720;
+  }
+  if(media_mode=='vid'){
+var adr='./bezel.jpg';
+wi=1920;
+he=1080;
+  }
 var hii=window.innerHeight;
 document.getElementById('ihid').innerHTML=hii;
 r$=hii/he;
