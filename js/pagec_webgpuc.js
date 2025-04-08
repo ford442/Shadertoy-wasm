@@ -269,7 +269,7 @@ document.getElementById('itim').innerHTML=$pt;
 });
   }
 if(media_mode=='img'){
-mV.addEventListener('canplay',function(){
+mV.addEventListener('load',function(){
 mV.width=this.naturalWidth;
 mV.height=this.naturalHeight;
 });
