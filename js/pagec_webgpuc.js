@@ -159,8 +159,9 @@ document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('scanvas').height=parseInt(window.innerHeight,10);
 document.getElementById('scanvas').width=parseInt(window.innerHeight,10);
-document.getElementById('mv').load();
-document.getElementById('ldv').load();
+
+// document.getElementById('mv').load();
+// document.getElementById('ldv').load();
 
 function snd(){
 const randSong=Math.floor(($sngs[0]-5)*Math.random());
@@ -285,8 +286,10 @@ document.getElementById('circle').height=parseInt(window.innerHeight,10);
 document.getElementById('circle').width=parseInt(window.innerWidth,10);
 document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
 // document.getElementById('mv').height=document.innerHeight;
+  if(media_mode=='vid'){
 document.getElementById('ldv').load();
 document.getElementById('ldv').currentTime=document.getElementById('itim').innerHTML;
+  }
 // document.getElementById('ldv').height=he;
 // document.getElementById('ldv').width=wi;
 document.getElementById('di').click();
