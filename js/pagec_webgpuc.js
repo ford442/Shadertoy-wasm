@@ -205,7 +205,7 @@ var adr='./intro.mp4';
 wi=1280;
 he=720;
   }
-  if(media_mode=='vid'){
+  if(media_mode=='img'){
 var adr='./bezel.jpg';
 wi=1920;
 he=1080;
