@@ -594,7 +594,7 @@ return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(['HTMLImage']).setOptimizeFloatMemory(true).setOutput([sz]);
 t=g.createKernel(function(v){
 var P=v[this.thread.y][this.thread.x+this.constants.blnk];
-return {[P[0],P[1],P[2],P[3]]} ;
+return [P[0],P[1],P[2],P[3]];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
