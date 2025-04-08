@@ -242,7 +242,7 @@ const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
 function loada(){
 if(lockVid!=1){
-document.getElementById('ldv').height=document.innerHeight;
+document.getElementById('ldv').height=window.innerHeight;
   
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
@@ -328,8 +328,8 @@ document.getElementById('circle').height=parseInt(window.innerHeight,10);
 document.getElementById('circle').width=parseInt(window.innerWidth,10);
 document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
   if(media_mode=='img'){
-document.getElementById('mv').height=document.innerHeight;
-document.getElementById('ldv').height=document.innerHeight;
+document.getElementById('mv').height=window.innerHeight;
+document.getElementById('ldv').height=window.innerHeight;
   }
   if(media_mode=='vid'){
 document.getElementById('ldv').load();
