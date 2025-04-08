@@ -327,16 +327,16 @@ document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('circle').height=parseInt(window.innerHeight,10);
 document.getElementById('circle').width=parseInt(window.innerWidth,10);
 document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
-//  if(media_mode=='img'){
-//document.getElementById('mv').height=document.innerHeight;
-//document.getElementById('ldv').height=document.innerHeight;
-//  }
+  if(media_mode=='img'){
+document.getElementById('mv').height=document.innerHeight;
+document.getElementById('ldv').height=document.innerHeight;
+  }
   if(media_mode=='vid'){
 document.getElementById('ldv').load();
 document.getElementById('ldv').currentTime=document.getElementById('itim').innerHTML;
   }
-// document.getElementById('ldv').height=he;
-// document.getElementById('ldv').width=wi;
+ document.getElementById('ldv').height=he;
+ document.getElementById('ldv').width=wi;
 document.getElementById('di').click();
 }
 setTimeout(function(){
