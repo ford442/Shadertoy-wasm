@@ -575,10 +575,11 @@ this.color(p[0],p[1],p[2],aveg);
 }
     
 if(vid_mode=='Video'){
+    if(media_mode=='vid'){
 R=g2.createKernel(function(tv){
 var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
-}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setOptimizeFloatMemory(true).setOutput([sz]);
+}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLVideo"]).setOptimizeFloatMemory(true).setOutput([sz]);
 t=g.createKernel(function(v){
 var P=v[this.thread.y][this.thread.x+this.constants.blnk];
 return[P[0],P[1],P[2],P[3]];
@@ -587,7 +588,23 @@ r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 this.color(p[0],p[1],p[2],p[3]);
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}).setImmutable(true).setTactic("precision").setGraphical(true).setDynamicOutput(true).setOutput([h$,h$]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
+}
+    if(media_mode=='img'){
+R=g2.createKernel(function(tv){
+var Pa=tv[this.thread.y][this.thread.x*4];
+return Ave(Pa[0],Pa[1],Pa[2]);
+}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLImage"]).setOptimizeFloatMemory(true).setOutput([sz]);
+t=g.createKernel(function(v){
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+return[P[0],P[1],P[2],P[3]];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
+r=g.createKernel(function(f){
+var p=f[this.thread.y][this.thread.x];
+this.color(p[0],p[1],p[2],p[3]);
+// }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
+    }
 }
        
 w$=parseInt(document.querySelector("#wid").innerHTML,10);
