@@ -159,9 +159,10 @@ document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('scanvas').height=parseInt(window.innerHeight,10);
 document.getElementById('scanvas').width=parseInt(window.innerHeight,10);
-
-// document.getElementById('mv').load();
-// document.getElementById('ldv').load();
+  if(media_mode=='vid'){
+document.getElementById('mv').load();
+document.getElementById('ldv').load();
+  }
 
 function snd(){
 const randSong=Math.floor(($sngs[0]-5)*Math.random());
@@ -212,7 +213,10 @@ $iwid.innerHTML=parseInt($w,10);
 document.getElementById('wrap').style.lineheight=$hg;
 document.getElementById('wrap').style.pointerEvents='auto';
 document.getElementById('isrc').innerHTML=adr;
+const media_mode = document.querySelector('#media').value;
+  if(media_mode=='vid'){
 mV.play();
+  }
 var vv=document.getElementById('mv');
 let lockVid;
 
@@ -228,7 +232,6 @@ if(e.code=='KeyX'){lockVid=0;};
 
 const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
-const media_mode = document.querySelector('#media').value;
 function loada(){
 if(lockVid!=1){
 document.getElementById('ldv').height=document.innerHeight;
