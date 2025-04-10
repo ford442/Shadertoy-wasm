@@ -690,11 +690,13 @@ eval("if ($F==="+i+"){var $r"+i+"=t($"+i+");r($r"+i+");var $$"+$Bu+"=t(vv);$"+$B
 var $bb=R(vv);
 $B.set($bb,0,sz);
 pointb=66*la;
-  
+var vB = Module.val($B.buffer);
+var vagav = Module.val(agav.buffer);
+
 // Module.ccall("nanoD",null,["Number","Number","Number","Number"],[$F,sz,pointb,pointa]);
   // Call the function bound via embind, passing TypedArray views directly
 // Assumes '$B' holds the input data (ptr) and 'agav' is the output buffer (aptr)
-Module.nanoD($F, sz, $B, agav); // '$B' and 'agav' are Float64Array views
+Module.nanoD($F, sz, vB, vagav); // '$B' and 'agav' are Float64Array views
 
 setTimeout(function(){
 M();
