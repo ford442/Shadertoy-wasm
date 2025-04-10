@@ -75,7 +75,7 @@ let fileStream=FS.open('/video/frame.gl','w');
     const imageData = image.data;
     const pixelData = new Float64Array(imageData);
     FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-    Module.ccall("frmOn");
+    Module.frmOn();
   }
   if (running == 0) {
     setTimeout(() => {
@@ -172,7 +172,7 @@ const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-Module.ccall("frmOn");
+Module.frmOn();
 }
 if (running == 0) {
 setTimeout(() => {
@@ -232,7 +232,7 @@ const image = gl3.getImageData(0, 0, w$, h$);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-Module.ccall("frmOn");
+Module.frmOn();
 }
 }
 if (running == 0) {
@@ -321,7 +321,7 @@ const image = gl3.getImageData(0, 0, vsiz, vsiz);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-Module.ccall("frmOn");
+Module.frmOn();
 }
 if (running == 0) {
 setTimeout(() => {
@@ -391,7 +391,7 @@ const image = new ImageData(frameData, width, height);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-Module.ccall("frmOn");
+Module.frmOn();
 }
 
 function splitAudioIntoChunks(audioData) {
@@ -503,7 +503,7 @@ var pixelData=new Float32Array(imageData);
 // var pixelData=new Float32Array(imageData,0,la);
 let fileStream=FS.open('/video/frame.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-Module.ccall("frmOn");
+Module.frmOn();
 setInterval(function(){
 gl3.clearRect(0,0,w$,h$);  
 gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
@@ -517,7 +517,7 @@ pixelData=new Float32Array(imageData);
 // gpuQueue.writeTexture({ texture }, pixelData, { bytesPerRow }, { width: w$, height: h$ } );
 // pixelData=new Float32Array(imageData,0,la);  // causes sub-array data array-reforming (slower)
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-Module.ccall("frmOn");
+Module.frmOn();
 },16.666);
 }
 
@@ -571,7 +571,7 @@ var imageData=image.data;
 let pixelData=new Uint8ClampedArray(imageData);
 var fileStream=FS.open('/video/frame.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-Module.ccall("frmOn");
+Module.frmOn();
 setInterval(function(){
 gl3.clearRect(0,0,w$,h$);  
 gl3.drawImage(vvi,0,0,w$-offsetX,h$-offsetY,0,0,w$-offsetX,h$-offsetY);
@@ -579,7 +579,7 @@ var image2=gl3.getImageData(0,0,w$-offsetX,h$-offsetY);
 var imageData=image2.data;
 var pixelData=new Float32Array(imageData);
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-Module.ccall("frmOn");
+Module.frmOn();
 },16.666);
 }
 
@@ -646,7 +646,7 @@ let imageData=image.data;
 let pixelData=new Float32Array(imageData);
 // var pixelData=new Float32Array(imageData,0,la);
 FS.writeFile('/video/frame.gl',pixelData);
-Module.ccall("frmOn");
+Module.frmOn();
 setInterval(function(){
 image=gl4.getImageData(0,0,SiZ,SiZ);
 gl3.drawImage(image,0,offS,h$,h$,0,0,h$,h$);
@@ -654,7 +654,7 @@ let image2=gl3.getImageData(0,0,w$,h$);
 imageData=image2.data;
 pixelData=new Float32Array(imageData);
 FS.writeFile('/video/frame.gl',pixelData);
-Module.ccall("frmOn");
+Module.frmOn();
 },16.666);
 }
 
