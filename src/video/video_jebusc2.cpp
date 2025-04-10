@@ -98,7 +98,10 @@ return;
 
 // Wrapper function specifically for embind using typed_memory_view
 // This function will be called from JavaScript
-void nanoD_embind(int Fnum, int leng, emscripten::typed_memory_view<double> ptr_view, emscripten::typed_memory_view<double> aptr_view) {
+void nanoD_embind(int Fnum, int leng, emscripten::val ptr, emscripten::val aptr) {
+    emscripten::typed_memory_view<double> ptr_view(ptr.as<double*>(), ptr["length"].as<size_t>());
+    emscripten::typed_memory_view<double> aptr_view(aptr.as<double*>(), aptr["length"].as<size_t>());
+
     // Optional: Basic validation of view sizes
     if (ptr_view.size() < leng) {
         printf("Error: nanoD_embind ptr_view size (%zu) is less than required length (%d)\n", ptr_view.size(), leng);
