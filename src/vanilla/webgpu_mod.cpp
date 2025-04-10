@@ -2,6 +2,9 @@
 #include "../../src/vanilla/webgpu_compute_vars_em.cpp"
 #include <boost/filesystem/fstream.hpp>
 
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+
 namespace fsm = boost::filesystem;
 
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
@@ -83,6 +86,10 @@ if(on.at(3,3)==1){
 on_b.at(4,4)=1;
 }
 return EM_TRUE;
+}
+
+EMSCRIPTEN_BINDINGS(my_video_module) {
+    emscripten::function("frmOn", &texOn);
 }
 
 EM_BOOL framesOff(){
@@ -1242,10 +1249,10 @@ ZoomOut();
 return;
 }
 
-void frmOn(){
-texOn();
-return;
-}
+// void frmOn(){
+// texOn();
+// return;
+// }
 
 void frmsOff(){
 framesOff();
