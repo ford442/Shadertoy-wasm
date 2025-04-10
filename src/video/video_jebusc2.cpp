@@ -95,40 +95,29 @@ maxSum+=aptr[i+200];
 aptr[200]=maxSum/32.0;
 return;
 }
+void nanoD_via_offsets(int Fnum, int leng, uintptr_t ptr_offset, uintptr_t aptr_offset) {
+    printf("nanoD_via_offsets called: Fnum=%d, leng=%d, ptr_offset=%p, aptr_offset=%p\n",
+           Fnum, leng, (void*)ptr_offset, (void*)aptr_offset); // Log addresses
+    // --- UNSAFE CASTS ---
+    // Assume the offsets passed from JS are valid byte offsets in the Wasm HEAP
+    double* ptr = reinterpret_cast<double*>(ptr_offset);
+    double* aptr = reinterpret_cast<double*>(aptr_offset);
+    // --- END UNSAFE CASTS ---
+    // WARNING: We have lost the size information that typed_memory_view provided.
+    // Any bounds checking inside avgFrmD must rely solely on Fnum/leng,
+    // which might not be enough to prevent reading/writing past the end
+    // of the actual underlying buffers if incorrect offsets/lengths are involved.
 
-// Wrapper function specifically for embind using typed_memory_view
-// This function will be called from JavaScript
-void nanoD_embind(int Fnum, int leng,
-                  emscripten::typed_memory_view<double> ptr_view,
-                  emscripten::typed_memory_view<double> aptr_view)
-{
-    // Optional: Basic validation of view sizes
-    if (ptr_view.size() < leng) {
-        printf("Error: nanoD_embind ptr_view size (%zu) is less than required length (%d)\n", ptr_view.size(), leng);
-        // Consider throwing an exception or returning an error code if needed
-        return;
-    }
-    // Check size needed for aptr based on how avgFrmD uses it (max index is Fnum + 200)
-    if (aptr_view.size() < Fnum + 201) {
-         printf("Error: nanoD_embind aptr_view size (%zu) is insufficient for Fnum (%d)\n", aptr_view.size(), Fnum);
-         return;
-    }
-    // Get the raw pointers from the memory views
-    // These point directly into the JS ArrayBuffer (Emscripten HEAP)
-    double* ptr = ptr_view.data();
-    double* aptr = aptr_view.data();
-    // Call the original function with the raw pointers
+    // Call the original function with the cast pointers
     avgFrmD(Fnum, leng, ptr, aptr);
 }
 
+// Bind the offset-based wrapper
 EMSCRIPTEN_BINDINGS(my_video_module) {
-    // Bind the wrapper function 'nanoD_embind' to the JS name 'nanoD'
-    emscripten::function("nanoD", &nanoD_embind);
-
-    // If you also need the float version ('nano'), bind it similarly:
-    // 1. Define avgFrm(...)
-    // 2. Define nano_embind(int, int, emscripten::typed_memory_view<float>, emscripten::typed_memory_view<float>)
-    // 3. Add: emscripten::function("nano", &nano_embind);
+    // Bind the function accepting offsets. Use a distinct name if desired.
+    emscripten::function("nanoD_unsafe", &nanoD_via_offsets);
+    // Note: You wouldn't bind the original nanoD directly if using this method,
+    // unless you had another way to call it safely.
 }
 
 EM_JS(void,ma,(),{
@@ -692,9 +681,13 @@ $B.set($bb,0,sz);
 pointb=66*la;
 
 // Module.ccall("nanoD",null,["Number","Number","Number","Number"],[$F,sz,pointb,pointa]);
-  // Call the function bound via embind, passing TypedArray views directly
-// Assumes '$B' holds the input data (ptr) and 'agav' is the output buffer (aptr)
-Module.nanoD($F, sz, $B, agav); // '$B' and 'agav' are Float64Array views
+const inputDataView = $B; // Or new Float64Array($H, pointb, sz);
+const averageDataView = agav; // Or new Float64Array($H, pointa, 300);
+// ** Calculate the byte offsets **
+const ptr_offset = inputDataView.byteOffset;
+const aptr_offset = averageDataView.byteOffset;
+// ** Call the bound function using numerical offsets **
+Module.nanoD_unsafe($F, sz, ptr_offset, aptr_offset);
 
 setTimeout(function(){
 M();
