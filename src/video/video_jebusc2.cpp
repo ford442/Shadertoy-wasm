@@ -1,3 +1,7 @@
+
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+
 #include "../../include/video/video_jebus.hpp"
 
 #include <iostream>
@@ -28,8 +32,7 @@
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <emscripten/html5_webgl.h>
-#include <emscripten/bind.h>
-#include <emscripten/val.h>
+
 
 void avgFrm(int Fnum,int leng,float *ptr,float *aptr){
 float max=0.0f;
