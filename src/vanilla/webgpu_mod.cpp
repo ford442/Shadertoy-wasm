@@ -4,7 +4,7 @@
 
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
-#include "/usr/include/eigen3/Eigen/Eigen"
+// #include "/usr/include/eigen3/Eigen/Eigen"
 
 namespace fsm = boost::filesystem;
 
@@ -256,14 +256,14 @@ fsm::ifstream fram(Fnm2,std::ios::binary);
       
 std::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
     
-//   std::vector<emscripten_align1_float>floatData(data.size());
+std::vector<emscripten_align1_float>floatData(data.size());
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
-//   std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
+std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
 
-Eigen::VectorXf floatData(data.size());
-for (Eigen::Index i = 0; i < data.size(); ++i) {
-floatData(i) = static_cast<float>(data[i]) / 255.0f;
-}
+// Eigen::VectorXf floatData(data.size());
+// for (Eigen::Index i = 0; i < data.size(); ++i) {
+// floatData(i) = static_cast<float>(data[i]) / 255.0f;
+// }
     
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 // frame_tensor.at(0,0)=data;
