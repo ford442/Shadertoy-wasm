@@ -4,7 +4,7 @@
 
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
-#include <Eigen/Dense>
+#include <eigen3/Eigen/Dense>
 
 namespace fsm = boost::filesystem;
 
