@@ -61,6 +61,8 @@ using namespace std;
 #include <boost/tuple/tuple.hpp>
 #include <boost/chrono.hpp>
 
+#include <boost/container/vector.hpp>
+ 
 #include <boost/compute/core.hpp>   //  requires CL.h
 
 #include <array>
