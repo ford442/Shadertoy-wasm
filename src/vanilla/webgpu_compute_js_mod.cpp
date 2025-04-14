@@ -662,19 +662,21 @@ function regularStart(){
 let SiZ=window.innerHeight;
 let cnvb=document.querySelector('#scanvas');
 const vvic=document.querySelector('#mvi');
-
+document.querySelector('#path').innerHTML=document.querySelector('#path').innerHTML+document.querySelector('#sh1').value;
 cnvb.height=SiZ;
 cnvb.width=SiZ;
 if(running==0){
 setTimeout(function(){
-let srsiz=document.querySelector('#srsiz').innerHTML;let vsiz=document.querySelector('#vsiz').innerHTML;
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
 Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 console.log('Starting..');
 running=1;
 },50);
 }else{
 setTimeout(function(){
-let srsiz=document.querySelector('#srsiz').innerHTML;let vsiz=document.querySelector('#vsiz').innerHTML;
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
 Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 console.log('Starting..');
 },50);
