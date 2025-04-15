@@ -8,6 +8,17 @@
 
 namespace fsm = boost::filesystem;
 
+boost::container<float> pixel_buffer;
+
+emscripten::val getPixelBufferView() {
+if (pixel_buffer.empty()) {
+// Return null or undefined if not initialized
+return emscripten::val::undefined();
+}
+// Create a Float32Array view into our std::vector's data
+return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
+}
+
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
 if(eventType==EMSCRIPTEN_EVENT_MOUSEDOWN&&e->buttons!=0){
@@ -90,7 +101,8 @@ return EM_TRUE;
 }
 
 EMSCRIPTEN_BINDINGS(my_video_module) {
-    emscripten::function("frmOn", &texOn);
+emscripten::function("frmOn", &texOn);
+emscripten::function("getPixelBufferView", &FrameProcessor::getPixelBufferView);
 }
 
 EM_BOOL framesOff(){
@@ -256,6 +268,7 @@ fsm::ifstream fram(Fnm2,std::ios::binary);
 
 boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
 boost::container::vector<emscripten_align1_float>floatData(data.size());
+    
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
 std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
 
