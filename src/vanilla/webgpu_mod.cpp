@@ -254,9 +254,9 @@ wtv.at(6,6)=INVTextureView;
 // std::ifstream fram(Fnm2,std::ios::binary);
 fsm::ifstream fram(Fnm2,std::ios::binary);
       
-std::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
+boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
     
-boost::container::vector<emscripten_align1_float>floatData(data.size());
+boost::container::vector<emscripten_align1_float>floatData(data.size()/sizeof(float));
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
 std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
 
@@ -273,7 +273,7 @@ const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 // frame_tensorGL.at(0,0)=data;
 // wetd.at(0,0).source=texid.at(0,0);
 //   wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),&frame_tensor.at(0,0),bytesPerRow,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),floatData.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
+wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),floatData.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),1,1);
 
 /*    //  highway way
 const HWY_FULL(uint8_t) d;
