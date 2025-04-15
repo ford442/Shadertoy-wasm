@@ -14,6 +14,18 @@ emscripten::val getPixelBufferView() {
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
 }
 
+uintptr_t get_buffer_ptr() {
+return reinterpret_cast<uintptr_t>(cpp_buffer.data());
+}
+
+void process_copied_data_val(emscripten::val js_typed_array_val) {
+std::vector<float> cpp_copy = emscripten::vecFromJSArray<float>(js_typed_array_val);
+std::transform(cpp_copy.begin(),cpp_copy.end(),pixel_buffer.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
+if(on.at(3,3)==1){
+on_b.at(4,4)=1;
+}
+}
+
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
 if(eventType==EMSCRIPTEN_EVENT_MOUSEDOWN&&e->buttons!=0){
@@ -98,6 +110,7 @@ return EM_TRUE;
 EMSCRIPTEN_BINDINGS(my_video_module) {
 emscripten::function("frmOn", &texOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
+emscripten::function("processCopiedDataVal", &process_copied_data_val);
 }
 
 EM_BOOL framesOff(){
@@ -263,11 +276,11 @@ wtv.at(6,6)=INVTextureView;
 
   // boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
 // boost::container::vector<emscripten_align1_float>floatData(data.size());
-boost::container::vector<float>floatData(pixel_buffer.size());
+// boost::container::vector<float>floatData(pixel_buffer.size());
     
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
 // std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
-std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
+// std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
 
 // Eigen::VectorXf floatData(data.size());
 // for (Eigen::Index i = 0; i < data.size(); ++i) {
