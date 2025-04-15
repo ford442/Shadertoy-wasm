@@ -15,7 +15,7 @@ return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_
 }
 
 uintptr_t get_buffer_ptr() {
-return reinterpret_cast<uintptr_t>(cpp_buffer.data());
+return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 }
 
 void process_copied_data_val(emscripten::val js_typed_array_val) {
@@ -295,7 +295,7 @@ const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 // frame_tensorGL.at(0,0)=data;
 // wetd.at(0,0).source=texid.at(0,0);
 //   wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),&frame_tensor.at(0,0),bytesPerRow,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),floatData.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
+wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
 
 /*    //  highway way
 const HWY_FULL(uint8_t) d;
