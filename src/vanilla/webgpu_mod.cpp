@@ -11,11 +11,6 @@ namespace fsm = boost::filesystem;
 boost::container::vector<emscripten_align1_float> pixel_buffer;
 
 emscripten::val getPixelBufferView() {
-if (pixel_buffer.empty()) {
-// Return null or undefined if not initialized
-return emscripten::val::undefined();
-}
-// Create a Float32Array view into our std::vector's data
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
 }
 
@@ -1202,7 +1197,7 @@ wgpu_adapter_request_device_async(wa.at(0,0),&wdd.at(0,0),ObtainedWebGpuDeviceSt
 }
 
 EM_BOOL WGPU_Start(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
-     //       pixel_buffer.resize(vsz*vsz*4*4);
+            pixel_buffer.resize(vsz*vsz*4*sizeof(float));
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
@@ -1220,7 +1215,7 @@ return EM_TRUE;
 }
 
 EM_BOOL WGPU_StartC(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
-  //    pixel_buffer.resize(vsz*vsz*4*4);
+      pixel_buffer.resize(vsz*vsz*4*sizeof(float));
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
