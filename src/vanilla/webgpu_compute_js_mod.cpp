@@ -465,8 +465,13 @@ let w$=parseInt(document.querySelector("#mvi").width);
 let h$=parseInt(document.querySelector("#mvi").height);
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
-        frameBufferViewF32 = Module.getPixelBufferView();
+    //    frameBufferViewF32 = Module.getPixelBufferView();
      //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+    const bufferPtr = Module.get_buffer_ptr();
+    const bufferSizeFloats = w$*h$*4*4;
+    const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
+    console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
+
 
 if(running==0){
 setTimeout(function(){
@@ -512,25 +517,27 @@ var image=gl3.getImageData(0,0,w$,h$);
 var imageData=image.data;
 // let pixelData=new Uint8ClampedArray(imageData);
 const pixelCount = w$ * h$ * 4; // RGBA
-if(frameBufferViewF32){
+
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-frameBufferViewF32[i] = 0.77; //  imageData[i] / 255.0;
+frameView[i] = imageData[i] / 255.0;
 }
-}
+
 /*
 var pixelData=new Float32Array(imageData);
 // var pixelData=new Float32Array(imageData,0,la);
 let fileStream=FS.open('/video/frame.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
-Module.frmOn();
+Module.processCopiedDataVal(imageData);
+// Module.frmOn();
 setInterval(function(){
 gl3.clearRect(0,0,w$,h$);  
 gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // image=flipImageData(gl3.getImageData(0,0,w$,h$));
 image=gl3.getImageData(0,0,w$,h$);
 imageData=image.data;
+/*
 pixelData=new Float32Array(imageData);
 
 if(frameBufferViewF32){
@@ -539,6 +546,7 @@ for (let i = 0; i < pixelCount; ++i) {
 frameBufferViewF32[i] = 0.77; //  pixelData[i]; //  / 255.0;
 }
 }
+*/
 /*
 // pixelData=new Uint8ClampedArray(imageData);
 pixelData=new Float32Array(imageData);
@@ -548,7 +556,9 @@ pixelData=new Float32Array(imageData);
 // pixelData=new Float32Array(imageData,0,la);  // causes sub-array data array-reforming (slower)
 FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
-Module.frmOn();
+Module.processCopiedDataVal(imageData);
+
+// Module.frmOn();
 },16.666);
 }
 
