@@ -160,8 +160,9 @@ Module.ccall('frmsOn');
 // gl3.imageSmoothingEnabled=false;
 
         frameBufferViewF32 = Module.getPixelBufferView();
+         console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 
-const fileStream=FS.open('/video/frame.gl','w');
+// const fileStream=FS.open('/video/frame.gl','w');
 function drawFrame() {
 if (pause === 'ready') {
 gl3.clearRect(0, 0, keepSize, keepSize);
