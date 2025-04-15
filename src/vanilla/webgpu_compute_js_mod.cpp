@@ -466,7 +466,7 @@ let h$=parseInt(document.querySelector("#mvi").height);
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
         frameBufferViewF32 = Module.getPixelBufferView();
-         console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+     //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 
 if(running==0){
 setTimeout(function(){
