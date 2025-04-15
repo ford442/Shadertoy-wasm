@@ -111,6 +111,7 @@ EMSCRIPTEN_BINDINGS(my_video_module) {
 emscripten::function("frmOn", &texOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
 emscripten::function("processCopiedDataVal", &process_copied_data_val);
+emscripten::function("get_buffer_ptr", &get_buffer_ptr);
 }
 
 EM_BOOL framesOff(){
