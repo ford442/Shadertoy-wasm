@@ -514,37 +514,34 @@ gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // var image=flipImageData(gl3.getImageData(0,0,w$,h$));
 var image=gl3.getImageData(0,0,w$,h$);
 var imageData=image.data;
-// let pixelData=new Uint8ClampedArray(imageData);
-var pixelData=new Float32Array(imageData);
-/*
+
 const pixelCount = w$ * h$ * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 frameView[i] = imageData[i] / 255.0;
 }
-*/
+
 /*
+// let pixelData=new Uint8ClampedArray(imageData);
+var pixelData=new Float32Array(imageData);
 // var pixelData=new Float32Array(imageData,0,la);
 let fileStream=FS.open('/video/frame.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
-Module.processCopiedDataVal(pixelData);
-// Module.frmOn();
+// Module.processCopiedDataVal(pixelData);
+Module.frmOn();
 setInterval(function(){
 gl3.clearRect(0,0,w$,h$);  
 gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // image=flipImageData(gl3.getImageData(0,0,w$,h$));
 image=gl3.getImageData(0,0,w$,h$);
 imageData=image.data;
-pixelData=new Float32Array(imageData);
-/*
-if(frameBufferViewF32){
+
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-frameBufferViewF32[i] = 0.77; //  pixelData[i]; //  / 255.0;
+frameView[i] = 0.77; //  imageData[i]; //  / 255.0;
 }
-}
-*/
+
 /*
 // pixelData=new Uint8ClampedArray(imageData);
 pixelData=new Float32Array(imageData);
@@ -554,8 +551,8 @@ pixelData=new Float32Array(imageData);
 // pixelData=new Float32Array(imageData,0,la);  // causes sub-array data array-reforming (slower)
 FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
-Module.processCopiedDataVal(pixelData);
-// Module.frmOn();
+// Module.processCopiedDataVal(pixelData);
+Module.frmOn();
 },16.666);
 }
 
