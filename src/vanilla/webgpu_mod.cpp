@@ -256,7 +256,7 @@ fsm::ifstream fram(Fnm2,std::ios::binary);
       
 boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
     
-boost::container::vector<emscripten_align1_float>floatData(data.size()/sizeof(float));
+boost::container::vector<emscripten_align1_float>floatData(data.size());
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
 std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
 
