@@ -1201,6 +1201,7 @@ wgpu_adapter_request_device_async(wa.at(0,0),&wdd.at(0,0),ObtainedWebGpuDeviceSt
 }
 
 EM_BOOL WGPU_Start(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
+            pixel_buffer.resize(vsz*vsz*4);
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
@@ -1218,6 +1219,7 @@ return EM_TRUE;
 }
 
 EM_BOOL WGPU_StartC(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
+      pixel_buffer.resize(vsz*vsz*4);
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
