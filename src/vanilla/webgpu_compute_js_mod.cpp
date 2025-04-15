@@ -4,6 +4,8 @@ FS.mkdir('/shader');
 FS.mkdir('/video');
 let running=0;
 
+let frameBufferViewF32 = null; // The view into C++ memory
+
 function flipImageData(imageData){
 const width=imageData.width;
 const height=imageData.height;
@@ -119,13 +121,11 @@ const keepSizea = Math.max(h$, w$);
 const keepSize = Math.min(keepSizea, vsiz);
 const drawX = (keepSize - w$) / 2;
 const drawY = (keepSize - h$) / 2;
-
 console.log("canvas size: ",keepSize,", ",keepSize);
 const OffscCnv=new OffscreenCanvas(keepSize,keepSize); 
 // document.querySelector('#contain2').appendChild(OffscCnv);
 const scnv=document.querySelector('#scanvas');
 const bcnv=document.querySelector('#bcanvas');
-    
 scnv.height=SiZ;
 OffscCnv.height=keepSize;
 bcnv.height=keepSize;
@@ -147,8 +147,6 @@ powerPreference:"high-performance",
 premultipliedAlpha:true,
 preserveDrawingBuffer:false
 });
-
-
 document.querySelector('#moveFwdb').addEventListener('click',function(){
 Module.ccall('frmsOff');
 console.log('stopping frames for move');
@@ -159,9 +157,10 @@ Module.ccall('frmsOn');
 // console.log('restarting frames for move');
 }, 1900);
 });
-
-
 // gl3.imageSmoothingEnabled=false;
+
+        frameBufferViewF32 = Module.getPixelBufferView();
+
 const fileStream=FS.open('/video/frame.gl','w');
 function drawFrame() {
 if (pause === 'ready') {
@@ -170,6 +169,13 @@ gl3.drawImage(vvic, 0, 0, w$, h$, drawX, drawY, w$, h$);
 }
 const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
+  // val array
+    const pixelCount = keepSize * keepSize * 4; // RGBA
+  for (let i = 0; i < pixelCount; ++i) {
+        // Normalize uint8 (0-255) to float (0.0-1.0)
+        frameBufferViewF32[i] = imageData[i] / 255.0;
+    }
+
 // const pixelData = new Float32Array(imageData);
 const pixelData = new Uint8Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
