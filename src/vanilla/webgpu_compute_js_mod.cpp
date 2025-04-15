@@ -515,7 +515,7 @@ const pixelCount = w$ * h$ * 4; // RGBA
 if(frameBufferViewF32){
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-frameBufferViewF32[i] = imageData[i] / 255.0;
+frameBufferViewF32[i] = 0.77; //  imageData[i] / 255.0;
 }
 }
 /*
@@ -534,7 +534,7 @@ imageData=image.data;
 if(frameBufferViewF32){
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-frameBufferViewF32[i] = imageData[i] / 255.0;
+frameBufferViewF32[i] = 0.77; //  imageData[i] / 255.0;
 }
 }
 /*
