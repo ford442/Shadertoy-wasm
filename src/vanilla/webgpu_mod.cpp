@@ -8,7 +8,7 @@
 
 namespace fsm = boost::filesystem;
 
-boost::container<float> pixel_buffer;
+boost::container::vector<float> pixel_buffer;
 
 emscripten::val getPixelBufferView() {
 if (pixel_buffer.empty()) {
@@ -102,7 +102,7 @@ return EM_TRUE;
 
 EMSCRIPTEN_BINDINGS(my_video_module) {
 emscripten::function("frmOn", &texOn);
-emscripten::function("getPixelBufferView", &FrameProcessor::getPixelBufferView);
+emscripten::function("getPixelBufferView", &getPixelBufferView);
 }
 
 EM_BOOL framesOff(){
