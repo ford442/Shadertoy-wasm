@@ -170,7 +170,8 @@ gl3.drawImage(vvic, 0, 0, w$, h$, drawX, drawY, w$, h$);
 }
 const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
-const pixelData = new Float32Array(imageData);
+// const pixelData = new Float32Array(imageData);
+const pixelData = new Uint8Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
 Module.frmOn();
 }
