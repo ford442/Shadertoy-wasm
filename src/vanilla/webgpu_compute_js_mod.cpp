@@ -161,13 +161,13 @@ Module.ccall('frmsOn');
 if (running == 0) {
 setTimeout(() => {
 console.log('sending: ',keepSize,vsiz,srsiz);
-Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vvic.height,vsiz,srsiz]);
 running = 1;
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 }, 250);
 } else {
-Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vvic.height,vsiz,srsiz]);
 
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
