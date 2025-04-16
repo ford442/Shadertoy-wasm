@@ -516,7 +516,7 @@ gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // var image=flipImageData(gl3.getImageData(0,0,w$,h$));
 var image=gl3.getImageData(0,0,w$,h$);
 var imageData=image.data;
-var pixelData=new Float32Array(imageData);
+// var pixelData=new Float32Array(imageData);
 
 const pixelCount = w$ * h$ * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
