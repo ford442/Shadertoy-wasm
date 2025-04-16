@@ -481,12 +481,10 @@ frameBufferViewF32 = Module.getPixelBufferView();
 },250);
 }
      //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
-    const bufferPtr = Module.get_buffer_ptr();
-    const bufferSizePix = (w$*h$)/4;
-    const bufferSizeFloats = Math.ceil(bufferSizePix)*4;
-
+const bufferPtr = Module.get_buffer_ptr();
+const bufferSizeFloats = (w$*h$)*4;
 const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
-    console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
+ //   console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
 
 console.log("vid size: ",h$,", ",w$);
 const cnvb=new OffscreenCanvas(h$,w$); 
@@ -518,12 +516,12 @@ gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // var image=flipImageData(gl3.getImageData(0,0,w$,h$));
 var image=gl3.getImageData(0,0,w$,h$);
 var imageData=image.data;
-var pixelData=new Float32Array(imageData);
+// var pixelData=new Float32Array(imageData);
 
 const pixelCount = w$ * h$ * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-const normalizedValue = pixelData[i] / 255.0;
+const normalizedValue = imageData[i] / 255.0;
 frameView[i] = normalizedValue;
 }
 
@@ -542,11 +540,10 @@ gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // image=flipImageData(gl3.getImageData(0,0,w$,h$));
 image=gl3.getImageData(0,0,w$,h$);
 imageData=image.data;
-var pixelData=new Float32Array(imageData);
 
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-const normalizedValue = pixelData[i] / 255.0;
+const normalizedValue = imageData[i] / 255.0;
 frameView[i] = normalizedValue;
 }
 
