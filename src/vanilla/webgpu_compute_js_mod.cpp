@@ -186,7 +186,7 @@ loada();
 
 document.getElementById('startBtn').addEventListener('click',function(){
 scanVideos();
-setTimeout({loada();},2200);
+setTimeout({loada()},2200);
 });
 
 
