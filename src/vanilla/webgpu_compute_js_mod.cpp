@@ -184,7 +184,8 @@ const imageData = image.data;
 const pixelCount = keepSize * keepSize * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-frameBufferViewF32[i] = imageData[i] / 255.0;
+const normalizedValue = imageData[i] / 255.0;
+frameBufferViewF32[i] = normalizedValue;
 }
 // const pixelData = new Float32Array(imageData);
 // const pixelData = new Uint8Array(imageData);
