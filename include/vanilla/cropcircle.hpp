@@ -3,6 +3,8 @@
 #include <emscripten.h>
 #include <emscripten/html5.h>
 // #include <webgl/webgl2.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
 
 #include <functional>
 #include <chrono>
