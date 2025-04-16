@@ -8,19 +8,23 @@
 
 namespace fsm = boost::filesystem;
 
-boost::container::vector<float> pixel_buffer;
+boost::container::vector<emscripten_align1_float> pixel_buffer;
 
 emscripten::val getPixelBufferView() {
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
 }
-
+/*
 uintptr_t get_buffer_ptr() {
 return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 }
+*/
+float get_buffer_ptr() {
+return reinterpret_cast<float>(pixel_buffer.data());
+}
 
 void process_copied_data_val(emscripten::val js_typed_array_val) {
-std::vector<float> cpp_copy = emscripten::vecFromJSArray<float>(js_typed_array_val);
-std::transform(cpp_copy.begin(),cpp_copy.end(),pixel_buffer.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
+boost::container::vector<emscripten_align1_float> cpp_copy = emscripten::vecFromJSArray<emscripten_align1_float>(js_typed_array_val);
+std::transform(cpp_copy.begin(),cpp_copy.end(),pixel_buffer.begin(),[](uint8_t val){return val;}); // /255.0f;});  // for RGBA32FLOAT
 if(on.at(3,3)==1){
 on_b.at(4,4)=1;
 }
