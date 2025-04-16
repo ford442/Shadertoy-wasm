@@ -299,18 +299,14 @@ NFptr[newIndex+3]=255;
 return;
 };
 
-
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
-
     if (cpp_vector.size() == 0) {
          return emscripten::val::object();
     }
-
     double sum = 0.0;
     float min_val = std::numeric_limits<float>::max();
     float max_val = std::numeric_limits<float>::lowest();
-
     for(size_t i = 0; i < cpp_vector.size(); ++i) {
         float val = cpp_vector[i];
         sum += val;
@@ -318,7 +314,6 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
         if (val > max_val) max_val = val;
     }
      double avg = sum / cpp_vector.size();
-
     emscripten::val result = emscripten::val::object();
     result.set("average", avg);
     result.set("min", min_val);
@@ -326,11 +321,10 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     return result;
 }
 
-
 EMSCRIPTEN_BINDINGS(my_module) {
-    emscripten::function("processFloatData", &processFloatData);
+emscripten::function("processFloatData", &processFloatData);
     // If you needed to return arrays back to JS you could bind std::vector
-    // emscripten::register_vector<float>("FloatVector");
+emscripten::register_vector<float>("FloatVector");
 }
 
 extern "C" {
@@ -464,7 +458,8 @@ let flPB=document.getElementById("flipB");
     tempCtx.drawImage(vd, 0, 0, ww, h, dx, dy, ww, h);
     const imgData = tempCtx.getImageData(0, 0, squareSize, squareSize);
 
-ctx.drawImage(vd,0,0,ww,h);
+// ctx.drawImage(vd,0,0,ww,h);
+  
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
 // var imgData=ctx.getImageData(0,0,ww,h);
