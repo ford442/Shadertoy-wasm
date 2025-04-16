@@ -19,11 +19,7 @@ const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
 $vids[0]=preList.length;
 for(var i=1;i<preList.length;i++){
 var txxt=preList[i].href;
-let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
-let lastSlashIndex = pathName.lastIndexOf('/');
-let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
-txxt=txxt.replace(basePath,'');
-$vids[i]=basePath+'video/'+txxt;
+$vids[i]='https://noahcohn.com/video/'+txxt;
 }}
 
 function scanVideos(){
