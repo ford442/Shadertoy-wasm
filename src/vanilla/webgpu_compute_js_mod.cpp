@@ -531,7 +531,7 @@ let fileStream=FS.open('/video/frame.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
 // Module.processCopiedDataVal(pixelData);
-const floatArray = new Float32Array(imageData.data.length);
+const floatArray = new Float32Array(imageData.length);
 for(let i = 0; i < imageData.length; i++) {
 floatArray[i] = imageData[i] / 255.0;
 }
