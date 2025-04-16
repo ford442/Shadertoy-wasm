@@ -35,7 +35,6 @@ fxhttp.open('GET','video/',true);
 fxhttp.send();
 }
 
-scanVideos();
 
 const media_mode = document.querySelector('#media').value;
 
@@ -184,6 +183,7 @@ loada();
 }
 
 document.getElementById('startBtn').addEventListener('click',function(){
+scanVideos();
 loada();
 });
 
