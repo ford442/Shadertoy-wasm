@@ -302,12 +302,15 @@ return;
 
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
+
     if (cpp_vector.size() == 0) {
          return emscripten::val::object();
     }
+
     double sum = 0.0;
     float min_val = std::numeric_limits<float>::max();
     float max_val = std::numeric_limits<float>::lowest();
+
     for(size_t i = 0; i < cpp_vector.size(); ++i) {
         float val = cpp_vector[i];
         sum += val;
@@ -315,12 +318,14 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
         if (val > max_val) max_val = val;
     }
      double avg = sum / cpp_vector.size();
+
     emscripten::val result = emscripten::val::object();
     result.set("average", avg);
     result.set("min", min_val);
     result.set("max", max_val);
     return result;
 }
+
 
 EMSCRIPTEN_BINDINGS(my_module) {
     emscripten::function("processFloatData", &processFloatData);
@@ -430,40 +435,20 @@ if(dis){dis();}
 dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 function set(){
-// ww=document.getElementById("iwid").innerHTML;
-ww=document.getElementById("ihig").innerHTML;
+ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
+ow=document.getElementById("wid").innerHTML;
+oh=document.getElementById("hig").innerHTML;
 let cnP=document.getElementById("cp");
 // let cnPB=document.getElementById("cpB");
 // let cnPC=document.getElementById("cpC");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
-  
-    const vd = document.getElementById("myvideo");
-    const ww2 = vd.videoWidth;  // Actual width
-    const h2 = vd.videoHeight; // Actual height
-    const squareSize = Math.max(ww, h);
-    let dx = 0; // Destination x on square canvas
-    let dy = 0; // Destination y on square canvas
-    if (ww > h2) { // Landscape video (wider than tall)
-        dy = (squareSize - h2) / 2;
-    } else { // Portrait or square video (taller than wide, or square)
-        dx = (squareSize - ww2) / 2;
-    }
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = squareSize;
-    tempCanvas.height = squareSize;
-    const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
-    tempCtx.fillStyle = 'white'; // Or 'rgba(0,0,0,0)' for transparent padding
-    tempCtx.fillRect(0, 0, squareSize, squareSize);
-    tempCtx.drawImage(vd, 0, 0, ww2, h2, dx, dy, ww2, h2);
-    const imgData = tempCtx.getImageData(0, 0, squareSize, squareSize);
-
-// ctx.drawImage(vd,0,0,ww,h);
-  
+let vd=document.getElementById("myvideo");
+ctx.drawImage(vd,0,0,ww,h);
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
-// var imgData=ctx.getImageData(0,0,ww,h);
+var imgData=ctx.getImageData(0,0,ww,h);
 var rgbdat=ctx.createImageData(ww,h);
 var rgbdat2=ctxB.createImageData(ww,h);
 var rgbdat3=ctxC.createImageData(ww,h);
