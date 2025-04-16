@@ -439,15 +439,15 @@ let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
   
     const vd = document.getElementById("myvideo");
-   //  ww = vd.videoWidth;  // Actual width
-   //  h = vd.videoHeight; // Actual height
-    const squareSize = parseInt(Math.max(ww, h));
+   const  ww2 = vd.videoWidth;  // Actual width
+  const  h2 = vd.videoHeight; // Actual height
+    const squareSize = parseInt(Math.max(ww2, h2));
     let dx = 0; // Destination x on square canvas
     let dy = 0; // Destination y on square canvas
-    if (ww > h) { // Landscape video (wider than tall)
-        dy = (squareSize - h) / 2;
+    if (ww2 > h2) { // Landscape video (wider than tall)
+        dy = (squareSize - h2) / 2;
     } else { // Portrait or square video (taller than wide, or square)
-        dx = (squareSize - ww) / 2;
+        dx = (squareSize - ww2) / 2;
     }
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = squareSize;
