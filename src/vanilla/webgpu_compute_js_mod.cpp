@@ -532,8 +532,8 @@ FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
 // Module.processCopiedDataVal(pixelData);
 const floatArray = new Float32Array(imgData.data.length);
-for(let i = 0; i < imgData.data.length; i++) {
-floatArray[i] = imgData.data[i] / 255.0;
+for(let i = 0; i < imageData.data.length; i++) {
+floatArray[i] = imageData.data[i] / 255.0;
 }
 Module.processCopiedDataVal(floatArray);
 // Module.frmOn();
@@ -562,8 +562,8 @@ FS.write(fileStream,pixelData,0,pixelData.length,0);
 // pixelData=new Float32Array(imageData);
 // Module.processCopiedDataVal(pixelData);
 // console.log(`Frame data sample: [${frameBufferViewF32[0].toFixed(2)}, ${frameBufferViewF32[1].toFixed(2)}, ${frameBufferViewF32[2].toFixed(2)}, ${frameBufferViewF32[3].toFixed(2)}]`);
-for(let i = 0; i < imgData.data.length; i++) {
-floatArray[i] = imgData.data[i] / 255.0;
+for(let i = 0; i < imageData.data.length; i++) {
+floatArray[i] = imageData.data[i] / 255.0;
 }
 Module.processCopiedDataVal(floatArray);
 // Module.frmOn();
