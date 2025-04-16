@@ -470,14 +470,14 @@ if(running==0){
 setTimeout(function(){
 Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
 console.log('Starting..');
-frameBufferViewF32 = Module.getPixelBufferView();
+// frameBufferViewF32 = Module.getPixelBufferView();
 running=1;
 },250);
 }else{
 setTimeout(function(){
 Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
 console.log('Starting..');
-frameBufferViewF32 = Module.getPixelBufferView();
+// frameBufferViewF32 = Module.getPixelBufferView();
 },250);
 }
      //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
