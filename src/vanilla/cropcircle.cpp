@@ -301,7 +301,7 @@ return;
 
 
 emscripten::val processFloatData(emscripten::val js_float32_array_val, size_t expected_length) {
-     emscripten::memory_view<float> float_view(expected_length, js_float32_array_val);
+    emscripten::memory_view<unsigned char> image_bytes = emscripten::typed_memory_view<unsigned char>(expected_length, js_uint8_array_val);
 
     if (float_view.size() == 0) {
          return emscripten::val::object();
