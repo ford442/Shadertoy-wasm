@@ -476,7 +476,7 @@ running=1;
 setTimeout(function(){
 Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
 console.log('Starting..');
-// frameBufferViewF32 = Module.getPixelBufferView();
+frameBufferViewF32 = Module.getPixelBufferView();
 },250);
 }
      //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
@@ -515,14 +515,14 @@ gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 var image=gl3.getImageData(0,0,w$,h$);
 var imageData=image.data;
 // var pixelData=new Float32Array(imageData);
-
+/*
 const pixelCount = w$ * h$ * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
 frameBufferViewF32[i] = normalizedValue;
 }
-
+*/
 /*
 // let pixelData=new Uint8ClampedArray(imageData);
 var pixelData=new Float32Array(imageData);
@@ -537,21 +537,21 @@ for(let i = 0; i < imageData.length; i++) {
 floatArray[i] = imageData[i] / 255.0;
 }
 */
-// Module.processCopiedDataVal(imageData);
-Module.frmOn();
+Module.processCopiedDataVal(imageData);
+// Module.frmOn();
 setInterval(function(){
 gl3.clearRect(0,0,w$,h$);  
 gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // image=flipImageData(gl3.getImageData(0,0,w$,h$));
 image=gl3.getImageData(0,0,w$,h$);
 imageData=image.data;
-
+/*
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
 frameBufferViewF32[i] = normalizedValue;
 }
-
+*/
 /*
 // pixelData=new Uint8ClampedArray(imageData);
 pixelData=new Float32Array(imageData);
@@ -569,8 +569,8 @@ for(let i = 0; i < imageData.length; i++) {
 floatArray[i] = imageData[i] / 255.0;
 }
 */
-// Module.processCopiedDataVal(imageData);
-Module.frmOn();
+Module.processCopiedDataVal(imageData);
+// Module.frmOn();
 },16.666);
 }
 
