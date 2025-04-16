@@ -92,7 +92,7 @@ EGL_SAMPLES,4,
 EGL_NONE
 };
 
-EM_BOOL emsc(int leng,float *ptr){
+void emsc(int leng,float *ptr){
 // eglBindAPI(EGL_OPENGL_ES_API);
 glDisable(GL_DITHER);
 glHint(GL_FRAGMENT_SHADER_DERIVATIVE_HINT,GL_NICEST);
@@ -234,7 +234,7 @@ glBindBuffer(GL_RENDERBUFFER,0);
 glViewport(0,0,GLint(Size),GLint(Size));
 }
 
-EM_BOOL emscA(){
+void emscA(){
 emscripten_get_element_css_size("zimag",&wi,&hi);
 Size=(int)hi;
 S=(GLfloat)Size;
@@ -259,7 +259,7 @@ surface=eglCreateWindowSurface(display,eglconfig,0,attribut_list);
 eglMakeCurrent(display,surface,surface,contextegl);
 }
 
-boost::function<EM_BOOL(int,float *,float *)>avgFrm=[](int leng,float *ptr,float *aptr){
+boost::function<void(int,float *,float *)>avgFrm=[](int leng,float *ptr,float *aptr){
 max=0.0f;
 min=255.0f;
 sum=0.0f;
@@ -275,10 +275,10 @@ sum=sum/leng;
 aptr[0]=sum;
 aptr[1]=min;
 aptr[2]=max;
-return EM_TRUE;
+return;
 };
 
-boost::function<EM_BOOL(int,int,int,float *,float *)>rotateFrame=[](int angle,int wid,int hig,float *Fptr,float *NFptr){
+boost::function<void(int,int,int,float *,float *)>rotateFrame=[](int angle,int wid,int hig,float *Fptr,float *NFptr){
 for(int y=0;y<hig;y++){
 for(int x=0;x<wid;x++){
 int index=4*(y*hig+x);
@@ -296,20 +296,20 @@ NFptr[newIndex+3]=255;
 }
 }
 }
-return EM_TRUE;
+return;
 };
 
 extern "C" {
 
-EM_BOOL nano(int leng,float *ptr,float *aptr){
+void nano(int leng,float *ptr,float *aptr){
 avgFrm(leng,ptr,aptr);
 }
 
-EM_BOOL rotat(int angle,int wd,int hi,float *Fptr,float *NFptr){
+void rotat(int angle,int wd,int hi,float *Fptr,float *NFptr){
 rotateFrame(angle,wd,hi,Fptr,NFptr);
 }
 
-EM_BOOL emem(int leng,float *ptr){
+void emem(int leng,float *ptr){
 emsc(leng,ptr);
 }
 
@@ -646,5 +646,5 @@ dsd=true;
 int main(){
 emscA();
 ma();
-return 0;
+return 1;
 }
