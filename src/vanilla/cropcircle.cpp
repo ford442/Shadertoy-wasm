@@ -458,7 +458,7 @@ let flPB=document.getElementById("flipB");
     tempCtx.drawImage(vd, 0, 0, ww, h, dx, dy, ww, h);
     const imgData = tempCtx.getImageData(0, 0, h, h);
 
-// ctx.drawImage(vd,0,0,ww,h);
+ctx.drawImage(vd,0,0,ww,h);
   
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
