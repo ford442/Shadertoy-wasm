@@ -445,15 +445,15 @@ let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
   
     const vd = document.getElementById("myvideo");
-    const ww = vd.videoWidth;  // Actual width
-    const h = vd.videoHeight; // Actual height
+    const ww2 = vd.videoWidth;  // Actual width
+    const h2 = vd.videoHeight; // Actual height
     const squareSize = Math.max(ww, h);
     let dx = 0; // Destination x on square canvas
     let dy = 0; // Destination y on square canvas
-    if (ww > h) { // Landscape video (wider than tall)
-        dy = (squareSize - h) / 2;
+    if (ww > h2) { // Landscape video (wider than tall)
+        dy = (squareSize - h2) / 2;
     } else { // Portrait or square video (taller than wide, or square)
-        dx = (squareSize - ww) / 2;
+        dx = (squareSize - ww2) / 2;
     }
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = squareSize;
@@ -461,7 +461,7 @@ let flPB=document.getElementById("flipB");
     const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
     tempCtx.fillStyle = 'white'; // Or 'rgba(0,0,0,0)' for transparent padding
     tempCtx.fillRect(0, 0, squareSize, squareSize);
-    tempCtx.drawImage(vd, 0, 0, ww, h, dx, dy, ww, h);
+    tempCtx.drawImage(vd, 0, 0, ww2, h2, dx, dy, ww2, h2);
     const imgData = tempCtx.getImageData(0, 0, squareSize, squareSize);
 
 ctx.drawImage(vd,0,0,ww,h);
