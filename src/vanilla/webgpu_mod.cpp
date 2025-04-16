@@ -287,7 +287,16 @@ wtv.at(6,6)=INVTextureView;
 // for (Eigen::Index i = 0; i < data.size(); ++i) {
 // floatData(i) = static_cast<float>(data[i]) / 255.0f;
 // }
-    
+
+      
+    size_t num_to_print = std::min((size_t)16, pixel_buffer.size()); // Print max 16 floats
+
+    for (size_t i = 0; i < num_to_print; ++i) {
+        // Print index and value, format float to a few decimal places
+        printf("pixel_buffer[%zu] = %.4f\n", i, pixel_buffer[i]);
+    }
+
+      
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 // frame_tensor.at(0,0)=data;
 // fjs_data_pointer.at(0,0)=floatData.data();
