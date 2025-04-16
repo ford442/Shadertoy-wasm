@@ -480,7 +480,7 @@ console.log('Starting..');
 },250);
 }
      //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
-const bufferPtr = Module.get_buffer_ptr();
+// const bufferPtr = Module.get_buffer_ptr();
 const bufferSizeFloats = w$*h$*4;
 // const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
 console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
@@ -532,8 +532,8 @@ FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
 // Module.processCopiedDataVal(pixelData);
 const floatArray = new Float32Array(imageData.data.length);
-for(let i = 0; i < imageData.data.length; i++) {
-floatArray[i] = imageData.data[i] / 255.0;
+for(let i = 0; i < imageData.length; i++) {
+floatArray[i] = imageData[i] / 255.0;
 }
 Module.processCopiedDataVal(floatArray);
 // Module.frmOn();
@@ -562,8 +562,8 @@ FS.write(fileStream,pixelData,0,pixelData.length,0);
 // pixelData=new Float32Array(imageData);
 // Module.processCopiedDataVal(pixelData);
 // console.log(`Frame data sample: [${frameBufferViewF32[0].toFixed(2)}, ${frameBufferViewF32[1].toFixed(2)}, ${frameBufferViewF32[2].toFixed(2)}, ${frameBufferViewF32[3].toFixed(2)}]`);
-for(let i = 0; i < imageData.data.length; i++) {
-floatArray[i] = imageData.data[i] / 255.0;
+for(let i = 0; i < imageData.length; i++) {
+floatArray[i] = imageData[i] / 255.0;
 }
 Module.processCopiedDataVal(floatArray);
 // Module.frmOn();
