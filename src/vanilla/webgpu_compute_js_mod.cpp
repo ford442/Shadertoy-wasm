@@ -18,7 +18,6 @@ const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
 $vids[0]=preList.length;
 for(var i=1;i<preList.length;i++){
 var txxt=preList[i].href;
-var Self=location.href;
 let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
 let lastSlashIndex = pathName.lastIndexOf('/');
 let basePath = currentPath.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
