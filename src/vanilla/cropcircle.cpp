@@ -435,20 +435,39 @@ if(dis){dis();}
 dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 function set(){
-ww=document.getElementById("iwid").innerHTML;
+// ww=document.getElementById("iwid").innerHTML;
+ww=document.getElementById("ihig").innerHTML;
 h=document.getElementById("ihig").innerHTML;
-ow=document.getElementById("wid").innerHTML;
-oh=document.getElementById("hig").innerHTML;
 let cnP=document.getElementById("cp");
 // let cnPB=document.getElementById("cpB");
 // let cnPC=document.getElementById("cpC");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
-let vd=document.getElementById("myvideo");
+  
+    const vd = document.getElementById("myvideo");
+    const ww = vd.videoWidth;  // Actual width
+    const h = vd.videoHeight; // Actual height
+    const squareSize = Math.max(ww, h);
+    let dx = 0; // Destination x on square canvas
+    let dy = 0; // Destination y on square canvas
+    if (ww > h) { // Landscape video (wider than tall)
+        dy = (squareSize - h) / 2;
+    } else { // Portrait or square video (taller than wide, or square)
+        dx = (squareSize - ww) / 2;
+    }
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = squareSize;
+    tempCanvas.height = squareSize;
+    const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
+    tempCtx.fillStyle = 'white'; // Or 'rgba(0,0,0,0)' for transparent padding
+    tempCtx.fillRect(0, 0, squareSize, squareSize);
+    tempCtx.drawImage(vd, 0, 0, ww, h, dx, dy, ww, h);
+    const imgData = tempCtx.getImageData(0, 0, squareSize, squareSize);
+
 ctx.drawImage(vd,0,0,ww,h);
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
-var imgData=ctx.getImageData(0,0,ww,h);
+// var imgData=ctx.getImageData(0,0,ww,h);
 var rgbdat=ctx.createImageData(ww,h);
 var rgbdat2=ctxB.createImageData(ww,h);
 var rgbdat3=ctxC.createImageData(ww,h);
