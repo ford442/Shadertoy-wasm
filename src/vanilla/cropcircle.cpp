@@ -441,7 +441,7 @@ let flPB=document.getElementById("flipB");
     const vd = document.getElementById("myvideo");
      ww = vd.videoWidth;  // Actual width
      h = vd.videoHeight; // Actual height
-    const squareSize = Math.max(ww, h);
+    const squareSize = parseInt(Math.max(ww, h));
     let dx = 0; // Destination x on square canvas
     let dy = 0; // Destination y on square canvas
     if (ww > h) { // Landscape video (wider than tall)
