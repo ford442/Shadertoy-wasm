@@ -602,6 +602,10 @@ const greenThreshold = 145;
 const yellowThreshold = 128;
 const darkThreshold = 126; // Below this is transparent
 
+function smoothstep(edge0, edge1, x) {
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+}
 
 if (rgb > darkThreshold) {
     alpha_out = 255; // Make it opaque
@@ -616,7 +620,9 @@ if (rgb > darkThreshold) {
         rgbd2[i+3] = 0; rgbd3[i+3] = 0;
 
     } else if (rgb > redThreshold) { // --- Transition: Red to Orange ---
-        const factor = (rgb - redThreshold) / (orangeThreshold - redThreshold); // 0.0 to 1.0
+     //   const factor = (rgb - redThreshold) / (orangeThreshold - redThreshold); // 0.0 to 1.0
+      const factor = smoothstep(redThreshold, orangeThreshold, rgb); // Use smoothstep
+
         r_out = targetRed.r * (1 - factor) + targetOrange.r * factor;
         g_out = targetRed.g * (1 - factor) + targetOrange.g * factor; // Blends from 0 to (128-diff)
         b_out = targetRed.b * (1 - factor) + targetOrange.b * factor; // Stays 0
@@ -640,7 +646,9 @@ if (rgb > darkThreshold) {
         rgbd2[i+3] = 0; rgbd3[i+3] = 0;
 
     } else if (rgb > blueThreshold) { // --- Transition: Blue to Violet ---
-        const factor = (rgb - blueThreshold) / (violetThreshold - blueThreshold);
+        // const factor = (rgb - blueThreshold) / (violetThreshold - blueThreshold);
+       factor = smoothstep(blueThreshold, violetThreshold, rgb); // Use smoothstep
+
         r_out = targetBlue.r * (1 - factor) + targetViolet.r * factor; // Blends 0 to (128-diff)
         g_out = targetBlue.g * (1 - factor) + targetViolet.g * factor; // Stays 0
         b_out = targetBlue.b * (1 - factor) + targetViolet.b * factor; // Blends (255-diff) to 255
@@ -650,7 +658,9 @@ if (rgb > darkThreshold) {
         rgbd[i+3] = 0; rgbd3[i+3] = 0;
 
     } else if (rgb > greenThreshold) { // --- Transition: Green to Blue ---
-         const factor = (rgb - greenThreshold) / (blueThreshold - greenThreshold);
+       //  const factor = (rgb - greenThreshold) / (blueThreshold - greenThreshold);
+         factor = smoothstep(greenThreshold, blueThreshold, rgb); // Use smoothstep
+
          r_out = targetGreen.r * (1-factor) + targetBlue.r * factor; // Stays 0
          g_out = targetGreen.g * (1-factor) + targetBlue.g * factor; // Blends (255-diff) to 0
          b_out = targetGreen.b * (1-factor) + targetBlue.b * factor; // Blends 0 to (255-diff)
@@ -660,7 +670,9 @@ if (rgb > darkThreshold) {
         rgbd[i+3] = 0; rgbd3[i+3] = 0;
 
     } else if (rgb > yellowThreshold) { // --- Transition: Yellow to Green ---
-         const factor = (rgb - yellowThreshold) / (greenThreshold - yellowThreshold);
+      //   const factor = (rgb - yellowThreshold) / (greenThreshold - yellowThreshold);
+         factor = smoothstep(yellowThreshold, greenThreshold, rgb); // Use smoothstep
+
          r_out = targetYellow.r * (1-factor) + targetGreen.r * factor; // Blends 255 to 0
          g_out = targetYellow.g * (1-factor) + targetGreen.g * factor; // Stays (255-diff)
          b_out = targetYellow.b * (1-factor) + targetGreen.b * factor; // Stays 0
