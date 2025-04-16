@@ -167,13 +167,15 @@ frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 }, 250);
 } else {
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
+
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 }
 
 // gl3.imageSmoothingEnabled=false;
 // const fileStream=FS.open('/video/frame.gl','w');
-setTimeout(function() {
+setInterval(function() {
 if (pause === 'ready') {
 gl3.clearRect(0, 0, keepSize, keepSize);
 gl3.drawImage(vvic, 0, 0, w$, h$, drawX, drawY, w$, h$); 
