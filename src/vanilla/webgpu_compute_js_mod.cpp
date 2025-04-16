@@ -4,7 +4,7 @@ FS.mkdir('/shader');
 FS.mkdir('/video');
 let running=0;
 
-let frameBufferViewF32 = null; // The view into C++ memory
+let frameBufferViewF32 = []; // The view into C++ memory
 
 function flipImageData(imageData){
 const width=imageData.width;
