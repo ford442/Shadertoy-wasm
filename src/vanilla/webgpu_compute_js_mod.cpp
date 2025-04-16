@@ -4,6 +4,7 @@ FS.mkdir('/shader');
 FS.mkdir('/video');
 let running=0;
 
+/*
 var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
 const $iwid=document.getElementById('iwid');
@@ -89,6 +90,7 @@ if(e.code=='KeyX'){lockVid=0;};
 
 const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
+*/
 /*
 function loada(){
 if(lockVid!=1){
