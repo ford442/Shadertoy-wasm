@@ -135,7 +135,7 @@ OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
 const gl3=OffscCnv.getContext('2d',{
-colorType:'float64',
+colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
@@ -161,13 +161,13 @@ Module.ccall('frmsOn');
 if (running == 0) {
 setTimeout(() => {
 console.log('sending: ',keepSize,vsiz,srsiz);
-Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vvic.height,vsiz,srsiz]);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 running = 1;
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 }, 250);
 } else {
-Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vvic.height,vsiz,srsiz]);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
