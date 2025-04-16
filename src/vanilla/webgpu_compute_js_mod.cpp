@@ -4,7 +4,7 @@ FS.mkdir('/shader');
 FS.mkdir('/video');
 let running=0;
 
-/*
+
 var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
 const $iwid=document.getElementById('iwid');
@@ -36,6 +36,7 @@ fxhttp.open('GET','video/',true);
 fxhttp.send();
 }
 
+
 const media_mode = document.querySelector('#media').value;
 
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
@@ -45,7 +46,7 @@ if(media_mode=='vid'){
 document.getElementById('mv').load();
 document.getElementById('ldv').load();
 }
-
+/*
 const tem=document.getElementById('tim');
 const ban=document.getElementById('menuBtn');
 const sfr=document.getElementById('slideframe');
