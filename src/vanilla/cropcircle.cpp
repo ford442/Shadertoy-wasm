@@ -300,8 +300,8 @@ return;
 };
 
 
-emscripten::val processFloatData(emscripten::val js_float32_array_val, size_t expected_length) {
-    emscripten::memory_view<float> float_view = emscripten::typed_memory_view<float>(expected_length, js_float32_array_val);
+emscripten::val processFloatData(emscripten::val js_float32_array_val) {
+    std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(jsTypedArrayVal);
 
     if (float_view.size() == 0) {
          return emscripten::val::object();
@@ -468,7 +468,7 @@ for(let i = 0; i < imgData.data.length; i++) {
 floatArray[i] = imgData.data[i] / 255.0;
 }
 console.log(`Processing ${floatArray.length} floats`);
-const floatResult = Module.processFloatData(floatArray, floatArray.length);
+const floatResult = Module.processFloatData(floatArray);
 if (floatResult && floatResult.average !== undefined) {
 console.log("Image Analysis Result (Floats):", floatResult);
 console.log(`Average: ${floatResult.average}, Min: ${floatResult.min}, Max: ${floatResult.max}`);
