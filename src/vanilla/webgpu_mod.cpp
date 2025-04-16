@@ -19,7 +19,11 @@ return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 }
 */
 float get_buffer_ptr() {
-return reinterpret_cast<float*>(pixel_buffer.data());
+      
+      float pos = reinterpret_cast<float>(pixel_buffer.data());
+      float * pttr;
+      pttr=&pos;
+return pttr;
 }
 
 void process_copied_data_val(emscripten::val js_typed_array_val) {
