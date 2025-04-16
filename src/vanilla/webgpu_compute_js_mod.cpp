@@ -23,7 +23,7 @@ var txxt=preList[i].href;
 let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
  let lastSlashIndex = pathName.lastIndexOf('/');
  let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
- txxt=txxt.replace(basePath,'');
+ txxt=txxt.replace('https://noahcohn.com/','');
  $vids[i]=basePath+'video/'+txxt;
 $vids[i]='https://noahcohn.com/video/'+txxt;
 }}
