@@ -324,7 +324,7 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
 EMSCRIPTEN_BINDINGS(my_module) {
 emscripten::function("processFloatData", &processFloatData);
     // If you needed to return arrays back to JS you could bind std::vector
-emscripten::register_vector<float>("FloatVector");
+ // emscripten::register_vector<float>("FloatVector");
 }
 
 extern "C" {
