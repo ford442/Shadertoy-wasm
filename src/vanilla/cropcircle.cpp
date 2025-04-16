@@ -401,7 +401,7 @@ powerPreference:'high-performance',
 antialias:false
 };
   var contxVarsB={
-colorType:'float32',
+colorType:'float64',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
@@ -439,8 +439,8 @@ let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
   
     const vd = document.getElementById("myvideo");
-    const ww = vd.videoWidth;  // Actual width
-    const h = vd.videoHeight; // Actual height
+     ww = vd.videoWidth;  // Actual width
+     h = vd.videoHeight; // Actual height
     const squareSize = Math.max(ww, h);
     let dx = 0; // Destination x on square canvas
     let dy = 0; // Destination y on square canvas
