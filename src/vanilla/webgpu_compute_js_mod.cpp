@@ -43,10 +43,10 @@ document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
 
 if(media_mode=='vid'){
-document.getElementById('mv').load();
+document.getElementById('mvi').load();
 document.getElementById('ldv').load();
 }
-/*
+
 const tem=document.getElementById('tim');
 const ban=document.getElementById('menuBtn');
 const sfr=document.getElementById('slideframe');
@@ -76,7 +76,7 @@ document.getElementById('isrc').innerHTML=adr;
 if(media_mode=='vid'){
 mV.play();
 }
-var vv=document.getElementById('mv');
+var vv=document.getElementById('mvi');
 let lockVid;
 
 function spKey(e){
@@ -91,8 +91,7 @@ if(e.code=='KeyX'){lockVid=0;};
 
 const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
-*/
-/*
+
 function loada(){
 if(lockVid!=1){
 document.getElementById('ldv').height=window.innerHeight;
@@ -159,7 +158,7 @@ lo=vide[1].id;
 vide[0].id=lo;
 vide[1].id=mv;
 if(media_mode=='vid'){
-document.getElementById('mv').play();
+document.getElementById('mvi').play();
 }
 $iwid.innerHTML=parseInt($w,10);
 $ihig.innerHTML=parseInt(window.innerHeight,10);  
@@ -168,7 +167,7 @@ document.getElementById('circle').height=parseInt(window.innerHeight,10);
 document.getElementById('circle').width=parseInt(window.innerWidth,10);
 document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
 if(media_mode=='img'){
-document.getElementById('mv').height=window.innerHeight;
+document.getElementById('mvi').height=window.innerHeight;
 document.getElementById('ldv').height=window.innerHeight;
 }
 if(media_mode=='vid'){
@@ -188,7 +187,7 @@ document.getElementById('startBtn').addEventListener('click',function(){
 scanVideos();
 loada();
 });
-*/
+
 
 let frameBufferViewF32 = []; // The view into C++ memory
 
