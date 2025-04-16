@@ -456,7 +456,7 @@ let flPB=document.getElementById("flipB");
     tempCtx.fillStyle = 'white'; // Or 'rgba(0,0,0,0)' for transparent padding
     tempCtx.fillRect(0, 0, squareSize, squareSize);
     tempCtx.drawImage(vd, 0, 0, ww, h, dx, dy, ww, h);
-    const imgData = tempCtx.getImageData(0, 0, squareSize, squareSize);
+    const imgData = tempCtx.getImageData(0, 0, h, h);
 
 // ctx.drawImage(vd,0,0,ww,h);
   
