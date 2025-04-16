@@ -13,14 +13,11 @@ boost::container::vector<emscripten_align1_float> pixel_buffer;
 emscripten::val getPixelBufferView() {
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
 }
-/*
+
 uintptr_t get_buffer_ptr() {
 return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 }
-*/
-intptr_t get_buffer_ptr() {
-return reinterpret_cast<intptr_t>(pixel_buffer.data());
-}
+
 
 void process_copied_data_val(emscripten::val js_typed_array_val) {
 std::vector<emscripten_align1_float> cpp_copy = emscripten::vecFromJSArray<emscripten_align1_float>(js_typed_array_val);
