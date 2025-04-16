@@ -299,14 +299,18 @@ NFptr[newIndex+3]=255;
 return;
 };
 
+
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
+
     if (cpp_vector.size() == 0) {
          return emscripten::val::object();
     }
+
     double sum = 0.0;
     float min_val = std::numeric_limits<float>::max();
     float max_val = std::numeric_limits<float>::lowest();
+
     for(size_t i = 0; i < cpp_vector.size(); ++i) {
         float val = cpp_vector[i];
         sum += val;
@@ -314,6 +318,7 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
         if (val > max_val) max_val = val;
     }
      double avg = sum / cpp_vector.size();
+
     emscripten::val result = emscripten::val::object();
     result.set("average", avg);
     result.set("min", min_val);
@@ -321,10 +326,11 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     return result;
 }
 
+
 EMSCRIPTEN_BINDINGS(my_module) {
-emscripten::function("processFloatData", &processFloatData);
+    emscripten::function("processFloatData", &processFloatData);
     // If you needed to return arrays back to JS you could bind std::vector
- // emscripten::register_vector<float>("FloatVector");
+    // emscripten::register_vector<float>("FloatVector");
 }
 
 extern "C" {
@@ -401,7 +407,7 @@ powerPreference:'high-performance',
 antialias:false
 };
   var contxVarsB={
-colorType:'float64',
+colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
@@ -439,15 +445,15 @@ let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
   
     const vd = document.getElementById("myvideo");
-   const  ww2 = vd.videoWidth;  // Actual width
-  const  h2 = vd.videoHeight; // Actual height
-    const squareSize = parseInt(Math.max(ww2, h2));
+    const ww = vd.videoWidth;  // Actual width
+    const h = vd.videoHeight; // Actual height
+    const squareSize = Math.max(ww, h);
     let dx = 0; // Destination x on square canvas
     let dy = 0; // Destination y on square canvas
-    if (ww2 > h2) { // Landscape video (wider than tall)
-        dy = (squareSize - h2) / 2;
+    if (ww > h) { // Landscape video (wider than tall)
+        dy = (squareSize - h) / 2;
     } else { // Portrait or square video (taller than wide, or square)
-        dx = (squareSize - ww2) / 2;
+        dx = (squareSize - ww) / 2;
     }
     const tempCanvas = document.createElement('canvas');
     tempCanvas.width = squareSize;
@@ -456,10 +462,9 @@ let flPB=document.getElementById("flipB");
     tempCtx.fillStyle = 'white'; // Or 'rgba(0,0,0,0)' for transparent padding
     tempCtx.fillRect(0, 0, squareSize, squareSize);
     tempCtx.drawImage(vd, 0, 0, ww, h, dx, dy, ww, h);
-    const imgData = tempCtx.getImageData(0, 0, h, h);
+    const imgData = tempCtx.getImageData(0, 0, squareSize, squareSize);
 
 ctx.drawImage(vd,0,0,ww,h);
-  
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
 // var imgData=ctx.getImageData(0,0,ww,h);
