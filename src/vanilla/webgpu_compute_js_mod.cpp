@@ -530,11 +530,13 @@ var pixelData=new Float32Array(imageData);
 let fileStream=FS.open('/video/frame.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
+/*
 // Module.processCopiedDataVal(pixelData);
 const floatArray = new Float32Array(imageData.length);
 for(let i = 0; i < imageData.length; i++) {
 floatArray[i] = imageData[i] / 255.0;
 }
+*/
 Module.processCopiedDataVal(imageData);
 // Module.frmOn();
 setInterval(function(){
@@ -562,9 +564,11 @@ FS.write(fileStream,pixelData,0,pixelData.length,0);
 // pixelData=new Float32Array(imageData);
 // Module.processCopiedDataVal(pixelData);
 // console.log(`Frame data sample: [${frameBufferViewF32[0].toFixed(2)}, ${frameBufferViewF32[1].toFixed(2)}, ${frameBufferViewF32[2].toFixed(2)}, ${frameBufferViewF32[3].toFixed(2)}]`);
+/*
 for(let i = 0; i < imageData.length; i++) {
 floatArray[i] = imageData[i] / 255.0;
 }
+*/
 Module.processCopiedDataVal(imageData);
 // Module.frmOn();
 },16.666);
