@@ -18,7 +18,7 @@ uintptr_t get_buffer_ptr() {
 return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 }
 */
-float* get_buffer_ptr() {
+float get_buffer_ptr() {
 return reinterpret_cast<float*>(pixel_buffer.data());
 }
 
