@@ -303,7 +303,7 @@ return;
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
 
-    if (float_view.size() == 0) {
+    if (cpp_vector.size() == 0) {
          return emscripten::val::object();
     }
 
@@ -311,13 +311,13 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     float min_val = std::numeric_limits<float>::max();
     float max_val = std::numeric_limits<float>::lowest();
 
-    for(size_t i = 0; i < float_view.size(); ++i) {
-        float val = float_view[i];
+    for(size_t i = 0; i < cpp_vector.size(); ++i) {
+        float val = cpp_vector[i];
         sum += val;
         if (val < min_val) min_val = val;
         if (val > max_val) max_val = val;
     }
-     double avg = sum / float_view.size();
+     double avg = sum / cpp_vector.size();
 
     emscripten::val result = emscripten::val::object();
     result.set("average", avg);
