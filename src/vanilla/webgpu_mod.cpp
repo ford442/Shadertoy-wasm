@@ -25,6 +25,7 @@ std::vector<float> cpp_copy = emscripten::vecFromJSArray<float>(js_typed_array_v
 size_t num_elements = (size_t)cpp_copy.size();
 pixel_buffer.resize(num_elements);
 std::transform(cpp_copy.begin(),cpp_copy.end(),pixel_buffer.begin(),[](float val){return val/255.0f;});
+      
 if(on.at(3,3)==1){
 on_b.at(4,4)=1;
 }
@@ -286,7 +287,7 @@ boost::container::vector<emscripten_align1_float>floatData(pixel_buffer.size());
     
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
 // std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
-std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val;}); // /255.0f;});  // for RGBA32FLOAT
+std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
 
 // Eigen::VectorXf floatData(data.size());
 // for (Eigen::Index i = 0; i < data.size(); ++i) {
