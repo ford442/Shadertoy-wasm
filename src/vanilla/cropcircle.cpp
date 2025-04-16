@@ -301,7 +301,7 @@ return;
 
 
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
-    std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(jsTypedArrayVal);
+    std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
 
     if (float_view.size() == 0) {
          return emscripten::val::object();
