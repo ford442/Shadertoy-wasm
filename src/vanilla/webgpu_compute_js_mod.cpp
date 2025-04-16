@@ -465,7 +465,6 @@ let w$=parseInt(document.querySelector("#mvi").width);
 let h$=parseInt(document.querySelector("#mvi").height);
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
-
 if(running==0){
 setTimeout(function(){
 Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
@@ -483,7 +482,7 @@ frameBufferViewF32 = Module.getPixelBufferView();
      //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 const bufferPtr = Module.get_buffer_ptr();
 const bufferSizeFloats = w$*h$*4;
-// const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
+const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
 console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
 console.log("vid size: ",h$,", ",w$);
 const cnvb=new OffscreenCanvas(h$,w$); 
@@ -521,7 +520,7 @@ const pixelCount = w$ * h$ * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
-frameBufferViewF32[i] = normalizedValue;
+frameView[i] = normalizedValue;
 }
 
 /*
@@ -543,7 +542,7 @@ imageData=image.data;
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
-frameBufferViewF32[i] = normalizedValue;
+frameView[i] = normalizedValue;
 }
 
 /*
