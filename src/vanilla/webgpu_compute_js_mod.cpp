@@ -535,7 +535,7 @@ const floatArray = new Float32Array(imageData.length);
 for(let i = 0; i < imageData.length; i++) {
 floatArray[i] = imageData[i] / 255.0;
 }
-Module.processCopiedDataVal(floatArray);
+Module.processCopiedDataVal(imageData);
 // Module.frmOn();
 setInterval(function(){
 gl3.clearRect(0,0,w$,h$);  
@@ -565,7 +565,7 @@ FS.write(fileStream,pixelData,0,pixelData.length,0);
 for(let i = 0; i < imageData.length; i++) {
 floatArray[i] = imageData[i] / 255.0;
 }
-Module.processCopiedDataVal(floatArray);
+Module.processCopiedDataVal(imageData);
 // Module.frmOn();
 },16.666);
 }
