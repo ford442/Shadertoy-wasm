@@ -35,7 +35,6 @@ fxhttp.open('GET','video/',true);
 fxhttp.send();
 }
 
-
 const media_mode = document.querySelector('#media').value;
 
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
@@ -90,7 +89,7 @@ if(e.code=='KeyX'){lockVid=0;};
 
 const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
-
+/*
 function loada(){
 if(lockVid!=1){
 document.getElementById('ldv').height=window.innerHeight;
@@ -186,7 +185,7 @@ document.getElementById('startBtn').addEventListener('click',function(){
 scanVideos();
 loada();
 });
-
+*/
 
 let frameBufferViewF32 = []; // The view into C++ memory
 
