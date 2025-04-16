@@ -553,6 +553,8 @@ pixelData=new Float32Array(imageData);
 FS.write(fileStream,pixelData,0,pixelData.length,0);
 */
 // Module.processCopiedDataVal(pixelData);
+console.log(`Frame data sample: [${frameBufferViewF32[0].toFixed(2)}, ${frameBufferViewF32[1].toFixed(2)}, ${frameBufferViewF32[2].toFixed(2)}, ${frameBufferViewF32[3].toFixed(2)}]`);
+
 Module.frmOn();
 },16.666);
 }
