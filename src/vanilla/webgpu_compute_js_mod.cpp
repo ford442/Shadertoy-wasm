@@ -8,7 +8,7 @@ let running=0;
 var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
 const $iwid=document.getElementById('iwid');
-var mV=document.getElementById('mv');
+var mV=document.getElementById('mvi');
 var loadV=document.getElementById('ldv');
 var $vids=[];
 
