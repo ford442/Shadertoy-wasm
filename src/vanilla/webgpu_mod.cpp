@@ -20,9 +20,8 @@ return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 */
 float get_buffer_ptr() {
       
-      float pos = reinterpret_cast<float>(pixel_buffer.data());
-      float * pttr;
-      pttr=&pos;
+    
+      pttr=&pixel_buffer.data();
 return pttr;
 }
 
