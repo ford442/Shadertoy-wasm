@@ -299,6 +299,40 @@ NFptr[newIndex+3]=255;
 return;
 };
 
+
+emscripten::val processFloatData(emscripten::val js_float32_array_val, size_t expected_length) {
+     emscripten::memory_view<float> float_view(expected_length, js_float32_array_val);
+
+    if (float_view.size() == 0) {
+         return emscripten::val::object();
+    }
+
+    double sum = 0.0;
+    float min_val = std::numeric_limits<float>::max();
+    float max_val = std::numeric_limits<float>::lowest();
+
+    for(size_t i = 0; i < float_view.size(); ++i) {
+        float val = float_view[i];
+        sum += val;
+        if (val < min_val) min_val = val;
+        if (val > max_val) max_val = val;
+    }
+     double avg = sum / float_view.size();
+
+    emscripten::val result = emscripten::val::object();
+    result.set("average", avg);
+    result.set("min", min_val);
+    result.set("max", max_val);
+    return result;
+}
+
+
+EMSCRIPTEN_BINDINGS(my_module) {
+    emscripten::function("processFloatData", &processFloatData);
+    // If you needed to return arrays back to JS you could bind std::vector
+    // emscripten::register_vector<float>("FloatVector");
+}
+
 extern "C" {
 
 void nano(int leng,float *ptr,float *aptr){
@@ -428,11 +462,26 @@ var la=h*ww*4;
 var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
+
+const floatArray = new Float32Array(imgData.data.length);
+for(let i = 0; i < imgData.data.length; i++) {
+floatArray[i] = imgData.data[i] / 255.0;
+}
+console.log(`Processing ${floatArray.length} floats`);
+const floatResult = Module.processFloatData(floatArray, floatArray.length);
+if (floatResult && floatResult.average !== undefined) {
+console.log("Image Analysis Result (Floats):", floatResult);
+console.log(`Average: ${floatResult.average}, Min: ${floatResult.min}, Max: ${floatResult.max}`);
+} else {
+console.error("processFloatData returned invalid result.");
+}
+
+  
 // var $H=Module.HEAPF32.buffer;
-var agavF=new Float32Array(Module.HEAPF32.buffer,pointa,la);
-var agavNF=new Float32Array(Module.HEAPF32.buffer,pointb,la);
-agavF.set(imgData.data);
-Module.ccall("nano",null,["Number","Number","Number"],[la,pointa,pointc]);
+// var agavF=new Float32Array(Module.HEAPF32.buffer,pointa,la);
+// var agavNF=new Float32Array(Module.HEAPF32.buffer,pointb,la);
+// agavF.set(imgData.data);
+// Module.ccall("nano",null,["Number","Number","Number"],[la,pointa,pointc]);
 /* ctx.getExtension('GL_ALL_EXTENSIONS');
 ctx.getExtension('GL_KHR_no_error');
 ctx.getExtension('GL_REGAL_enable');
@@ -440,11 +489,11 @@ ctx.getExtension('GL_ARB_spirv_extensions');
 ctx.getExtension('GL_ARB_ES2_compatibility');
 ctx.getExtension('GL_ARB_direct_state_access');
  */
-var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
+// var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
 for(i=0;i<(ww*h*4);i=i+4){
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
-var lightDark=128+((Math.abs(agav[0]-128))/2);
+var lightDark=128+((Math.abs(floatResult.average-128))/2);
 rgb=rgb+lightDark/2;
  
  //  but run past a lighter pixel if the avg is darker 
@@ -465,7 +514,7 @@ rgb=rgb+lightDark/2;
  //  range to the next color giving further color depth as well as 
  // keeping a darker range from having few different colors of gradient
  //
-var diff=(agav[0]/255)*32;
+var diff=(floatResult.average/255)*32;
 if(rgb>126){
 if(rgb>209){    // orange
 rgbd[i]=255;
