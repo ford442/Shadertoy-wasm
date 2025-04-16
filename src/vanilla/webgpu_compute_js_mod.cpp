@@ -157,11 +157,23 @@ Module.ccall('frmsOn');
 // console.log('restarting frames for move');
 }, 1900);
 });
-// gl3.imageSmoothingEnabled=false;
+
+if (running == 0) {
+setTimeout(() => {
+console.log('sending: ',keepSize,vsiz,srsiz);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
+running = 1;
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+}, 250);
+} else {
+frameBufferViewF32 = Module.getPixelBufferView();
+console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+}
+
+// gl3.imageSmoothingEnabled=false;
 // const fileStream=FS.open('/video/frame.gl','w');
-function drawFrame() {
+setTimeout(function() {
 if (pause === 'ready') {
 gl3.clearRect(0, 0, keepSize, keepSize);
 gl3.drawImage(vvic, 0, 0, w$, h$, drawX, drawY, w$, h$); 
@@ -178,17 +190,8 @@ frameBufferViewF32[i] = imageData[i] / 255.0;
 // const pixelData = new Uint8Array(imageData);
 // FS.write(fileStream, pixelData, 0, pixelData.length, 0);
 Module.frmOn();
-}
-if (running == 0) {
-setTimeout(() => {
-console.log('sending: ',keepSize,vsiz,srsiz);
-Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
-running = 1;
-setInterval(drawFrame, 16.6); 
-}, 250);
-} else {
-setInterval(drawFrame, 16.6);
-}
+},16);
+
 }
 
 
