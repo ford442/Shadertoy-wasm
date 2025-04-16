@@ -29,7 +29,7 @@ GL_FLAGS = -sGL_ENABLE_GET_PROC_ADDRESS -sFULL_ES3=1 -sFULL_ES2=0 -sUSE_GLFW=0 \
 	 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sGL_TRACK_ERRORS=1
 
 LINK_FLAGS = -DQUAD $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 -sSUPPORT_BIG_ENDIAN=1 \
-	 -sWASM_BIGINT=0 -sOFFSCREENCANVAS_SUPPORT=1 --bind -lembind \
+	 -sWASM_BIGINT=1 -sOFFSCREENCANVAS_SUPPORT=1 --bind -lembind \
 	 -sTRUSTED_TYPES=1 -sIGNORE_MISSING_MAIN=0 -sABORT_ON_WASM_EXCEPTIONS=0 \
 	 -sASSERTIONS=0 --typed-function-references --enable-reference-types \
 	 -sTEXTDECODER=0 --use-preload-plugins --closure 0 --closureFriendly \
@@ -43,7 +43,7 @@ WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigato
 
 b3_cropcircle:
 	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O2 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS)
-	 emcc $(STDS) -o $(BIN_NAME) -O3 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
+	 emcc $(STDS) -o $(BIN_NAME) -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --extern-pre-js gpujsx.js cropcircle.o
