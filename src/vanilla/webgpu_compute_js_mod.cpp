@@ -465,12 +465,6 @@ let w$=parseInt(document.querySelector("#mvi").width);
 let h$=parseInt(document.querySelector("#mvi").height);
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
-    //    frameBufferViewF32 = Module.getPixelBufferView();
-     //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
-    const bufferPtr = Module.get_buffer_ptr();
-    const bufferSizeFloats = w$*h$*4*4;
-    const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
-    console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
 
 if(running==0){
 setTimeout(function(){
@@ -484,6 +478,13 @@ Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vvi.height,vsiz,
 console.log('Starting..');
 },250);
 }
+frameBufferViewF32 = Module.getPixelBufferView();
+     //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+    const bufferPtr = Module.get_buffer_ptr();
+    const bufferSizeFloats = w$*h$*4*4;
+const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
+    console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
+
 console.log("vid size: ",h$,", ",w$);
 const cnvb=new OffscreenCanvas(h$,w$); 
 // document.querySelector('#contain2').appendChild(cnvb);
@@ -539,7 +540,7 @@ imageData=image.data;
 
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
-frameView[i] = 0.77; //  imageData[i]; //  / 255.0;
+frameView[i] =  imageData[i]; //  / 255.0;
 }
 
 /*
