@@ -8,7 +8,7 @@
 
 namespace fsm = boost::filesystem;
 
-boost::container::vector<float> pixel_buffer;
+boost::container::vector<emscripten_align1_float> pixel_buffer;
 
 emscripten::val getPixelBufferView() {
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
