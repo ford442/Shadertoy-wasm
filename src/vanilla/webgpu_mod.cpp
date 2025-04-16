@@ -288,14 +288,14 @@ wtv.at(6,6)=INVTextureView;
 // floatData(i) = static_cast<float>(data[i]) / 255.0f;
 // }
 
-      
+  /*    
     size_t num_to_print = std::min((size_t)16, pixel_buffer.size()); // Print max 16 floats
 
     for (size_t i = 0; i < num_to_print; ++i) {
         // Print index and value, format float to a few decimal places
         printf("pixel_buffer[%zu] = %.4f\n", i, pixel_buffer[i]);
     }
-
+*/
       
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 // frame_tensor.at(0,0)=data;
@@ -1221,8 +1221,8 @@ wgpu_adapter_request_device_async(wa.at(0,0),&wdd.at(0,0),ObtainedWebGpuDeviceSt
 }
 
 EM_BOOL WGPU_Start(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
-size_t num_elements = (size_t)vsz * vsz * 4;
-pixel_buffer.resize(num_elements);
+// size_t num_elements = (size_t)vsz * vsz * 4;
+// pixel_buffer.resize(num_elements);
       
       sze.at(1,1)=sz;
 sze.at(6,6)=sz;
@@ -1241,8 +1241,8 @@ return EM_TRUE;
 }
 
 EM_BOOL WGPU_StartC(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
-size_t num_elements = (size_t)vsz * vsz * 4;
-pixel_buffer.resize(num_elements);
+// size_t num_elements = (size_t)vsz * vsz * 4;
+// pixel_buffer.resize(num_elements);
       
       sze.at(1,1)=sz;
 sze.at(6,6)=sz;
