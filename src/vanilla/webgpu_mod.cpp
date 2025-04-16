@@ -20,7 +20,7 @@ return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 */
 float get_buffer_ptr() {
       
-    
+    float * pttr;
       pttr=&pixel_buffer.data();
 return pttr;
 }
