@@ -428,9 +428,9 @@ var la=h*ww*4;
 var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
-var $H=Module.HEAPF32.buffer;
-var agavF=new Float32Array($H,pointa,la);
-var agavNF=new Float32Array($H,pointb,la);
+// var $H=Module.HEAPF32.buffer;
+var agavF=new Float32Array(Module.HEAPF32.buffer,pointa,la);
+var agavNF=new Float32Array(Module.HEAPF32.buffer,pointb,la);
 agavF.set(imgData.data);
 Module.ccall("nano",null,["Number","Number","Number"],[la,pointa,pointc]);
 /* ctx.getExtension('GL_ALL_EXTENSIONS');
@@ -440,7 +440,7 @@ ctx.getExtension('GL_ARB_spirv_extensions');
 ctx.getExtension('GL_ARB_ES2_compatibility');
 ctx.getExtension('GL_ARB_direct_state_access');
  */
-var agav=new Float32Array($H,pointc,1);
+var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
 for(i=0;i<(ww*h*4);i=i+4){
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
