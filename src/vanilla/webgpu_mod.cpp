@@ -20,6 +20,8 @@ return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 
 
 void process_copied_data_val(emscripten::val js_typed_array_val) {
+size_t num_elements = (size_t)js_typed_array_val.size();
+pixel_buffer.resize(num_elements);
     std::vector<float> cpp_copy = emscripten::vecFromJSArray<float>(js_typed_array_val);
 std::transform(cpp_copy.begin(),cpp_copy.end(),pixel_buffer.begin(),[](uint8_t val){return val;}); // /255.0f;});  // for RGBA32FLOAT
 if(on.at(3,3)==1){
