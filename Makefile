@@ -8,7 +8,7 @@ STDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c+
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
 
 COMMON_FLAGS = -D__EMSCRIPTEN__ -fopenmp-simd -sSUPPORT_LONGJMP=emscripten -pthread -pipe -mextended-const \
-	 -sWASM_WORKERS=1 -sSHARED_MEMORY=1 -stdlib=libc++ -mbulk-memory -matomics \
+	 -sWASM_WORKERS=1 -sSHARED_MEMORY=0 -stdlib=libc++ -mbulk-memory -matomics \
 	 -sDISABLE_EXCEPTION_CATCHING=1 -fPIC -fpie -finline-functions -funroll-loops \
 	 -m32 -fmerge-all-constants -ffast-math -ffp-contract=off \
 	 -ftree-vectorize -fstrict-vtable-pointers -funsafe-math-optimizations -fno-math-errno \
@@ -36,7 +36,7 @@ LINK_FLAGS = -DQUAD $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 -sSUPPO
 	 -march=haswell -sWASM=1 -sTOTAL_STACK=65536 -sENVIRONMENT='web,worker' -sSTRICT_JS=1 \
 	 -sGLOBAL_BASE=352321536 -sSUPPORT_ERRNO=0 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=3221225472 --output_eol linux -mllvm -mtune=wasm32 -wasm-enable-eh \
-	 --memory-init-file 0 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
+	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
 
 WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
 	 -lmath.js -lhtml5.js -lint53.js
