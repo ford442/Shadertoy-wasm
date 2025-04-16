@@ -522,7 +522,7 @@ const pixelCount = w$ * h$ * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
-frameView[i] = normalizedValue;
+frameBufferViewF32[i] = normalizedValue;
 }
 
 /*
@@ -544,7 +544,7 @@ imageData=image.data;
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
-frameView[i] = normalizedValue;
+frameBufferViewF32[i] = normalizedValue;
 }
 
 /*
