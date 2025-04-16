@@ -482,10 +482,9 @@ console.log('Starting..');
 }
      //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 const bufferPtr = Module.get_buffer_ptr();
-const bufferSizeFloats = (w$*h$)*4;
+const bufferSizeFloats = w$*h$*4;
 const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
- //   console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
-
+console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
 console.log("vid size: ",h$,", ",w$);
 const cnvb=new OffscreenCanvas(h$,w$); 
 // document.querySelector('#contain2').appendChild(cnvb);
