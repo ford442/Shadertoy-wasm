@@ -128,7 +128,6 @@ const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
 $vids[0]=preList.length;
 for(var i=1;i<preList.length;i++){
 var txxt=preList[i].href;
-
 let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
 let lastSlashIndex = pathName.lastIndexOf('/');
 let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
@@ -171,6 +170,10 @@ var adr='./bezel.jpg';
 wi=1920;
 he=1080;
 }
+
+wi=window.innerHeight;
+he=window.innerHeight;
+
 var hii=window.innerHeight;
 document.querySelector('#ihid').innerHTML=hii;
 r$=hii/he;
