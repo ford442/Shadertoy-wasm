@@ -1023,8 +1023,6 @@ let vh$=vvi.videoHeight;
 let SiZ=window.innerHeight;
 vvi.height=vh$;
 vvi.width=vw$;
-let w$=parseInt(document.querySelector("#mvi").width);
-let h$=parseInt(document.querySelector("#mvi").height);
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
 if(running==0){
