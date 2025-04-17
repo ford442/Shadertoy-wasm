@@ -114,7 +114,7 @@ video.pause();
 body.addEventListener('keydown', handleKeydown);
 body.addEventListener('keyup', handleKeyup);
 
-var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
+let $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
 const $iwid=document.querySelector('#iwid');
 var mV=document.querySelector('#mvi');
@@ -170,9 +170,6 @@ var adr='./bezel.jpg';
 wi=1920;
 he=1080;
 }
-
-wi=window.innerHeight;
-he=window.innerHeight;
 
 var hii=window.innerHeight;
 document.querySelector('#ihid').innerHTML=hii;
