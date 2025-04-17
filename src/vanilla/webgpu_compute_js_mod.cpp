@@ -1254,7 +1254,7 @@ contx.getExtension('EGL_EXT_request_priority');
 contx.getExtension('EGL_EXT_create_surface_from_window');
 contx.getExtension('EGL_EXT_surface_attachment');
 contx.getExtension('EXT_texture_storage');
-*/ // 'new' ext list
+ // 'new' ext list
 
 //  'old' ext list
 gl.getExtension('WEBGL_color_buffer_float');
@@ -1311,6 +1311,7 @@ contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_SUBTRACT);
 contx.disable(gl.DITHER);
 // contx.drawingBufferColorMetadata={mode:'extended'};
 // contx.drawingBufferColorSpace='display-p3';
+*/
 
 const g=new GPUX({canvas:bcanvas,context:contx});
 const g2=new GPUX();
