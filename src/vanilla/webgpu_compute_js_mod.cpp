@@ -1488,7 +1488,18 @@ var locb=$Bu+1;if(locb>64){locb=1;}
 var frmm=new Float64Array($H,pointc,la);
 eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frmm.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
 }
-    
+
+let offset = 0;
+for (let y = 0; y < h$; y++) {
+for (let x = 0; x < h$; x++) {
+const pixel = frmm[y][x]; // GPU.js returns [height][width][channels]
+frameBufferViewF32[offset++] = pixel[0]; // R
+frameBufferViewF32[offset++] = pixel[1]; // G
+frameBufferViewF32[offset++] = pixel[2]; // B
+frameBufferViewF32[offset++] = pixel[3]; // A
+}
+}
+
 var $bb=R(vv);
 $B.set($bb,0,sz);
 pointb=66*la;
