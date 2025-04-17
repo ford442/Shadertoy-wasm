@@ -216,8 +216,8 @@ mV.addEventListener('canplay',function(){
 loadV.addEventListener('canplay',function(){
 // loadV.width=this.videoWidth;
 // loadV.height=this.videoHeight;
-document.querySelector('#wid').innerHTML=this.width; // this.videoWidth;
-document.querySelector('#hig').innerHTML=parseInt(window.innerHeight); // this.height; // .videoHeight;
+document.querySelector('#wid').innerHTML=this.videoWidth;
+document.querySelector('#hig').innerHTML=this.videoHeight;
 document.querySelector('#blnnk').innerHTML=Math.max((this.videoWidth-this.videoHeight)/2.0,0);
 var $sc=this.duration;
 var mic=Math.round($sc*1000000);
@@ -234,9 +234,9 @@ if(media_mode=='img'){
 mV.addEventListener('load',function(){
 });
 loadV.addEventListener('load',function(){
-document.querySelector('#wid').innerHTML=this.width;
-document.querySelector('#hig').innerHTML=parseInt(window.innerHeight); // this.height; // .videoHeight;
-document.querySelector('#blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
+document.querySelector('#wid').innerHTML=this.videoWidth;
+document.querySelector('#hig').innerHTML=this.videoHeight;
+document.querySelector('#blnnk').innerHTML=Math.max((this.videoWidth-this.videoHeight)/2.0,0);
 });
 }
 if(media_mode=='vid'){
