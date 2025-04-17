@@ -1490,8 +1490,8 @@ if(T){return;}
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
-
-eval("if ($F==="+i+"){var $r"+i+"=t($"+i+");var frmm=new Float64Array($H,pointc,la); frmm.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
+var frmm=new Float64Array($H,pointc,la);
+eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frmm.set( r($r"+i+") );var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+"); $F="+loca+";$Bu="+locb+";}");
 }
 
 var $bb=R(vv);
