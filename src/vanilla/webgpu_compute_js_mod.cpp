@@ -1411,7 +1411,7 @@ return[P[0],P[1],P[2],P[3]];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
-return [p[0],p[1],p[2],aveg];
+return [p[0],p[1],p[2],p[3]];
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
@@ -1426,7 +1426,7 @@ return[P[0],P[1],P[2],P[3]];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
-return [p[0],p[1],p[2],aveg];
+return [p[0],p[1],p[2],p[3]];
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
