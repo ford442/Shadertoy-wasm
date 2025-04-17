@@ -1016,7 +1016,7 @@ Module.frmOn();
 
 
 function B3_Start(){
-
+let frameBufferViewF32 = [];
 const vvi=document.querySelector('#mvi');
 let vw$=vvi.videoWidth;
 let vh$=vvi.videoHeight;
