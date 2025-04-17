@@ -286,8 +286,8 @@ if(media_mode=='vid'){
 document.querySelector('#ldv').load();
 document.querySelector('#ldv').currentTime=document.querySelector('#itim').innerHTML;
 }
-document.querySelector('#ldv').height=he;
-document.querySelector('#ldv').width=wi;
+// document.querySelector('#ldv').height=he;
+// document.querySelector('#ldv').width=wi;
 document.querySelector('#di').click();
 }
 setTimeout(function(){
