@@ -114,6 +114,8 @@ emscripten::function("frmOn", &texOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
 emscripten::function("processCopiedDataVal", &process_copied_data_val);
 emscripten::function("get_buffer_ptr", &get_buffer_ptr);
+      emscripten::function("nanoD_unsafe", &nanoD_via_offsets);
+
 // emscripten::register_vector<float>("VectorFloat"); // Needed for vecFromJSArray
 }
 
