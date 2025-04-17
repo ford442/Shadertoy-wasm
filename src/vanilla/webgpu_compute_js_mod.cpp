@@ -1504,6 +1504,7 @@ setTimeout(function(){
 let offset = 0;
 for (let y = 0; y < h$; y++) {
 for (let x = 0; x < h$; x++) {
+    console.log(frmm[y][x]);
 // const pixel = frmm[y][x]; // GPU.js returns [height][width][channels]
 frameBufferViewF32[offset++] = frmm[y][x][0]; // R
 frameBufferViewF32[offset++] = frmm[y][x][1]; // G
