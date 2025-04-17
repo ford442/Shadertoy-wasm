@@ -207,12 +207,12 @@ if(lockVid!=1){
 document.querySelector('#ldv').height=window.innerHeight;
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
-mV.width=this.videoWidth;
-mV.height=this.videoHeight;
+// mV.width=this.videoWidth;
+// mV.height=this.videoHeight;
 });
 loadV.addEventListener('canplay',function(){
-loadV.width=this.videoWidth;
-loadV.height=this.videoHeight;
+// loadV.width=this.videoWidth;
+// loadV.height=this.videoHeight;
 document.querySelector('#wid').innerHTML=this.videoWidth;
 document.querySelector('#hig').innerHTML=this.videoHeight;
 document.querySelector('#blnnk').innerHTML=Math.max((this.videoWidth-this.videoHeight)/2.0,0);
