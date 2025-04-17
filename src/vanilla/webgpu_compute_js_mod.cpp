@@ -204,10 +204,10 @@ pnnl.addEventListener('keydown',spKey);
 
 function loada(){
 if(lockVid!=1){
-document.querySelector('#ldv').style.height=window.innerHeight+'px';
-document.querySelector('#ldv').style.width='auto';
-document.querySelector('#mvi').style.height=window.innerHeight+'px';
-document.querySelector('#mvi').style.width='auto';
+// document.querySelector('#ldv').style.height=window.innerHeight+'px';
+// document.querySelector('#ldv').style.width='auto';
+// document.querySelector('#mvi').style.height=window.innerHeight+'px';
+// document.querySelector('#mvi').style.width='auto';
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
 // mV.width=this.videoWidth;
