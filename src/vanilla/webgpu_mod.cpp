@@ -28,6 +28,43 @@ on_b.at(4,4)=1;
 }
 }
 
+void avgFrmD(int Fnum,int leng,double *ptr,double *aptr){
+double max=0.0;
+double min=1.0;
+double sum=0.0;
+double avgSum=0.0;
+double minSum=0.0;
+double maxSum=0.0;
+for (int i=0;i<leng;i++){
+sum+=ptr[i];
+if(max<ptr[i]){max=ptr[i];}
+if(min>ptr[i]&&ptr[i]>0){min=ptr[i];}
+}
+sum=sum/leng;
+aptr[Fnum]=sum;
+aptr[Fnum+100]=min;
+aptr[Fnum+200]=max;
+for(int i=33;i<65;i++){
+avgSum+=aptr[i];
+}
+aptr[0]=avgSum/32.0;
+for(int i=33;i<65;i++){
+minSum+=aptr[i+100];
+}
+aptr[100]=minSum/32.0;
+for(int i=33;i<65;i++){
+maxSum+=aptr[i+200];
+}
+aptr[200]=maxSum/32.0;
+return;
+}
+
+void nanoD_via_offsets(int Fnum, int leng, uintptr_t ptr_offset, uintptr_t aptr_offset) {
+double* ptr = reinterpret_cast<double*>(ptr_offset);
+double* aptr = reinterpret_cast<double*>(aptr_offset);
+avgFrmD(Fnum, leng, ptr, aptr);
+}
+
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
 if(eventType==EMSCRIPTEN_EVENT_MOUSEDOWN&&e->buttons!=0){
