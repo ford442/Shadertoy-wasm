@@ -1068,6 +1068,11 @@ agav.fill(avag,0,33);
 agav.fill(min,100,33);
 agav.fill(max,200,33);
 const bcanvas=document.querySelector("#bcanvas");
+const scanvas=document.querySelector("#scanvas");
+bcanvas.height=window.innerHeight;
+bcanvas.width=window.innerWidth;
+scanvas.height=window.innerHeight;
+scanvas.width=window.innerWidth;
 const contx=bcanvas.getContext("webgl2",{colorType:'float64',precision:'highp',colorSpace:'display-p3',alpha:true,depth:true,stencil:true,preserveDrawingBuffer:false,premultipliedAlpha:false,desynchronized:false,lowLatency:false,powerPreference:'high-performance',antialias:true,willReadFrequently:false});
 /*  new ext list
 contx.getExtension('ARB_robust_buffer_access_behavior');
