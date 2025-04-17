@@ -1466,7 +1466,7 @@ nblank$=Math.max((h$-w$)/2,0);
 la=nearestPowerOf2((((h$+(blank$$*2))*h$*4)/4)*4);
 sz=(h$*h$)/8;
 pointa=77*la;
-// var agav=new Float32Array($H,pointa,300);
+pointc=88*la;
 R.setOutput([sz]);
 for(i=0;i<65;i++){
 var j=i+1;
@@ -1485,8 +1485,10 @@ if(T){return;}
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
-eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frameBufferViewF32.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
+var frmm=new Float64Array($H,pointc,la);
+eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frmm.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
 }
+    
 var $bb=R(vv);
 $B.set($bb,0,sz);
 pointb=66*la;
