@@ -2,7 +2,7 @@
 #include "../../src/vanilla/webgpu_compute_vars_em.cpp"
 #include <boost/filesystem/fstream.hpp>
 
-#include <webgl/webgl2.h>
+// #include <webgl/webgl2.h>
 
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
