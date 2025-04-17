@@ -1374,7 +1374,7 @@ var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
 var Min=((p[3]-$favg)+1.0101)*(($amax-($aavg-$fmin-($amin-$fmin)))/(2.0+($aavg-p[3])));
 var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
-return [p[0]/255,p[1]/255,p[2]/255,aveg/255];
+return [p[0],p[1],p[2],aveg];
 }).setImmutable(true).setTactic("precision").setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }
 if(vid_mode=='B3_B'){
@@ -1400,7 +1400,7 @@ var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
 var Min=2.0101*(($amax-($aavg-$fmin))/2.0);
 var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
-return [p[0]/255,p[1]/255,p[2]/255,aveg/255];
+return [p[0],p[1],p[2],aveg];
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
@@ -1416,7 +1416,7 @@ return[P[0],P[1],P[2],P[3]];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([1024,1024]); // h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
-return [p[0]/255,p[1]/255,p[2]/255,p[3]/255];
+return [p[0],p[1],p[2],p[3]];
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([1024,1024]); // h$,h$]);
 }
@@ -1431,7 +1431,7 @@ return[P[0],P[1],P[2],P[3]];
 }).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
-return [p[0]/255,p[1]/255,p[2]/255,p[3]/255];
+return [p[0],p[1],p[2],p[3]];
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
