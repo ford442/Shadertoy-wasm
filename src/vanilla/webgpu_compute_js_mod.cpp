@@ -1485,8 +1485,8 @@ if(T){return;}
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
-var frmm=new Float64Array($H,pointc,la);
-eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frmm.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
+
+eval("if ($F==="+i+"){var $r"+i+"=t($"+i+");var frmm=new Float64Array($H,pointc,la); frmm.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
 }
 
 var $bb=R(vv);
@@ -1502,7 +1502,7 @@ const aptr_offset = averageDataView.byteOffset;
 Module.nanoD_unsafe($F, sz, ptr_offset, aptr_offset);
 setTimeout(function(){
 let offset = 0;
-if(frmm[y][x]){
+if(frmm[0][0]){
 for (let y = 0; y < h$; y++) {
 for (let x = 0; x < h$; x++) {
 frameBufferViewF32[offset++] = frmm[y][x][0]; // R
