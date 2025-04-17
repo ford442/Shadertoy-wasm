@@ -4,6 +4,115 @@ FS.mkdir('/shader');
 FS.mkdir('/video');
 let running=0;
 
+const body = document.body;
+var video = document.querySelector("#mvi");
+var intervalBackward;
+var intervalForward;
+var intervalLoop;
+
+function back() {
+    clearInterval(intervalBackward);
+    intervalBackward = requestAnimationFrame(function loop() {
+        if (video.currentTime <= 0) {
+            cancelAnimationFrame(intervalBackward);
+        } else {
+            video.currentTime -= 0.032;
+            intervalBackward = requestAnimationFrame(loop);
+        }
+    });
+}
+
+function forward() {
+    clearInterval(intervalForward);
+    intervalForward = requestAnimationFrame(function loop() {
+        video.currentTime += 0.032;
+        intervalForward = requestAnimationFrame(loop);
+    });
+}
+
+function backForth(stp, strt, rate) {
+    var f = true;
+    clearInterval(intervalLoop);
+    intervalLoop = requestAnimationFrame(function loop() {
+        if (f) {
+            if (video.currentTime >= strt * 1000.0) {
+                video.currentTime -= 0.016;
+            } else {
+                video.currentTime = strt * 1000.0;
+                f = false;
+            }
+        } else if (video.currentTime <= stp * 1000.0) {
+            video.currentTime += 0.016;
+        } else {
+            video.currentTime = stp * 1000.0;
+            f = true;
+        }
+        setTimeout(() => requestAnimationFrame(loop), rate);
+    });
+}
+
+function stopForward() {
+    clearInterval(intervalForward);
+}
+
+function stopBack() {
+    clearInterval(intervalBackward);
+}
+
+function stopBackForth() {
+    clearInterval(intervalLoop);
+}
+
+let playing = true;
+
+function handleKeydown(e) {
+    e.preventDefault();
+    if (e.code === 'Space') {
+        if (playing) {
+            video=document.querySelector("#mvi");
+            video.pause();
+            playing = false;
+        } else {
+            video=document.querySelector("#mvi");
+            video.play();
+            playing = true;
+        }
+    } else if (e.code === 'KeyW') {
+        video=document.querySelector("#mvi");
+        video.pause();
+        forward();
+    } else if (e.code === 'KeyS') {
+        video=document.querySelector("#mvi");
+        video.pause();
+        back();
+    } else if (e.code === 'KeyZ') {
+        video=document.querySelector("#mvi");
+        video.pause();
+        let ends = video.currentTime / 1000.0;
+        let begins = (video.currentTime - 2.5) / 1000.0;
+        let fps = 1000.0 / video.frameRate;
+        backForth(ends, begins, fps);
+    } else if (e.code === 'KeyX') {
+        video=document.querySelector("#mvi");
+        video.play();
+        stopBackForth();
+    }
+}
+
+function handleKeyup(e) {
+    if (e.code === 'KeyS') {
+        stopBack();
+        video=document.querySelector("#mvi");
+        video.pause();
+    } else if (e.code === 'KeyW') {
+        stopForward();
+        video=document.querySelector("#mvi");
+        video.pause();
+    }
+}
+
+body.addEventListener('keydown', handleKeydown);
+body.addEventListener('keyup', handleKeyup);
 
 var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
