@@ -1486,7 +1486,7 @@ let frmm=new Float64Array($H,pointc,la);
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
-eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frmm.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
+eval("if ($F==="+i+"){var $r"+i+"=t($"+i+");var $$"+$Bu+"=r($r"+i+"); frmm.set( $$"+$Bu+" );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
 }
 console.log(frmm[0][0]);
     /*
