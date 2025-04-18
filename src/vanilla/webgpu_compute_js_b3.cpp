@@ -1479,7 +1479,7 @@ r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:
 t.setConstants({nblnk:nblank$,blnk:blank$$});
 var T=false;
     
-    let frmm=new Float64Array($H,pointc,la);
+    let frmm;
 
 function M(){
 vv=document.querySelector("#mvi");
@@ -1489,11 +1489,9 @@ if(T){return;}
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
-eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";frmm.set( $$"+$Bu+" ); $Bu="+locb+";}");
+eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frmm=new Float64Array($H,pointc,la); var fmrr=r($r"+i+"); frmm.set(fmrr); var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
 }
-console.log(frmm[0]);
-console.log(frmm[0][0]);
-    /*
+
 let offset = 0;
 for (let y = 0; y < h$; y++) {
 for (let x = 0; x < h$; x++) {
@@ -1504,7 +1502,7 @@ frameBufferViewF32[offset++] = pixel[2]; // B
 frameBufferViewF32[offset++] = pixel[3]; // A
 }
 }
-*/
+
 var $bb=R(vv);
 $B.set($bb,0,sz);
 pointb=66*la;
