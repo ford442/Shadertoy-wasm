@@ -109,8 +109,16 @@ on_b.at(4,4)=1;
 return EM_TRUE;
 }
 
+EM_BOOL cnvOn(){
+if(on.at(3,3)==1){
+on_b.at(5,5)=1;
+}
+return EM_TRUE;
+}
+
 EMSCRIPTEN_BINDINGS(my_video_module) {
 emscripten::function("frmOn", &texOn);
+emscripten::function("cnvOn", &cnvOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
 emscripten::function("processCopiedDataVal", &process_copied_data_val);
 emscripten::function("get_buffer_ptr", &get_buffer_ptr);
@@ -268,6 +276,15 @@ passDesc2.occlusionQuerySet=0;
 passDesc2.timestampWrites=renderTimestampWrites;
 wrpd.at(1,1)=passDesc2;
       
+if(on_b.at(5,5)==1){
+fsm::ifstream fram(Fnm2,std::ios::binary);
+boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
+std::transform(data.begin(),data.end(),pixel_buffer.begin(),[](uint8_t val){return val/255.0f;});
+const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
+wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
+on_b.at(5,5)=0;
+}
+      
 if(on_b.at(4,4)==1){
 
 INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
@@ -416,6 +433,7 @@ return;
 void ObtainedWebGpuDeviceStart(WGpuDevice result,void *userData){
 if(on.at(0,0)==0){wd.at(0,0)=result;}
 on_b.at(4,4)=0;
+on_b.at(5,5)=0;
 on.at(3,3)=1;
 js_data_pointer.at(0,0)=0;
 fjs_data_pointer.at(0,0)=0;
