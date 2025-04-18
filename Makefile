@@ -158,14 +158,14 @@ b3_googleStreetView_dev:
 	 em++ src/video/video_google_street.cpp -c -O0 -std=c++20 -flto -fmerge-all-constants -mbulk-memory -fno-math-errno -mcpu=bleeding-edge -fstrict-vtable-pointers -fwhole-program-vtables \
 	 -ffp-contract=on \
 	 -msimd128 -mavx -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -fwasm-exceptions -ffunction-sections -fdata-sections -fvectorize -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize
-	 emcc main_google_street.o video_google_street.o -o g0003.js -mllvm -O0 -mbulk-memory -fmerge-all-constants -std=c++20 -sUSE_SDL=2 -flto \
+	 emcc main_google_street.o video_google_street.o -o g0010.js -mllvm -O0 -mbulk-memory -fmerge-all-constants -std=c++20 -sUSE_SDL=2 -flto \
 	 -fwasm-exceptions -ffunction-sections -fdata-sections -fno-math-errno -mcpu=bleeding-edge -fvectorize -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize \
 	 -msimd128 -mavx -mpclmul -msha -mavxifma -fstrict-vtable-pointers -fwhole-program-vtables \
 	 -msimd128 -mavx -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -maes -sFETCH_SUPPORT_INDEXEDDB=0 -force-vector-width=4 \
 	 -sPRECISE_F32=1 --closure 0 --closureFriendly -sWASM_BIGINT=0 -mtune=tigerlake -march=corei7-avx -DWORDS_BIGENDIAN=0 -DCPU_IS_LITTLE_ENDIAN=1 \
 	 -fwhole-program-vtables -polly -sFORCE_FILESYSTEM=1 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1400mb -sUSE_GLFW=3 -DEMMALLOC_USE_64BIT_OPS=1 \
 	 -sFULL_ES2=0 -sFULL_ES3=1 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sENVIRONMENT=web -sPRECISE_I64_MATH=2 \
-	 -sEXPORTED_FUNCTIONS='["_main","_str","_pl","_b3","_b3_egl","_nano","_clr","_r4nd","_frm"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' \
+	 -sEXPORTED_FUNCTIONS='["_main","_str","_b3","_nano","_clr"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' \
 	 --pre-js js/module.js --pre-js rSlider.js --pre-js slideOut.js --pre-js gpujsx.js --extern-post-js fluid.js --extern-post-js flui.js
 
 all: b3_video_google_llvm
