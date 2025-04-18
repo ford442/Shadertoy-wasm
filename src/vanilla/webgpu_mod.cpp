@@ -284,7 +284,7 @@ boost::container::vector<emscripten_align1_float>floatData(pixel_buffer.size());
     
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
 // std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
-std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
+std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val;});  // for RGBA32FLOAT
 
 // Eigen::VectorXf floatData(data.size());
 // for (Eigen::Index i = 0; i < data.size(); ++i) {
