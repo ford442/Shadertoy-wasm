@@ -141,8 +141,8 @@ video_resurection_webgpuc:
 video_resurection_webgpuc2:
 	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static
 	 em++ lib/lib_webgpu.cpp $(STDS) -static
-	 em++ src/video/video_jebusc2.cpp -O3 -I/content/RAMDRIVE2/b3/include/vanilla/ -c $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
-	 em++ video_jebusc2.o -O3 $(STDS) --bind -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(STDS) $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
+	 em++ src/video/video_jebusc2.cpp -O1 -I/content/RAMDRIVE2/b3/include/vanilla/ -c $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
+	 em++ video_jebusc2.o -O1 $(STDS) --bind -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(STDS) $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -sFORCE_FILESYSTEM=1 -sUSE_SDL=2 \
 	 -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
 	 -sEXPORTED_FUNCTIONS='["_main","_str","_pl","_b3"]' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF64"]' \
