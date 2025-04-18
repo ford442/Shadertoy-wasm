@@ -1466,7 +1466,7 @@ nblank$=Math.max((h$-w$)/2,0);
 la=nearestPowerOf2((((h$+(blank$$*2))*h$*4)/4)*4);
 sz=(h$*h$)/8;
 pointa=77*la;
-pointc=88*la;
+pointc=70*la;
 R.setOutput([sz]);
 for(i=0;i<65;i++){
 var j=i+1;
