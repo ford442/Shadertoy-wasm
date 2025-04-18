@@ -1482,10 +1482,10 @@ vv=document.querySelector("#mvi");
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
 t.setConstants({nblnk:nblank$,blnk:blank$$});
 if(T){return;}
+let frmm=new Float64Array($H,pointc,la);
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
-let frmm=new Float64Array($H,pointc,la);
 eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); frmm.set( r($r"+i+") );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
 }
 
