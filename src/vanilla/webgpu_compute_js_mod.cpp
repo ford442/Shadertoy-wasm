@@ -4,6 +4,193 @@ FS.mkdir('/shader');
 FS.mkdir('/video');
 let running=0;
 
+
+var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
+
+const $iwid=document.getElementById('iwid');
+var mV=document.getElementById('mvi');
+var loadV=document.getElementById('ldv');
+var $vids=[];
+
+function vids(xml){
+const vparser=new DOMParser();
+const htmlDocv=vparser.parseFromString(xml.responseText,'text/html');
+const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
+$vids[0]=preList.length;
+for(var i=1;i<preList.length;i++){
+var txxt=preList[i].href;
+
+let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
+ let lastSlashIndex = pathName.lastIndexOf('/');
+ let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
+ txxt=txxt.replace('https://noahcohn.com/','');
+ $vids[i]=basePath+'video/'+txxt;
+$vids[i]='https://noahcohn.com/video/'+txxt;
+}}
+
+function scanVideos(){
+const fxhttp=new XMLHttpRequest();
+fxhttp.onreadystatechange=function(){
+if(this.readyState==4&&this.status==200){
+vids(this);
+}};
+fxhttp.open('GET','video/',true);
+fxhttp.send();
+}
+
+const media_mode = document.querySelector('#media').value;
+
+document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
+document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
+
+if(media_mode=='vid'){
+document.getElementById('mvi').load();
+document.getElementById('ldv').load();
+}
+
+const tem=document.getElementById('tim');
+const ban=document.getElementById('menuBtn');
+const sfr=document.getElementById('slideframe');
+
+if(media_mode=='vid'){
+var adr='./intro.mp4';
+wi=1280;
+he=720;
+}
+if(media_mode=='img'){
+var adr='./bezel.jpg';
+wi=1920;
+he=1080;
+}
+var hii=window.innerHeight;
+document.getElementById('ihid').innerHTML=hii;
+r$=hii/he;
+$w=wi*r$;
+const $ihigB=document.getElementById('ihid');
+const $ihig=document.getElementById('ihig');
+$hg=hii+'px';
+$ihig.innerHTML=parseInt(window.innerHeight,10);
+$iwid.innerHTML=parseInt($w,10);
+document.getElementById('wrap').style.lineheight=$hg;
+document.getElementById('wrap').style.pointerEvents='auto';
+document.getElementById('isrc').innerHTML=adr;
+if(media_mode=='vid'){
+mV.play();
+}
+var vv=document.getElementById('mvi');
+let lockVid;
+
+function spKey(e){
+if(e.code=='Space'){
+e.preventDefault();
+if(lockVid==0){lockVid=1;};
+if(lockVid==1){lockVid=0;};
+};
+if(e.code=='KeyZ'){lockVid=1;};
+if(e.code=='KeyX'){lockVid=0;};
+}
+
+const pnnl=document.body;
+pnnl.addEventListener('keydown',spKey);
+
+function loada(){
+if(lockVid!=1){
+document.getElementById('ldv').height=window.innerHeight;
+if(media_mode=='vid'){
+mV.addEventListener('canplay',function(){
+mV.width=this.videoWidth;
+mV.height=this.videoHeight;
+});
+loadV.addEventListener('canplay',function(){
+loadV.width=this.videoWidth;
+loadV.height=this.videoHeight;
+document.getElementById('wid').innerHTML=this.videoWidth;
+document.getElementById('hig').innerHTML=this.videoHeight;
+document.getElementById('blnnk').innerHTML=Math.max((this.videoWidth-this.videoHeight)/2.0,0);
+var $sc=this.duration;
+var mic=Math.round($sc*1000000);
+$pt=Math.random()*mic;
+$pt=$pt*1000000;
+$pt=$pt/1000000;
+$pt=Math.round($pt);
+$pt=$pt/1000000;
+document.getElementById('idur').innerHTML=mic/1000000;
+document.getElementById('itim').innerHTML=$pt;
+});
+}
+if(media_mode=='img'){
+mV.addEventListener('load',function(){
+});
+loadV.addEventListener('load',function(){
+document.getElementById('wid').innerHTML=this.width;
+document.getElementById('hig').innerHTML=this.height;
+document.getElementById('blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
+});
+}
+if(media_mode=='vid'){
+var vide=document.querySelectorAll('video');
+}
+if(media_mode=='img'){
+var vide=document.querySelector('#images').querySelectorAll('img');
+}
+document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
+hii=window.innerHeight;
+document.getElementById('ihid').innerHTML=hii;
+$lt=Math.round(tem.innerHTML);
+var $ldt=document.getElementById('tim').innerHTML;
+$ls=$lt/1000;
+$ls=$ls*1000;
+$ls=Math.round($ls);
+$ls=$ls/1000;
+var rnum=Math.floor((Math.random()*($vids[0]-5))+5);
+document.getElementById('isrc').innerHTML=$vids[rnum];
+$h=window.innerHeight;
+he=document.getElementById('hig').innerHTML;
+wi=document.getElementById('wid').innerHTML;
+r$=he/$h;
+$w=wi/r$;
+hii=$ihigB.innerHTML;
+var $hi=$h-hii;
+if($hi>1){$h=$ihigB.innerHTML;$ihig.innerHTML=$h;$r=$h/he;$r=$r*1000;$r=$r/1000;$w=wi*$r;};
+$hg=$h+'px';
+window.scroll(0,0);
+mv=vide[0].id;
+lo=vide[1].id;
+vide[0].id=lo;
+vide[1].id=mv;
+if(media_mode=='vid'){
+document.getElementById('mvi').play();
+}
+$iwid.innerHTML=parseInt($w,10);
+$ihig.innerHTML=parseInt(window.innerHeight,10);  
+document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
+document.getElementById('circle').height=parseInt(window.innerHeight,10);
+document.getElementById('circle').width=parseInt(window.innerWidth,10);
+document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
+if(media_mode=='img'){
+document.getElementById('mvi').height=window.innerHeight;
+document.getElementById('ldv').height=window.innerHeight;
+}
+if(media_mode=='vid'){
+document.getElementById('ldv').load();
+document.getElementById('ldv').currentTime=document.getElementById('itim').innerHTML;
+}
+document.getElementById('ldv').height=he;
+document.getElementById('ldv').width=wi;
+document.getElementById('di').click();
+}
+setTimeout(function(){
+loada();
+},$ldt);
+}
+
+document.getElementById('startBtn').addEventListener('click',function(){
+scanVideos();
+setTimeout(function(){
+loada()},2200);
+});
+
+
 let frameBufferViewF32 = []; // The view into C++ memory
 
 function flipImageData(imageData){
@@ -135,7 +322,7 @@ OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
 const gl3=OffscCnv.getContext('2d',{
-colorType:'float64',
+colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
@@ -161,13 +348,13 @@ Module.ccall('frmsOn');
 if (running == 0) {
 setTimeout(() => {
 console.log('sending: ',keepSize,vsiz,srsiz);
-Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 running = 1;
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 }, 250);
 } else {
-Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 
 frameBufferViewF32 = Module.getPixelBufferView();
 console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
