@@ -1639,8 +1639,8 @@ var pth4=document.querySelector('#vertPath').innerHTML;
 getShader(pth2,'compute.wgsl');
 getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
-// videoStart();
-B3_Start();
+videoStart();
+// B3_Start();
 });
 
 document.querySelector('#startBtn2').addEventListener('click',function(){
