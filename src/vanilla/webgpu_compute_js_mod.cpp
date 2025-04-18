@@ -1094,12 +1094,12 @@ var pth4=document.querySelector('#vertPath').innerHTML;
 getShader(pth2,'compute.wgsl');
 getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
-videoStart();
 
 scanVideos();
 setTimeout(function(){
 loada()},2200);
-
+setTimeout(function(){
+videoStart()},4200);
 });
 
 document.querySelector('#startBtn2').addEventListener('click',function(){
