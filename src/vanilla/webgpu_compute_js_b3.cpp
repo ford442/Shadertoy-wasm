@@ -1457,6 +1457,7 @@ for (i=0;i<65;i++){
 var j=i+1;
 eval("$"+j+".set($$1);");
 }
+    
 var d=S();if(d)d();d=S();function S(){
 w$=parseInt(document.querySelector("#wid").innerHTML,10);
 h$=parseInt(document.querySelector("#hig").innerHTML,10);
@@ -1477,16 +1478,18 @@ $B=new Float64Array($H,pointb,sz);
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
 t.setConstants({nblnk:nblank$,blnk:blank$$});
 var T=false;
+    
+    let frmm=new Float64Array($H,pointc,la);
+
 function M(){
 vv=document.querySelector("#mvi");
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
 t.setConstants({nblnk:nblank$,blnk:blank$$});
 if(T){return;}
-let frmm=new Float64Array($H,pointc,la);
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
-eval("if ($F==="+i+"){var $r"+i+"=t($"+i+");var $$"+$Bu+"=r($r"+i+"); frmm.set( $$"+$Bu+" );  var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
+eval("if ($F==="+i+"){var $r"+i+"=t($"+i+"); var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";frmm.set( $$"+$Bu+" ); $Bu="+locb+";}");
 }
 console.log(frmm[0]);
 console.log(frmm[0][0]);
