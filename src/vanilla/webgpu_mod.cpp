@@ -2,8 +2,6 @@
 #include "../../src/vanilla/webgpu_compute_vars_em.cpp"
 #include <boost/filesystem/fstream.hpp>
 
-// #include <webgl/webgl2.h>
-
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 // #include "/usr/include/eigen3/Eigen/Eigen"
@@ -28,43 +26,6 @@ std::transform(cpp_copy.begin(),cpp_copy.end(),pixel_buffer.begin(),[](float val
 if(on.at(3,3)==1){
 on_b.at(4,4)=1;
 }
-}
-
-void avgFrmD(int Fnum,int leng,double *ptr,double *aptr){
-double max=0.0;
-double min=1.0;
-double sum=0.0;
-double avgSum=0.0;
-double minSum=0.0;
-double maxSum=0.0;
-for (int i=0;i<leng;i++){
-sum+=ptr[i];
-if(max<ptr[i]){max=ptr[i];}
-if(min>ptr[i]&&ptr[i]>0){min=ptr[i];}
-}
-sum=sum/leng;
-aptr[Fnum]=sum;
-aptr[Fnum+100]=min;
-aptr[Fnum+200]=max;
-for(int i=33;i<65;i++){
-avgSum+=aptr[i];
-}
-aptr[0]=avgSum/32.0;
-for(int i=33;i<65;i++){
-minSum+=aptr[i+100];
-}
-aptr[100]=minSum/32.0;
-for(int i=33;i<65;i++){
-maxSum+=aptr[i+200];
-}
-aptr[200]=maxSum/32.0;
-return;
-}
-
-void nanoD_via_offsets(int Fnum, int leng, uintptr_t ptr_offset, uintptr_t aptr_offset) {
-double* ptr = reinterpret_cast<double*>(ptr_offset);
-double* aptr = reinterpret_cast<double*>(aptr_offset);
-avgFrmD(Fnum, leng, ptr, aptr);
 }
 
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
@@ -153,8 +114,6 @@ emscripten::function("frmOn", &texOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
 emscripten::function("processCopiedDataVal", &process_copied_data_val);
 emscripten::function("get_buffer_ptr", &get_buffer_ptr);
-      emscripten::function("nanoD_unsafe", &nanoD_via_offsets);
-
 // emscripten::register_vector<float>("VectorFloat"); // Needed for vecFromJSArray
 }
 
