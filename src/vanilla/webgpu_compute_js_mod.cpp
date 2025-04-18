@@ -277,7 +277,6 @@ let fileStream=FS.open('/video/frame.gl','w');
   }
 }
 
-
 function canvasStartSize(){
 const vvic=document.querySelector('#mvi');
 const srsiz=document.querySelector('#srsiz').innerHTML;
@@ -309,13 +308,11 @@ const keepSizea = Math.max(h$, w$);
 const keepSize = Math.min(keepSizea, vsiz);
 const drawX = (keepSize - w$) / 2;
 const drawY = (keepSize - h$) / 2;
-
 console.log("canvas size: ",keepSize,", ",keepSize);
 const OffscCnv=new OffscreenCanvas(keepSize,keepSize); 
 // document.querySelector('#contain2').appendChild(OffscCnv);
 const scnv=document.querySelector('#scanvas');
 const bcnv=document.querySelector('#bcanvas');
-    
 scnv.height=SiZ;
 OffscCnv.height=keepSize;
 bcnv.height=keepSize;
@@ -337,8 +334,6 @@ powerPreference:"high-performance",
 premultipliedAlpha:true,
 preserveDrawingBuffer:false
 });
-
-
 document.querySelector('#moveFwdb').addEventListener('click',function(){
 Module.ccall('frmsOff');
 console.log('stopping frames for move');
@@ -349,8 +344,6 @@ Module.ccall('frmsOn');
 // console.log('restarting frames for move');
 }, 1900);
 });
-
-
 // gl3.imageSmoothingEnabled=false;
 const fileStream=FS.open('/video/frame.gl','w');
 function drawFrame() {
@@ -362,7 +355,7 @@ const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-Module.frmOn();
+Module.cnvOn();
 }
 if (running == 0) {
 setTimeout(() => {
