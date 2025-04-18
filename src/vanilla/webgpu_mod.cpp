@@ -8,7 +8,7 @@
 
 namespace fsm = boost::filesystem;
 
-std::vector<float> pixel_buffer;
+boost::container::vector<emscripten_align1_float> pixel_buffer;
 
 emscripten::val getPixelBufferView() {
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
@@ -19,7 +19,7 @@ return reinterpret_cast<uintptr_t>(pixel_buffer.data());
 }
 
 void process_copied_data_val(emscripten::val js_typed_array_val) {
-std::vector<float> cpp_copy = emscripten::vecFromJSArray<float>(js_typed_array_val);
+std::vector<emscripten_align1_float> cpp_copy = emscripten::vecFromJSArray<emscripten_align1_float>(js_typed_array_val);
 size_t num_elements = (size_t)cpp_copy.size();
 pixel_buffer.resize(num_elements);
 std::transform(cpp_copy.begin(),cpp_copy.end(),pixel_buffer.begin(),[](float val){return val;});
@@ -280,11 +280,11 @@ wtv.at(6,6)=INVTextureView;
 
   // boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
 // boost::container::vector<emscripten_align1_float>floatData(data.size());
-boost::container::vector<emscripten_align1_float>floatData(pixel_buffer.size());
+// boost::container::vector<emscripten_align1_float>floatData(pixel_buffer.size());
     
 // std::vector<float> outputData(data.size()); // Pre-allocate output data
 // std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
-std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val;});  // for RGBA32FLOAT
+// std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
 
 // Eigen::VectorXf floatData(data.size());
 // for (Eigen::Index i = 0; i < data.size(); ++i) {
@@ -308,7 +308,7 @@ const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 // frame_tensorGL.at(0,0)=data;
 // wetd.at(0,0).source=texid.at(0,0);
 //   wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),&frame_tensor.at(0,0),bytesPerRow,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),floatData.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
+wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
 
 /*    //  highway way
 const HWY_FULL(uint8_t) d;
