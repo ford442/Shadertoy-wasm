@@ -329,7 +329,7 @@ attr.alpha=EM_TRUE;
 attr.stencil=EM_TRUE;
 attr.depth=EM_TRUE;
 attr.antialias=EM_TRUE;
-attr.premultipliedAlpha=EM_TRUE;
+attr.premultipliedAlpha=EM_FALSE;
 attr.preserveDrawingBuffer=EM_FALSE;
 attr.enableExtensionsByDefault=EM_FALSE;
 attr.renderViaOffscreenBackBuffer=EM_FALSE;
@@ -559,7 +559,7 @@ attr_js.alpha=EM_TRUE;
 attr_js.stencil=EM_TRUE;
 attr_js.depth=EM_TRUE;
 attr_js.antialias=EM_TRUE;
-attr_js.premultipliedAlpha=EM_TRUE;
+attr_js.premultipliedAlpha=EM_FALSE;
 attr_js.preserveDrawingBuffer=EM_FALSE;
 attr_js.enableExtensionsByDefault=EM_FALSE;
 attr_js.renderViaOffscreenBackBuffer=EM_FALSE;
@@ -801,7 +801,7 @@ stencil:true,
 // imageSmoothingEnabled:false,
 // imageSmoothingQuality:'medium',
 preserveDrawingBuffer:false,
-premultipliedAlpha:true,
+premultipliedAlpha:false,
 desynchronized:false,
 lowLatency:true,
 powerPreference:'high-performance',
