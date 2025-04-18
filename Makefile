@@ -63,13 +63,13 @@ b3_video_google_llvm:
 
 
 b3_video_google_llvm2:
-	 em++ src/video/main_google_street.cpp -c -std=c++20 -fno-math-errno -O0 \
+	 em++ src/video/main_google_street.cpp -c -std=c++20 -fno-math-errno -O0 -fwasm-exceptions \
 	 -msimd128 -mavx -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 \
 	 -fwasm-exceptions -ffunction-sections -fdata-sections -ffp-contract=on -mcpu=bleeding-edge
-	 em++ src/video/video_google_street.cpp -c -std=c++20 -fno-math-errno -O0 \
+	 em++ src/video/video_google_street.cpp -c -std=c++20 -fno-math-errno -O0 -fwasm-exceptions \
 	 -mcpu=bleeding-edge -fwasm-exceptions -ffunction-sections -fdata-sections -ffp-contract=off \
 	 -msimd128 -mavx -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2
-	 emcc main_google_street.o video_google_street.o -o g0010.js -mllvm -flto -std=c++20 -fno-math-errno -O0 -fno-rtti \
+	 emcc main_google_street.o video_google_street.o -o g0010.js -mllvm -flto -fwasm-exceptions -std=c++20 -fno-math-errno -O0 -fno-rtti \
 	 -fwhole-program-vtables -polly -DWORDS_BIGENDIAN=0 -DCPU_IS_LITTLE_ENDIAN=1 \
 	 -sTEXTDECODER=1 -sGL_MAX_TEMP_BUFFER_SIZE=4096mb \
 	 -msimd128 -mavx -mpclmul -maes -mavx2 -msha -mfma -mbmi2 -mpopcnt -mcx16 -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 \
