@@ -1,125 +1,15 @@
-
 EM_JS(void,js_main,(),{
 
 FS.mkdir('/shader');
 FS.mkdir('/video');
 let running=0;
 
-const body = document.body;
-var video = document.querySelector("#mvi");
-var intervalBackward;
-var intervalForward;
-var intervalLoop;
 
-function back() {
-clearInterval(intervalBackward);
-intervalBackward = requestAnimationFrame(function loop() {
-if (video.currentTime <= 0) {
-cancelAnimationFrame(intervalBackward);
-} else {
-video.currentTime -= 0.032;
-intervalBackward = requestAnimationFrame(loop);
-}
-});
-}
+var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
-function forward() {
-clearInterval(intervalForward);
-intervalForward = requestAnimationFrame(function loop() {
-video.currentTime += 0.032;
-intervalForward = requestAnimationFrame(loop);
-});
-}
-
-function backForth(stp, strt, rate) {
-var f = true;
-clearInterval(intervalLoop);
-intervalLoop = requestAnimationFrame(function loop() {
-if (f) {
-if (video.currentTime >= strt * 1000.0) {
-video.currentTime -= 0.016;
-} else {
-video.currentTime = strt * 1000.0;
-f = false;
-}
-} else if (video.currentTime <= stp * 1000.0) {
-video.currentTime += 0.016;
-} else {
-video.currentTime = stp * 1000.0;
-f = true;
-}
-setTimeout(() => requestAnimationFrame(loop), rate);
-});
-}
-
-function stopForward() {
-clearInterval(intervalForward);
-}
-
-function stopBack() {
-clearInterval(intervalBackward);
-}
-
-function stopBackForth() {
-clearInterval(intervalLoop);
-}
-
-let playing = true;
-
-function handleKeydown(e) {
-e.preventDefault();
-if (e.code === 'Space') {
-if (playing) {
-video=document.querySelector("#mvi");
-video.pause();
-playing = false;
-} else {
-video=document.querySelector("#mvi");
-video.play();
-playing = true;
-}
-} else if (e.code === 'KeyW') {
-video=document.querySelector("#mvi");
-video.pause();
-forward();
-} else if (e.code === 'KeyS') {
-video=document.querySelector("#mvi");
-video.pause();
-back();
-} else if (e.code === 'KeyZ') {
-video=document.querySelector("#mvi");
-video.pause();
-let ends = video.currentTime / 1000.0;
-let begins = (video.currentTime - 2.5) / 1000.0;
-let fps = 1000.0 / video.frameRate;
-backForth(ends, begins, fps);
-} else if (e.code === 'KeyX') {
-video=document.querySelector("#mvi");
-video.play();
-stopBackForth();
-}
-}
-
-function handleKeyup(e) {
-if (e.code === 'KeyS') {
-stopBack();
-video=document.querySelector("#mvi");
-video.pause();
-} else if (e.code === 'KeyW') {
-stopForward();
-video=document.querySelector("#mvi");
-video.pause();
-}
-}
-
-body.addEventListener('keydown', handleKeydown);
-body.addEventListener('keyup', handleKeyup);
-
-let $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
-
-const $iwid=document.querySelector('#iwid');
-var mV=document.querySelector('#mvi');
-var loadV=document.querySelector('#ldv');
+const $iwid=document.getElementById('iwid');
+var mV=document.getElementById('mvi');
+var loadV=document.getElementById('ldv');
 var $vids=[];
 
 function vids(xml){
@@ -129,11 +19,12 @@ const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
 $vids[0]=preList.length;
 for(var i=1;i<preList.length;i++){
 var txxt=preList[i].href;
+
 let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
-let lastSlashIndex = pathName.lastIndexOf('/');
-let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
-txxt=txxt.replace('https://noahcohn.com/','');
-$vids[i]=basePath+'video/'+txxt;
+ let lastSlashIndex = pathName.lastIndexOf('/');
+ let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
+ txxt=txxt.replace('https://noahcohn.com/','');
+ $vids[i]=basePath+'video/'+txxt;
 $vids[i]='https://noahcohn.com/video/'+txxt;
 }}
 
@@ -149,17 +40,17 @@ fxhttp.send();
 
 const media_mode = document.querySelector('#media').value;
 
-document.querySelector('#pmhig').innerHTML=parseInt(window.innerHeight,10);
-document.querySelector('#ihig').innerHTML=parseInt(window.innerHeight,10);
+document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
+document.getElementById('ihig').innerHTML=parseInt(window.innerHeight,10);
 
 if(media_mode=='vid'){
-document.querySelector('#mvi').load();
-document.querySelector('#ldv').load();
+document.getElementById('mvi').load();
+document.getElementById('ldv').load();
 }
 
-const tem=document.querySelector('#tim');
-const ban=document.querySelector('#menuBtn');
-const sfr=document.querySelector('#slideframe');
+const tem=document.getElementById('tim');
+const ban=document.getElementById('menuBtn');
+const sfr=document.getElementById('slideframe');
 
 if(media_mode=='vid'){
 var adr='./intro.mp4';
@@ -171,23 +62,22 @@ var adr='./bezel.jpg';
 wi=1920;
 he=1080;
 }
-
 var hii=window.innerHeight;
-document.querySelector('#ihid').innerHTML=hii;
+document.getElementById('ihid').innerHTML=hii;
 r$=hii/he;
 $w=wi*r$;
-const $ihigB=document.querySelector('#ihid');
-const $ihig=document.querySelector('#ihig');
+const $ihigB=document.getElementById('ihid');
+const $ihig=document.getElementById('ihig');
 $hg=hii+'px';
 $ihig.innerHTML=parseInt(window.innerHeight,10);
 $iwid.innerHTML=parseInt($w,10);
-document.querySelector('#wrap').style.lineheight=$hg;
-document.querySelector('#wrap').style.pointerEvents='auto';
-document.querySelector('#isrc').innerHTML=adr;
+document.getElementById('wrap').style.lineheight=$hg;
+document.getElementById('wrap').style.pointerEvents='auto';
+document.getElementById('isrc').innerHTML=adr;
 if(media_mode=='vid'){
 mV.play();
 }
-var vv=document.querySelector('#mvi');
+var vv=document.getElementById('mvi');
 let lockVid;
 
 function spKey(e){
@@ -205,10 +95,7 @@ pnnl.addEventListener('keydown',spKey);
 
 function loada(){
 if(lockVid!=1){
-// document.querySelector('#ldv').style.height=window.innerHeight+'px';
-// document.querySelector('#ldv').style.width='auto';
-// document.querySelector('#mvi').style.height=window.innerHeight+'px';
-// document.querySelector('#mvi').style.width='auto';
+document.getElementById('ldv').height=window.innerHeight;
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
 mV.width=this.videoWidth;
@@ -217,9 +104,9 @@ mV.height=this.videoHeight;
 loadV.addEventListener('canplay',function(){
 loadV.width=this.videoWidth;
 loadV.height=this.videoHeight;
-document.querySelector('#wid').innerHTML=this.videoWidth;
-document.querySelector('#hig').innerHTML=this.videoHeight;
-document.querySelector('#blnnk').innerHTML=Math.max((this.videoWidth-this.videoHeight)/2.0,0);
+document.getElementById('wid').innerHTML=this.videoWidth;
+document.getElementById('hig').innerHTML=this.videoHeight;
+document.getElementById('blnnk').innerHTML=Math.max((this.videoWidth-this.videoHeight)/2.0,0);
 var $sc=this.duration;
 var mic=Math.round($sc*1000000);
 $pt=Math.random()*mic;
@@ -227,17 +114,17 @@ $pt=$pt*1000000;
 $pt=$pt/1000000;
 $pt=Math.round($pt);
 $pt=$pt/1000000;
-document.querySelector('#idur').innerHTML=mic/1000000;
-document.querySelector('#itim').innerHTML=$pt;
+document.getElementById('idur').innerHTML=mic/1000000;
+document.getElementById('itim').innerHTML=$pt;
 });
 }
 if(media_mode=='img'){
 mV.addEventListener('load',function(){
 });
 loadV.addEventListener('load',function(){
-document.querySelector('#wid').innerHTML=this.videoWidth;
-document.querySelector('#hig').innerHTML=this.videoHeight;
-document.querySelector('#blnnk').innerHTML=Math.max((this.videoWidth-this.videoHeight)/2.0,0);
+document.getElementById('wid').innerHTML=this.width;
+document.getElementById('hig').innerHTML=this.height;
+document.getElementById('blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
 });
 }
 if(media_mode=='vid'){
@@ -246,20 +133,20 @@ var vide=document.querySelectorAll('video');
 if(media_mode=='img'){
 var vide=document.querySelector('#images').querySelectorAll('img');
 }
-document.querySelector('#pmhig').innerHTML=parseInt(window.innerHeight,10);
+document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 hii=window.innerHeight;
-document.querySelector('#ihid').innerHTML=hii;
+document.getElementById('ihid').innerHTML=hii;
 $lt=Math.round(tem.innerHTML);
-var $ldt=document.querySelector('#tim').innerHTML;
+var $ldt=document.getElementById('tim').innerHTML;
 $ls=$lt/1000;
 $ls=$ls*1000;
 $ls=Math.round($ls);
 $ls=$ls/1000;
 var rnum=Math.floor((Math.random()*($vids[0]-5))+5);
-document.querySelector('#isrc').innerHTML=$vids[rnum];
+document.getElementById('isrc').innerHTML=$vids[rnum];
 $h=window.innerHeight;
-he=document.querySelector('#hig').innerHTML;
-wi=document.querySelector('#wid').innerHTML;
+he=document.getElementById('hig').innerHTML;
+wi=document.getElementById('wid').innerHTML;
 r$=he/$h;
 $w=wi/r$;
 hii=$ihigB.innerHTML;
@@ -272,32 +159,32 @@ lo=vide[1].id;
 vide[0].id=lo;
 vide[1].id=mv;
 if(media_mode=='vid'){
-document.querySelector('#mvi').play();
+document.getElementById('mvi').play();
 }
 $iwid.innerHTML=parseInt($w,10);
 $ihig.innerHTML=parseInt(window.innerHeight,10);  
-document.querySelector('#pmhig').innerHTML=parseInt(window.innerHeight,10);
-document.querySelector('#circle').height=parseInt(window.innerHeight,10);
-document.querySelector('#circle').width=parseInt(window.innerWidth,10);
-document.querySelector('#ldv').src=document.querySelector('#isrc').innerHTML;
-document.querySelector('#mvi').height=window.innerHeight;
-document.querySelector('#ldv').height=window.innerHeight;
+document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
+document.getElementById('circle').height=parseInt(window.innerHeight,10);
+document.getElementById('circle').width=parseInt(window.innerWidth,10);
+document.getElementById('ldv').src=document.getElementById('isrc').innerHTML;
 if(media_mode=='img'){
-document.querySelector('#mvi').height=window.innerHeight;
-document.querySelector('#ldv').height=window.innerHeight;
+document.getElementById('mvi').height=window.innerHeight;
+document.getElementById('ldv').height=window.innerHeight;
 }
 if(media_mode=='vid'){
-document.querySelector('#ldv').load();
-document.querySelector('#ldv').currentTime=document.querySelector('#itim').innerHTML;
+document.getElementById('ldv').load();
+document.getElementById('ldv').currentTime=document.getElementById('itim').innerHTML;
 }
-document.querySelector('#di').click();
+document.getElementById('ldv').height=he;
+document.getElementById('ldv').width=wi;
+document.getElementById('di').click();
 }
 setTimeout(function(){
 loada();
 },$ldt);
 }
 
-document.querySelector('#startBtn').addEventListener('click',function(){
+document.getElementById('startBtn').addEventListener('click',function(){
 scanVideos();
 setTimeout(function(){
 loada()},2200);
@@ -1013,524 +900,6 @@ Module.frmOn();
 },16.666);
 }
 
-
-
-function B3_Start(){
-let frameBufferViewF32 = [];
-const vvi=document.querySelector('#mvi');
-let vw$=vvi.videoWidth;
-let vh$=vvi.videoHeight;
-let SiZ=window.innerHeight;
-vvi.height=vh$;
-vvi.width=vw$;
-let srsiz=document.querySelector('#srsiz').innerHTML;
-let vsiz=document.querySelector('#vsiz').innerHTML;
-if(running==0){
-setTimeout(function(){
-Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
-console.log('Starting..');
-frameBufferViewF32 = Module.getPixelBufferView();
-running=1;
-},250);
-}else{
-setTimeout(function(){
-Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
-console.log('Starting..');
-frameBufferViewF32 = Module.getPixelBufferView();
-},250);
-}
-
-let w$=parseInt(document.querySelector("#wid").innerHTML,10);
-let h$=parseInt(document.querySelector("#hig").innerHTML,10);
-let blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
-let ch$=parseInt(window.innerHeight,10);
-let vv=document.querySelector("#mvi");
-let $H=Module.HEAPF64.buffer;
-
-function nearestPowerOf2(n){
-if(n&(n-1)){
-return Math.pow(2,Math.ceil(Math.log2(n)));
-}else{
-return n;
-}
-}
-
-let la=nearestPowerOf2((((h$+(blank$$*2))*h$*4)/4)*4);
-let pointa=77*la;
-const agav=new Float64Array($H,pointa,300);
-let sz=(h$*h$)/8;
-let blank$=Math.max((w$-h$)/4,0);
-let nblank$=Math.max((h$-w$)/2,0);
-var avag=0.750;
-var min=1.0;
-var max=0.0;
-agav.fill(avag,0,33);
-agav.fill(min,100,33);
-agav.fill(max,200,33);
-const bcanvas=document.querySelector("#bcanvas");
-const scanvas=document.querySelector("#scanvas");
-bcanvas.height=window.innerHeight;
-bcanvas.width=window.innerWidth;
-scanvas.height=window.innerHeight;
-scanvas.width=window.innerWidth;
-const contx=bcanvas.getContext("webgl2",{colorType:'float64',precision:'highp',colorSpace:'display-p3',alpha:true,depth:true,stencil:true,preserveDrawingBuffer:false,premultipliedAlpha:false,desynchronized:false,lowLatency:false,powerPreference:'high-performance',antialias:true,willReadFrequently:false});
-/*  new ext list
-contx.getExtension('ARB_robust_buffer_access_behavior');
-// contx.getExtension('ARB_ES3_compatibility');
-// contx.getExtension('GL_EXTENSIONS');
-// contx.getExtension('GL_ALL_EXTENSIONS');
-// contx.getExtension('KHR_no_error');
-// contx.getExtension('GL_REGAL_enable');
-// contx.getExtension('OES_fragment_precision_high'); // deprecated
-contx.getExtension('EGL_EXT_client_extensions');
-contx.getExtension('EGL_ANGLE_platform_angle');
-contx.getExtension('EXT_color_buffer_float'); // GLES float
-contx.getExtension('EXT_color_buffer_half_float'); // GLES half-float
-contx.getExtension('EXT_float_blend'); // GLES float
-contx.getExtension('OES_blend_equation_separate');
-contx.getExtension('OES_blend_func_separate');
-contx.getExtension('OES_blend_subtract');
-// contx.getExtension('ARB_texture_float'); // OpenGL 1.5/2.0
-contx.getExtension('OES_texture_float');
-// contx.getExtension('ARB_compatibility');
-// contx.getExtension('ARB_texture_half_float'); // OpenGL 1.5/2.0
-contx.getExtension('OES_texture_half_float');
-contx.getExtension('OES_element_index_uint');
-contx.getExtension('OES_shader_multisample_interpolation');
-contx.getExtension('ARB_framebuffer_object');
-contx.getExtension('ARB_framebuffer_sRGB');
-contx.getExtension('NV_half_float');
-contx.getExtension('ARB_fragment_program');
-contx.getExtension('NV_fragment_program_option');
-contx.getExtension('NV_fragment_program');
-contx.getExtension('NV_fragment_program2');
-contx.getExtension('NV_float_buffer');
-contx.getExtension('ARB_gl_spirv');
-contx.getExtension('ARB_spirv_extensions');
-contx.getExtension('EXT_polygon_offset_clamp');
-contx.getExtension('ARB_shader_atomic_counters');
-contx.getExtension('ARB_shader_atomic_counter_ops');
-contx.getExtension('EGL_NV_coverage_sample');
-contx.getExtension('EGL_NV_coverage_sample_resolve');
-contx.getExtension('EGL_NV_quadruple_buffer');
-contx.getExtension('ARB_depth_buffer_float');
-contx.getExtension('NV_depth_buffer_float');
-// contx.getExtension('ARB_color_buffer_float'); // non-ES
-// contx.getExtension('ARB_color_buffer_half_float'); // non-ES
-contx.getExtension('OES_sample_shading');
-contx.getExtension('OES_sample_variables');
-contx.getExtension('OES_get_program_binary');
-contx.getExtension('OES_texture_external');
-contx.getExtension('OES_vertex_half_float');
-contx.getExtension('EGL_IMG_context_priority');
-contx.getExtension('EXT_texture_filter_anisotropic');
-contx.getExtension('EGL_NV_context_priority_realtime');
-contx.getExtension('EGL_NV_depth_nonlinear');
-contx.getExtension('EGL_HI_colorformats');
-contx.getExtension('EGL_EXT_pixel_format_float');
-contx.getExtension('EGL_KHR_gl_colorspace');
-contx.getExtension('EGL_KHR_create_context');
-// contx.getExtension('ARB_robustness'); // OpenGL 1.1
-// contx.getExtension('KHR_robustness'); // upgraded by gl4.5 to es31
-// contx.getExtension('EXT_robustness'); // old GLES 1.1/2.0
-contx.getExtension('EGL_EXT_create_context_robustness');
-contx.getExtension('EGL_EXT_gl_colorspace_scrgb');
-contx.getExtension('EGL_EXT_gl_colorspace_scrgb_linear');
-// contx.getExtension('EGL_EXT_gl_colorspace_bt2020_pq');
-// contx.getExtension('EGL_EXT_gl_colorspace_display_p3');
-// contx.getExtension('EGL_EXT_gl_colorspace_display_p3_linear');
-// contx.getExtension('EXT_gl_colorspace_display_p3_passthrough');
-// contx.getExtension('EGL_EXT_gl_colorspace_bt2020_linear');
-contx.getExtension('NV_gpu_shader4');
-contx.getExtension('NV_gpu_shader5');
-contx.getExtension('NV_vertex_buffer_unified_memory');
-contx.getExtension('NV_gpu_program5');
-contx.getExtension('NV_vertex_attrib_integer_64bit');
-contx.getExtension('ARB_gpu_shader_fp64');
-contx.getExtension('EXT_vertex_attrib_64bit');
-contx.getExtension('EXT_sRGB_write_control');
-// contx.getExtension('EXT_multisample_compatibility');
-contx.getExtension('NV_framebuffer_multisample');
-contx.getExtension('ARB_enhanced_layouts');
-contx.getExtension('ARB_shading_language_420pack');
-// contx.getExtension('ARB_get_program_binary'); // OpenGL 3.0 / 3.2 compat
-contx.getExtension('ARB_shader_atomic_counters');
-contx.getExtension('EXT_bindable_uniform');
-// contx.getExtension('EXT_geometry_shader4');
-// contx.getExtension('ARB_ES2_compatibility'); // limits to OpenGL ES 2.0?
-contx.getExtension('ARB_direct_state_access');
-contx.getExtension('ARB_multitexture');
-// contx.getExtension('KHR_color_buffer_half_float');
-contx.getExtension('EXT_texture_norm16');
-contx.getExtension('EGL_ANGLE_create_context_extensions_enabled');
-contx.getExtension('EGL_ANGLE_d3d_texture_client_buffer');
-contx.getExtension('EGL_ANGLE_direct3d_display');
-// contx.getExtension('EGL_ANGLE_robust_resource_initialization');
-contx.getExtension('EGL_KHR_create_context_no_error');
-contx.getExtension('EGL_ANGLE_program_cache_control');
-contx.getExtension('EGL_ANGLE_create_context_client_arrays');
-contx.getExtension('EGL_CHROMIUM_create_context_bind_generates_resource');
-contx.getExtension('WEBGL_multi_draw');
-// contx.getExtension('WEBGL_color_buffer_float');
-contx.getExtension('WEBGL_render_shared_exponent');
-contx.getExtension('EGL_EXT_device_base');
-contx.getExtension('EGL_EXT_device_query');
-contx.getExtension('EGL_EXT_output_base');
-contx.getExtension('EGL_EXT_platform_base');
-contx.getExtension('EGL_EXT_platform_device');
-contx.getExtension('EGL_EXT_swap_buffers_with_damage');
-contx.getExtension('EGL_NV_cuda_event');
-contx.getExtension('EGL_NV_device_cuda');
-// contx.getExtension('EGL_NV_robustness_video_memory_purge');
-contx.getExtension('ARB_texture_view');
-contx.getExtension('EXT_float_32_packed_float');
-contx.getExtension('EGL_KHR_wait_sync');
-contx.getExtension('EGL_ANDROID_image_native_buffer');
-contx.getExtension('EGL_ANDROID_recordable');
-contx.getExtension('EGL_ANDROID_framebuffer_target');
-contx.getExtension('EGL_ANDROID_blob_cache');
-contx.getExtension('EGL_KHR_fence_sync');
-contx.getExtension('EGL_ANDROID_native_fence_sync');
-contx.getExtension('EGL_KHR_image');
-// contx.getExtension('EGL_KHR_image_base');
-contx.getExtension('OES_EGL_image_external');
-contx.getExtension('OES_EGL_image_external_essl3');
-contx.getExtension('EXT_YUV_target');
-// contx.getExtension('ARB_texture_rgb10_a2ui');
-// contx.getExtension('ARB_texture_multisample');
-contx.getExtension('EGL_EXT_surface_SMPTE2086_metadata');
-//  contx.getExtension('ARB_texture_storage'); //  NEW 4.2??
-contx.getExtension('ARB_multisample_texture');
-contx.getExtension('ARB_texture_cube_map_array');
-contx.getExtension('ARB_texture_buffer_object');
-contx.getExtension('ARB_texture_view');
-contx.getExtension('ARB_shader_storage_buffer_object');
-contx.getExtension('ARB_compute_shader');
-contx.getExtension('ARB_tessellation_shader');
-contx.getExtension('ARB_draw_elements_base_vertex');
-contx.getExtension('ARB_provoking_vertex');
-contx.getExtension('ARB_seamless_cube_map_per_texture');
-contx.getExtension('ARB_texture_compression_rgtc');
-contx.getExtension('ARB_texture_compression_bptc');
-contx.getExtension('ARB_texture_compression_astc');
-contx.getExtension('ARB_texture_filter_minmax');
-contx.getExtension('ARB_depth_texture');
-//  contx.getExtension('ARB_multisample'); // OLD 2001!!
-contx.getExtension('ARB_framebuffer_multisample');
-//  contx.getExtension('ARB_shader_objects'); // OLD 2004!!
-contx.getExtension('OES_vertex_array_object');
-contx.getExtension('WEBGL_compressed_texture_s3tc');
-contx.getExtension('WEBGL_compressed_texture_etc');
-contx.getExtension('EXT_blend_func_extended');
-contx.getExtension('EGL_KHR_swap_behavior');
-contx.getExtension('EXT_sRGB');
-contx.getExtension('EXT_texture_sRGB');
-contx.getExtension('ARB_buffer_storage');
-contx.getExtension('ARB_enhanced_multisample_interpolation');
-contx.getExtension('ARB_texture_storage_multisample');
-contx.getExtension('EXT_texture_lod_bias');
-contx.getExtension('ARB_shader_image_load_store');
-contx.getExtension('ARB_shader_bit_arithmetic');
-contx.getExtension('ARB_shader_texture_adodge');
-contx.getExtension('ARB_shader_texture_lod');
-contx.getExtension('ARB_shader_subroutine');
-contx.getExtension('EGL_EXT_buffer_age');
-contx.getExtension('EGL_EXT_multisample_swap_control');
-contx.getExtension('EGL_EXT_texture_format_2D_lock');
-contx.getExtension('EGL_EXT_texture_share_group');
-contx.getExtension('EGL_EXT_texture_surface');
-contx.getExtension('ARB_texture_filter_minmax_hq');
-contx.getExtension('EXT_texture_compression_astc');
-contx.getExtension('ARB_texture_gather');
-contx.getExtension('EXT_texture_buffer');
-contx.getExtension('EGL_EXT_swap_request');
-contx.getExtension('EGL_EXT_image_transform');
-contx.getExtension('EGL_EXT_surface_orientation');
-contx.getExtension('EGL_EXT_surface_pixel_format_float');
-contx.getExtension('EGL_EXT_create_surface_with_modifiers');
-contx.getExtension('ARB_pipeline_statistics_query');
-contx.getExtension('ARB_occlusion_query2');
-contx.getExtension('ARB_timer_query');
-contx.getExtension('ARB_transform_feedback3');
-contx.getExtension('EXT_shader_framebuffer_fetch_nonms');
-contx.getExtension('EGL_EXT_swap_buffers_with_damage');
-contx.getExtension('EGL_EXT_create_context_with_modifiers');
-contx.getExtension('EGL_EXT_request_priority');
-contx.getExtension('EGL_EXT_create_surface_from_window');
-contx.getExtension('EGL_EXT_surface_attachment');
-contx.getExtension('EXT_texture_storage');
- // 'new' ext list
-
-//  'old' ext list
-gl.getExtension('WEBGL_color_buffer_float');
-gl.getExtension('WEBGL_color_buffer_half_float');
-gl.getExtension('GL_OES_texture_float_linear');
-gl.getExtension('GL_OES_texture_half_float_linear');
-gl.getExtension('GL_EXT_float_blend');
-gl.getExtension('GL_EXT_frag_depth');
-gl.getExtension('GL_EXT_shader_texture_lod');
-gl.getExtension('GL_EXT_sRGB');
-gl.getExtension('GL_EXT_blend_minmax');
-gl.getExtension('ANGLE_instanced_arrays');
-// gl.getExtension('EXT_disjoint_timer_query');
-gl.getExtension('GL_EXT_clip_cull_distance');
-// gl.getExtension('EXT_disjoint_timer_query_webgl2');
-gl.getExtension('KHR_parallel_shader_compile');
-gl.getExtension('GL_OES_draw_buffers_indexed');
-gl.getExtension('GL_OES_element_index_uint');
-gl.getExtension('GL_OES_fbo_render_mipmap');
-gl.getExtension('GL_OES_standard_derivatives');
-gl.getExtension('GL_OES_vertex_array_object');
-gl.getExtension('WEBGL_blend_equation_advanced_coherent');
-gl.getExtension('WEBGL_depth_texture');
-gl.getExtension('WEBGL_draw_buffers');
-gl.getExtension('WEBGL_provoking_vertex');
-gl.getExtension('EXT_framebuffer_sRGB');
-gl.getExtension('OES_depth32');
-gl.getExtension('GL_OES_fixed_point');
-gl.getExtension('GL_OES_shader_multisample_interpolation');
-gl.getExtension('WEBGL_webcodecs_video_frame');
-gl.getExtension('GL_OES_single_precision');
-// gl.getExtension('GL_EXT_texture_shadow_lod');
-gl.getExtension('EGL_NV_memory_attachment');
-gl.getExtension('EGL_NV_depth_nonlinear');
-gl.getExtension('EGL_EXT_gl_colorspace_display_p3');
-gl.getExtension('EGL_EXT_gl_colorspace_display_p3_linear');
-gl.getExtension('EGL_EXT_gl_colorspace_bt2020_linear');
-gl.getExtension('GL_ARB_multisample');
-
-contx.hint(gl.FRAGMENT_SHADER_DERIVATIVE_HINT,gl.NICEST);
-contx.hint(gl.GENERATE_MIPMAP_HINT,gl.NICEST);
-// contx.blendColor(1.0,1.0,1.0,1.0);
-// contx.blendColor(1.0,1.0,1.0,0.0);
-// contx.blendColor(0.0,0.0,0.0,1.0);
-// contx.blendColor(0.0,0.0,0.0,0.0);
- // contx.blendColor(0.0,0.0,0.0,0.5);
-  // contx.blendColor(1.0,1.0,1.0,1.0);
-contx.blendFuncSeparate(gl.DST_COLOR,gl.SRC_COLOR,gl.SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-// contx.blendEquationSeparate(gl.FUNC_SUBTRACT,gl.MAX);
-  // contx.blendFuncSeparate(gl.DST_COLOR,gl.SRC_COLOR,gl.ONE_MINUS_SRC_ALPHA,gl.ONE_MINUS_SRC_ALPHA);
-// contx.blendEquationSeparate(gl.FUNC_ADD,gl.MAX);
-contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_SUBTRACT);
-// contx.blendEquationSeparate(gl.FUNC_ADD,gl.FUNC_REVERSE_SUBTRACT);
-contx.disable(gl.DITHER);
-// contx.drawingBufferColorMetadata={mode:'extended'};
-// contx.drawingBufferColorSpace='display-p3';
-*/
-
-const g=new GPUX({canvas:bcanvas,context:contx});
-const g2=new GPUX();
-const glslAve=`float Ave(float a,float b,float c){return(a+b+c)/3.0;}`;
-const glslSilver=`float Silver(float a){return((a+0.75+0.75+((a+0.75)/2.0))/4.0);}`;
-const glslGoldR=`float GoldR(float a){return((a+0.831+0.831+0.831+((a+0.831)/2.0))/5.0);}`;
-const glslGoldG=`float GoldG(float a){return((a+0.686+0.686+0.686+((a+0.686)/2.0))/5.0);}`;
-const glslGoldB=`float GoldB(float a){return((a+0.215+0.215+0.215+((a+0.215)/2.0))/5.0);}`;
-
-const glslAlphe1=`float AlpheV1(float a,float b,float c,float d,float e,float f,float g){return((0.7+(3.0*((1.0-b)-(((((1.0-f)-(a)+b)*1.5)/2.0)+((f-0.5)*((1.0-f)*0.25))-((0.5-f)*(f*0.25))-((g-e)*((1.0-g)*0.1))))))/4.0);}`;
-// const glslAlphe1=`float AlpheV1(float a,float b,float c,float d,float e,float f,float g){return((0.7+(3.0*((1.0-b)-(((((1.0-f)-(a)+b)*1.5)/2.0)+((f-0.5)*((1.0-f)*0.25))-((0.5-f)*(f*0.25))-((g-e)*((1.0-g)*0.1))))))/3.0);}`;
-// const glslAlphe1=`float AlpheV1(float a,float b,float c,float d,float e,float f,float g){return((g+(3.0*((1.0-b)-(((((1.0-f)-(a)+b)*1.5)/2.0)+((f-0.5)*((1.0-f)*0.25))-((0.5-f)*(f*0.25))-((g-f)*((1.0-g)*0.1))))))/4.0);}`;
-// const glslAlphe1=`float AlpheV1(float a,float b,float c,float d,float e,float f,float g){return((g+(3.0*((1.0-b)-(((((1.0-f)-(a)+b)*1.5)/2.0)+((f-0.5)*((1.0-f)*0.25))-((0.5-f)*(f*0.25))-((g-f)*((1.0-g)*0.1))))))/3.0);}`;
-
-const glslAlphe2=`float AlpheV2(float a,float b,float f,float g){return(((3.0*((1.0-b)-(((((1.0-f)-(a)+b)*1.5)/2.0)+((f-0.5)*((1.0-f)*0.25))-((0.5-f)*(f*0.25))-((g-f)*((1.0-g)*0.1))))))/3.0);}`;
-const glslAveg=`float Aveg(float a,float b){return(1.0-(((a)-(b))*((a)*(1.0/(1.0-b)))));}`;
-
-g.addNativeFunction('Ave',glslAve,{returnType:'Number'});
-g.addNativeFunction('AlpheV2',glslAlphe2,{returnType:'Number'});
-g.addNativeFunction('AlpheV1',glslAlphe1,{returnType:'Number'});
-g.addNativeFunction('Silver',glslSilver,{returnType:'Number'});
-g.addNativeFunction('GoldR',glslGoldR,{returnType:'Number'});
-g.addNativeFunction('GoldG',glslGoldG,{returnType:'Number'});
-g.addNativeFunction('GoldB',glslGoldB,{returnType:'Number'});
-g.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
-g2.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
-g2.addNativeFunction('Ave',glslAve,{returnType:'Number'});
-
-let t, r, R;
-
-var select=document.querySelector('#b3');
-var vid_mode=select.value;
-var select2=document.querySelector('#media');
-var media_mode=select2.value;
-if(vid_mode=='B3'){
-R=g2.createKernel(function(tv){
-var Pa=tv[this.thread.y][this.thread.x*4];
-return Ave(Pa[0],Pa[1],Pa[2]);
-}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLVideo"]).setOptimizeFloatMemory(true).setOutput([sz]);
-t=g.createKernel(function(v){
-var P=v[this.thread.y][this.thread.x+this.constants.blnk];
-var av$=Ave(P[0],P[1],P[2]);
-return[P[0],P[1],P[2],av$];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([1024,1024]); // h$,h$]);
-r=g.createKernel(function(f){
-var p=f[this.thread.y][this.thread.x];
-var $fmax=this.constants.fmax;
-var $fmin=this.constants.fmin;
-var $amax=this.constants.amax;
-var $amin=this.constants.amin;
-var $favg=this.constants.favg;
-var $aavg=this.constants.aavg;
-var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
-// var alph=AlpheV2($amax,$amin,$aavg,p[3]);
-var Min=((p[3]-$favg)+1.0101)*(($amax-($aavg-$fmin-($amin-$fmin)))/(2.0+($aavg-p[3])));
-var ouT=Math.max(Min,alph);
-var aveg=Aveg(p[3],ouT);
-return [p[0],p[1],p[2],aveg];
-}).setImmutable(true).setTactic("precision").setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}
-if(vid_mode=='B3_B'){
-R=g2.createKernel(function(tv){
-var Pa=tv[this.thread.y][this.thread.x*4];
-return Ave(Pa[0],Pa[1],Pa[2]);
-}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLVideo"]).setOptimizeFloatMemory(true).setOutput([sz]);
-t=g.createKernel(function(v){
-var P=v[this.thread.y][this.thread.x+this.constants.blnk];
-var av$=Ave(P[0],P[1],P[2]);
-return[P[0],P[1],P[2],av$];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-r=g.createKernel(function(f){
-var p=f[this.thread.y][this.thread.x];
-var $fmax=this.constants.fmax;
-var $fmin=this.constants.fmin;
-var $amax=this.constants.amax;
-var $amin=this.constants.amin;
-var $favg=this.constants.favg;
-var $aavg=this.constants.aavg;
-var alph=AlpheV1($amax,$amin,$fmax,$fmin,$favg,$aavg,p[3]);
-// var alph=AlpheV2($amax,$amin,$aavg,p[3]);
-var Min=2.0101*(($amax-($aavg-$fmin))/2.0);
-var ouT=Math.max(Min,alph);
-var aveg=Aveg(p[3],ouT);
-return [p[0],p[1],p[2],aveg];
-// }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-}
-if(vid_mode=='Video'){
-if(media_mode=='vid'){
-R=g2.createKernel(function(tv){
-var Pa=tv[this.thread.y][this.thread.x*4];
-return Ave(Pa[0],Pa[1],Pa[2]);
-}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLVideo"]).setOptimizeFloatMemory(true).setOutput([sz]);
-t=g.createKernel(function(v){
-var P=v[this.thread.y][this.thread.x+this.constants.blnk];
-return[P[0],P[1],P[2],P[3]];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-r=g.createKernel(function(f){
-var p=f[this.thread.y][this.thread.x];
-return [p[0],p[1],p[2],p[3]];
-// }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
-}
-if(media_mode=='img'){
-R=g2.createKernel(function(tv){
-var Pa=tv[this.thread.y][this.thread.x*4];
-return Ave(Pa[0],Pa[1],Pa[2]);
-}).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLImage"]).setOptimizeFloatMemory(true).setOutput([sz]);
-t=g.createKernel(function(v){
-var P=v[this.thread.y][this.thread.x+this.constants.blnk];
-return[P[0],P[1],P[2],P[3]];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
-r=g.createKernel(function(f){
-var p=f[this.thread.y][this.thread.x];
-return [p[0],p[1],p[2],p[3]];
-// }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}).setImmutable(true).setTactic("precision").setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
-}
-}
-w$=parseInt(document.querySelector("#wid").innerHTML,10);
-h$=parseInt(document.querySelector("#hig").innerHTML,10);
-blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
-vv=document.querySelector("#mvi");
-blank$=Math.max((w$-h$)/4,0);
-nblank$=Math.max((h$-w$)/2,0);
-la=nearestPowerOf2((((h$+(blank$$*2))*h$*4)/4)*4);
-sz=(h$*h$)/8;
-pointa=77*la;
-// agav=new Float32Array($H,pointa,300);
-R.setOutput([sz]);
-for(i=0;i<65;i++){
-var j=i+1;
-eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
-}
-var pointb=77*la;
-var $B=new Float64Array($H,pointb,sz);
-var $F=1;
-var $Bu=33;
-r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({nblnk:nblank$,blnk:blank$$});
-var $$1=t(vv);
-for (i=0;i<65;i++){
-var j=i+1;
-eval("$"+j+".set($$1);");
-}
-var d=S();if(d)d();d=S();function S(){
-w$=parseInt(document.querySelector("#wid").innerHTML,10);
-h$=parseInt(document.querySelector("#hig").innerHTML,10);
-blank$$=parseInt(document.querySelector("#blnnk").innerHTML,10);
-blank$=Math.max((w$-h$)/4,0);
-nblank$=Math.max((h$-w$)/2,0);
-la=nearestPowerOf2((((h$+(blank$$*2))*h$*4)/4)*4);
-sz=(h$*h$)/8;
-pointa=77*la;
-pointc=88*la;
-R.setOutput([sz]);
-for(i=0;i<65;i++){
-var j=i+1;
-eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
-}
-pointb=66*la;
-$B=new Float64Array($H,pointb,sz);
-r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({nblnk:nblank$,blnk:blank$$});
-var T=false;
-function M(){
-vv=document.querySelector("#mvi");
-r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({nblnk:nblank$,blnk:blank$$});
-if(T){return;}
-for(i=64;i>0;i--){
-var loca=$F+1;if(loca>64){loca=1;}
-var locb=$Bu+1;if(locb>64){locb=1;}
-var frmm=new Float64Array($H,pointc,la);
-eval("if ($F==="+i+"){var $r"+i+"=t($"+i+");var $$"+$Bu+"=r($r"+i+"); frmm.set( $$"+$Bu+" );var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+"); $F="+loca+";$Bu="+locb+";}");
-}
-
-var $bb=R(vv);
-$B.set($bb,0,sz);
-pointb=66*la;
-
-const inputDataView = $B; // Or new Float64Array($H, pointb, sz);
-const averageDataView = agav; // Or new Float64Array($H, pointa, 300);
-// ** Calculate the byte offsets **
-const ptr_offset = inputDataView.byteOffset;
-const aptr_offset = averageDataView.byteOffset;
-// ** Call the bound function using numerical offsets **
-Module.nanoD_unsafe($F, sz, ptr_offset, aptr_offset);
-setTimeout(function(){
-let offset = 0;
-if(frmm[0][0]){
-for (let y = 0; y < h$; y++) {
-for (let x = 0; x < h$; x++) {
-frameBufferViewF32[offset++] = frmm[y][x][0]; // R
-frameBufferViewF32[offset++] = frmm[y][x][1]; // G
-frameBufferViewF32[offset++] = frmm[y][x][2]; // B
-frameBufferViewF32[offset++] = frmm[y][x][3]; // A
-}
-}
-}
-M();
-},16.66);
-}
-M();
-document.querySelector("#di").onclick=function(){
-T=true;
-S();
-};
-return()=>{
-T=true;
-};
-}
-}
-
 function regularStart(){
 let SiZ=window.innerHeight;
 let cnvb=document.querySelector('#scanvas');
@@ -1640,7 +1009,6 @@ getShader(pth2,'compute.wgsl');
 getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 videoStart();
-// B3_Start();
 });
 
 document.querySelector('#startBtn2').addEventListener('click',function(){
@@ -1735,7 +1103,6 @@ Module.ccall("panRight");
 document.querySelector('#moveLeft').addEventListener('click',function(){
 Module.ccall("panLeft");
 });
-
 
 setTimeout(function(){
 document.querySelector('#di').click();
