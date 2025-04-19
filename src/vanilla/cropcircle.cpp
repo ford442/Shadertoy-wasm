@@ -441,16 +441,16 @@ let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
 // 1. Determine the size of the square to extract from the source
-let sourceSquareSize = Math.min(ww, h);
+var sourceSquareSize = Math.min(ww, h);
 // 2. Calculate the top-left (sx, sy) coordinates in the source video to center the square
-let sx = (ww - sourceSquareSize) / 2;
-let sy = (h - sourceSquareSize) / 2;
+var sx = (ww - sourceSquareSize) / 2;
+var sy = (h - sourceSquareSize) / 2;
         // 3. Define the destination rectangle (entire canvas)
-let canvasSize = scanvas.width; // Should be winSize
-let dx = 0;
-let dy = 0;
-let dWidth = canvasSize;
-let dHeight = canvasSize;
+var canvasSize = scanvas.width; // Should be winSize
+var dx = 0;
+var dy = 0;
+var dWidth = canvasSize;
+var dHeight = canvasSize;
         // 4. Draw the cropped and centered square onto the canvas
         //    Replaces: ctx.drawImage(vd, 0, 0, ww, h);
 ctx.drawImage(vd, sx, sy, sourceSquareSize, sourceSquareSize, dx, dy, dWidth, dHeight);
@@ -590,6 +590,7 @@ rgbd2[i+3]=255-((rgb-128)*diff);
 rgbd3[i+3]=255-((rgb-128)*diff);
 }
 }
+  
 /*
 let r_out = 0, g_out = 0, b_out = 0;
 let alpha_out = 0; // Default to transparent
