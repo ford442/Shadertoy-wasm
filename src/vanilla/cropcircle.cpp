@@ -302,15 +302,12 @@ return;
 
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
-
     if (cpp_vector.size() == 0) {
          return emscripten::val::object();
     }
-
     double sum = 0.0;
     float min_val = std::numeric_limits<float>::max();
     float max_val = std::numeric_limits<float>::lowest();
-
     for(size_t i = 0; i < cpp_vector.size(); ++i) {
         float val = cpp_vector[i];
         sum += val;
@@ -318,14 +315,12 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
         if (val > max_val) max_val = val;
     }
      double avg = sum / cpp_vector.size();
-
     emscripten::val result = emscripten::val::object();
     result.set("average", avg);
     result.set("min", min_val);
     result.set("max", max_val);
     return result;
 }
-
 
 EMSCRIPTEN_BINDINGS(my_module) {
     emscripten::function("processFloatData", &processFloatData);
@@ -445,7 +440,7 @@ let cnP=document.getElementById("cp");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
-  /*
+
 // 1. Determine the size of the square to extract from the source
 var sourceSquareSize = Math.min(ww, h);
 // 2. Calculate the top-left (sx, sy) coordinates in the source video to center the square
@@ -460,8 +455,9 @@ var dHeight = canvasSize;
         // 4. Draw the cropped and centered square onto the canvas
         //    Replaces: ctx.drawImage(vd, 0, 0, ww, h);
 ctx.drawImage(vd, sx, sy, sourceSquareSize, sourceSquareSize, dx, dy, dWidth, dHeight);
-*/
-  ctx.drawImage(vd, 0, 0, ww, h);
+ww=canvasSize;
+  h=canvasSize;
+//  ctx.drawImage(vd, 0, 0, ww, h);
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
 var imgData=ctx.getImageData(0,0,ww,h);
