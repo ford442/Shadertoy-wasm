@@ -241,10 +241,10 @@ S=(GLfloat)Size;
 // eglBindAPI(0);
 emscripten_webgl_init_context_attributes(&attr);
 attr.alpha=EM_TRUE;
-attr.stencil=EM_TRUE;
-attr.depth=EM_TRUE;
-attr.antialias=EM_TRUE;
-attr.premultipliedAlpha=EM_TRUE;
+attr.stencil=EM_FALSE;
+attr.depth=EM_FALSE;
+attr.antialias=EM_FALSE;
+attr.premultipliedAlpha=EM_FALSE;
 attr.preserveDrawingBuffer=EM_FALSE;
 attr.enableExtensionsByDefault=EM_FALSE;
 attr.renderViaOffscreenBackBuffer=EM_FALSE;
@@ -351,8 +351,14 @@ var scanvas=document.createElement('canvas');
 var icanvas=document.getElementById('imag2');
 var bcanvas=document.getElementById('imag3');
 // icanvas.setAttribute("style","opacity:0.422");
+scanvas.imageSmoothingEnabled=false;
+icanvas.imageSmoothingEnabled=false;
+bcanvas.imageSmoothingEnabled=false;
+icanvas.imageRendering='pixelated';
+bcanvas.imageRendering='pixelated';
+
 scanvas.id='zimag';
-scanvas.imageRendering='auto';
+scanvas.imageRendering='pixelated';
 scanvas.width=winSize;
 scanvas.height=winSize;
 scanvas.zoom=1;
@@ -386,14 +392,14 @@ zcanvas.style.backgroundColor='rgba(0,0,0,128)';
 // document.getElementById("cpB").appendChild(zcanvas);
   */
 var contxVars={
-colorType:'float64',
+colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:true,
-stencil:true,
+depth:false,
+stencil:false,
 preserveDrawingBuffer:false,
-premultipliedAlpha:true,
+premultipliedAlpha:false,
 // imageSmoothingEnabled:false,
 willReadFrequently:false,
 lowLatency:false,
@@ -402,7 +408,7 @@ powerPreference:'high-performance',
 antialias:false
 };
   var contxVarsB={
-colorType:'float64',
+colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
@@ -440,6 +446,8 @@ let cnP=document.getElementById("cp");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
+
+  
 ctx.drawImage(vd, 0, 0, ww, h);
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
