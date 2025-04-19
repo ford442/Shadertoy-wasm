@@ -468,10 +468,10 @@ tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
   
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
-var imgData=tempCtx.getImageData(0,0,paddedSize,paddedSize);
-var rgbdat=ctx.createImageData(paddedSize,paddedSize);
-var rgbdat2=ctxB.createImageData(paddedSize,paddedSize);
-var rgbdat3=ctxC.createImageData(paddedSize,paddedSize);
+var imgData=tempCtx.getImageData(0,0,winSize,winSize);
+var rgbdat=ctx.createImageData(winSize,winSize);
+var rgbdat2=ctxB.createImageData(winSize,winSize);
+var rgbdat3=ctxC.createImageData(winSize,winSize);
 var rgbd=rgbdat.data;
 var rgbd2=rgbdat2.data;
 var rgbd3=rgbdat3.data;
@@ -511,7 +511,7 @@ ctx.getExtension('GL_ARB_direct_state_access');
  */
 // var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
-for(i=0;i<(paddedSize*paddedSize*4);i=i+4){
+for(i=0;i<(winSize*winSize*4);i=i+4){
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
 var lightDark=128+((Math.abs(floatResult.average-128))/2);
 rgb=rgb+lightDark/2;
