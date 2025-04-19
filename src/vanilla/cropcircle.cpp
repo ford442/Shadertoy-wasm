@@ -412,10 +412,10 @@ colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:true,
-stencil:true,
+depth:false,
+stencil:false,
 preserveDrawingBuffer:false,
-premultipliedAlpha:true,
+premultipliedAlpha:false,
 // imageSmoothingEnabled:true,
 willReadFrequently:true,
 lowLatency:false,
@@ -447,14 +447,28 @@ let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
 
+  // ctx.drawImage(vd, 0, 0, ww, h);
+
+const paddedSize = Math.max(ww, h);
+if (!tempCanvas || tempCanvas.width !== paddedSize) {
+tempCanvas = document.createElement('canvas');
+tempCanvas.width = paddedSize;
+tempCanvas.height = paddedSize;
+tempCtx = tempCanvas.getContext('2d', contxVarsB); 
+console.log(`Created/Resized temp canvas to ${paddedSize}x${paddedSize}`);
+}
+tempCtx.fillStyle = 'black'; // Set padding color
+tempCtx.fillRect(0, 0, paddedSize, paddedSize);
+const destX = (paddedSize - ww) / 2; // Horizontal offset on temp canvas
+const destY = (paddedSize - h) / 2; // Vertical offset on temp canvas
+tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
   
-ctx.drawImage(vd, 0, 0, ww, h);
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
-var imgData=ctx.getImageData(0,0,ww,h);
-var rgbdat=ctx.createImageData(ww,h);
-var rgbdat2=ctxB.createImageData(ww,h);
-var rgbdat3=ctxC.createImageData(ww,h);
+var imgData=ctx.getImageData(0,0,paddedSize,paddedSize);
+var rgbdat=ctx.createImageData(paddedSize,paddedSize);
+var rgbdat2=ctxB.createImageData(paddedSize,paddedSize);
+var rgbdat3=ctxC.createImageData(paddedSize,paddedSize);
 var rgbd=rgbdat.data;
 var rgbd2=rgbdat2.data;
 var rgbd3=rgbdat3.data;
@@ -494,7 +508,7 @@ ctx.getExtension('GL_ARB_direct_state_access');
  */
 // var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
-for(i=0;i<(ww*h*4);i=i+4){
+for(i=0;i<(paddedSize*paddedSize*4);i=i+4){
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
 var lightDark=128+((Math.abs(floatResult.average-128))/2);
 rgb=rgb+lightDark/2;
