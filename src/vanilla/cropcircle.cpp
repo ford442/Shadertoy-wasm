@@ -436,8 +436,6 @@ if(dis){dis();}
 dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 
-
-
 function set(){
      let tempCanvas = null;
     let tempCtx = null;
@@ -470,7 +468,7 @@ tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
   
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
-var imgData=ctx.getImageData(0,0,paddedSize,paddedSize);
+var imgData=tempCtx.getImageData(0,0,paddedSize,paddedSize);
 var rgbdat=ctx.createImageData(paddedSize,paddedSize);
 var rgbdat2=ctxB.createImageData(paddedSize,paddedSize);
 var rgbdat3=ctxC.createImageData(paddedSize,paddedSize);
