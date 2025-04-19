@@ -435,6 +435,10 @@ let dis=set();
 if(dis){dis();}
 dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
+
+   let tempCanvas = null;
+    let tempCtx = null;
+
 function set(){
 ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
