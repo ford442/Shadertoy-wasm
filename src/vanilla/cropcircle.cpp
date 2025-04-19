@@ -439,8 +439,8 @@ var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb
 function set(){
      let tempCanvas = null;
     let tempCtx = null;
-ww=document.getElementById("wid").innerHTML;
-h=document.getElementById("hig").innerHTML;
+ww=document.getElementById("iwid").innerHTML;
+h=document.getElementById("ihig").innerHTML;
 // ow=document.getElementById("wid").innerHTML;
 // oh=document.getElementById("hig").innerHTML;
 let cnP=document.getElementById("cp");
