@@ -244,7 +244,7 @@ attr.alpha=EM_TRUE;
 attr.stencil=EM_TRUE;
 attr.depth=EM_TRUE;
 attr.antialias=EM_TRUE;
-attr.premultipliedAlpha=EM_TRUE;
+attr.premultipliedAlpha=EM_FALSE;
 attr.preserveDrawingBuffer=EM_FALSE;
 attr.enableExtensionsByDefault=EM_FALSE;
 attr.renderViaOffscreenBackBuffer=EM_FALSE;
@@ -301,31 +301,26 @@ return;
 
 
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
-    std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
-
-    if (cpp_vector.size() == 0) {
-         return emscripten::val::object();
-    }
-
-    double sum = 0.0;
-    float min_val = std::numeric_limits<float>::max();
-    float max_val = std::numeric_limits<float>::lowest();
-
-    for(size_t i = 0; i < cpp_vector.size(); ++i) {
-        float val = cpp_vector[i];
-        sum += val;
-        if (val < min_val) min_val = val;
-        if (val > max_val) max_val = val;
-    }
-     double avg = sum / cpp_vector.size();
-
-    emscripten::val result = emscripten::val::object();
-    result.set("average", avg);
-    result.set("min", min_val);
-    result.set("max", max_val);
-    return result;
+std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
+if (cpp_vector.size() == 0) {
+return emscripten::val::object();
 }
-
+double sum = 0.0;
+float min_val = std::numeric_limits<float>::max();
+float max_val = std::numeric_limits<float>::lowest();
+for(size_t i = 0; i < cpp_vector.size(); ++i) {
+float val = cpp_vector[i];
+sum += val;
+if (val < min_val) min_val = val;
+if (val > max_val) max_val = val;
+}
+double avg = sum / cpp_vector.size();
+emscripten::val result = emscripten::val::object();
+result.set("average", avg);
+result.set("min", min_val);
+result.set("max", max_val);
+return result;
+}
 
 EMSCRIPTEN_BINDINGS(my_module) {
     emscripten::function("processFloatData", &processFloatData);
@@ -407,7 +402,7 @@ powerPreference:'high-performance',
 antialias:false
 };
   var contxVarsB={
-colorType:'float32',
+colorType:'float64',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
@@ -603,101 +598,87 @@ const yellowThreshold = 128;
 const darkThreshold = 126; // Below this is transparent
 
 function smoothstep(edge0, edge1, x) {
-    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-    return t * t * (3 - 2 * t);
+const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+return t * t * (3 - 2 * t);
 }
 
 if (rgb > darkThreshold) {
-    alpha_out = 255; // Make it opaque
-
-    if (rgb > orangeThreshold) { // Pure Orange Zone (or above)
-        r_out = targetOrange.r;
-        g_out = targetOrange.g;
-        b_out = targetOrange.b;
-        // Assign to rgbd
-        rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
-        // Make others transparent for this pixel
-        rgbd2[i+3] = 0; rgbd3[i+3] = 0;
-
-    } else if (rgb > redThreshold) { // --- Transition: Red to Orange ---
-     //   const factor = (rgb - redThreshold) / (orangeThreshold - redThreshold); // 0.0 to 1.0
-      const factor = smoothstep(redThreshold, orangeThreshold, rgb); // Use smoothstep
-
-        r_out = targetRed.r * (1 - factor) + targetOrange.r * factor;
-        g_out = targetRed.g * (1 - factor) + targetOrange.g * factor; // Blends from 0 to (128-diff)
-        b_out = targetRed.b * (1 - factor) + targetOrange.b * factor; // Stays 0
-         // Assign to rgbd
-        rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
-        // Make others transparent for this pixel
-        rgbd2[i+3] = 0; rgbd3[i+3] = 0;
-
-    } else if (rgb > violetThreshold) { // Pure Red Zone (or maybe transition Violet->Red?)
+alpha_out = 255; // Make it opaque
+if (rgb > orangeThreshold) { // Pure Orange Zone (or above)
+r_out = targetOrange.r;
+g_out = targetOrange.g;
+b_out = targetOrange.b;
+// Assign to rgbd
+rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
+// Make others transparent for this pixel
+rgbd2[i+3] = 0; rgbd3[i+3] = 0;
+} else if (rgb > redThreshold) { // --- Transition: Red to Orange ---
+//   const factor = (rgb - redThreshold) / (orangeThreshold - redThreshold); // 0.0 to 1.0
+const factor = smoothstep(redThreshold, orangeThreshold, rgb); // Use smoothstep
+r_out = targetRed.r * (1 - factor) + targetOrange.r * factor;
+g_out = targetRed.g * (1 - factor) + targetOrange.g * factor; // Blends from 0 to (128-diff)
+b_out = targetRed.b * (1 - factor) + targetOrange.b * factor; // Stays 0
+// Assign to rgbd
+rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
+// Make others transparent for this pixel
+rgbd2[i+3] = 0; rgbd3[i+3] = 0;
+} else if (rgb > violetThreshold) { // Pure Red Zone (or maybe transition Violet->Red?)
          // You would need to decide if 193 is the end of Red or start of Red->Orange transition
          // Assuming for now 193 is the START of the Red->Orange blend zone above.
          // If you want a pure Red zone, you need another threshold. Let's assume pure Red is between, say, 190 and 193.
          // This part needs careful planning of your exact ranges.
          // Simplified: If not in transition above, it's pure Red before Violet.
-        r_out = targetRed.r;
-        g_out = targetRed.g;
-        b_out = targetRed.b;
+r_out = targetRed.r;
+g_out = targetRed.g;
+b_out = targetRed.b;
          // Assign to rgbd
-        rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
+rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
          // Make others transparent for this pixel
-        rgbd2[i+3] = 0; rgbd3[i+3] = 0;
-
-    } else if (rgb > blueThreshold) { // --- Transition: Blue to Violet ---
-        // const factor = (rgb - blueThreshold) / (violetThreshold - blueThreshold);
-       factor = smoothstep(blueThreshold, violetThreshold, rgb); // Use smoothstep
-
-        r_out = targetBlue.r * (1 - factor) + targetViolet.r * factor; // Blends 0 to (128-diff)
-        g_out = targetBlue.g * (1 - factor) + targetViolet.g * factor; // Stays 0
-        b_out = targetBlue.b * (1 - factor) + targetViolet.b * factor; // Blends (255-diff) to 255
+rgbd2[i+3] = 0; rgbd3[i+3] = 0;
+} else if (rgb > blueThreshold) { // --- Transition: Blue to Violet ---
+// const factor = (rgb - blueThreshold) / (violetThreshold - blueThreshold);
+factor = smoothstep(blueThreshold, violetThreshold, rgb); // Use smoothstep
+r_out = targetBlue.r * (1 - factor) + targetViolet.r * factor; // Blends 0 to (128-diff)
+g_out = targetBlue.g * (1 - factor) + targetViolet.g * factor; // Stays 0
+b_out = targetBlue.b * (1 - factor) + targetViolet.b * factor; // Blends (255-diff) to 255
          // Assign to rgbd2
-        rgbd2[i] = r_out; rgbd2[i+1] = g_out; rgbd2[i+2] = b_out; rgbd2[i+3] = alpha_out;
+rgbd2[i] = r_out; rgbd2[i+1] = g_out; rgbd2[i+2] = b_out; rgbd2[i+3] = alpha_out;
         // Make others transparent for this pixel
-        rgbd[i+3] = 0; rgbd3[i+3] = 0;
-
-    } else if (rgb > greenThreshold) { // --- Transition: Green to Blue ---
+rgbd[i+3] = 0; rgbd3[i+3] = 0;
+} else if (rgb > greenThreshold) { // --- Transition: Green to Blue ---
        //  const factor = (rgb - greenThreshold) / (blueThreshold - greenThreshold);
-         factor = smoothstep(greenThreshold, blueThreshold, rgb); // Use smoothstep
-
-         r_out = targetGreen.r * (1-factor) + targetBlue.r * factor; // Stays 0
-         g_out = targetGreen.g * (1-factor) + targetBlue.g * factor; // Blends (255-diff) to 0
-         b_out = targetGreen.b * (1-factor) + targetBlue.b * factor; // Blends 0 to (255-diff)
+factor = smoothstep(greenThreshold, blueThreshold, rgb); // Use smoothstep
+r_out = targetGreen.r * (1-factor) + targetBlue.r * factor; // Stays 0
+g_out = targetGreen.g * (1-factor) + targetBlue.g * factor; // Blends (255-diff) to 0
+b_out = targetGreen.b * (1-factor) + targetBlue.b * factor; // Blends 0 to (255-diff)
           // Assign to rgbd2 (Blue/Violet target) or rgbd3 (Green/Yellow target)? Decide where the transition lives. Let's put it in rgbd2.
-        rgbd2[i] = r_out; rgbd2[i+1] = g_out; rgbd2[i+2] = b_out; rgbd2[i+3] = alpha_out;
+rgbd2[i] = r_out; rgbd2[i+1] = g_out; rgbd2[i+2] = b_out; rgbd2[i+3] = alpha_out;
         // Make others transparent for this pixel
-        rgbd[i+3] = 0; rgbd3[i+3] = 0;
-
-    } else if (rgb > yellowThreshold) { // --- Transition: Yellow to Green ---
+rgbd[i+3] = 0; rgbd3[i+3] = 0;
+} else if (rgb > yellowThreshold) { // --- Transition: Yellow to Green ---
       //   const factor = (rgb - yellowThreshold) / (greenThreshold - yellowThreshold);
-         factor = smoothstep(yellowThreshold, greenThreshold, rgb); // Use smoothstep
-
-         r_out = targetYellow.r * (1-factor) + targetGreen.r * factor; // Blends 255 to 0
-         g_out = targetYellow.g * (1-factor) + targetGreen.g * factor; // Stays (255-diff)
-         b_out = targetYellow.b * (1-factor) + targetGreen.b * factor; // Stays 0
+factor = smoothstep(yellowThreshold, greenThreshold, rgb); // Use smoothstep
+r_out = targetYellow.r * (1-factor) + targetGreen.r * factor; // Blends 255 to 0
+g_out = targetYellow.g * (1-factor) + targetGreen.g * factor; // Stays (255-diff)
+b_out = targetYellow.b * (1-factor) + targetGreen.b * factor; // Stays 0
           // Assign to rgbd3
-         rgbd3[i] = r_out; rgbd3[i+1] = g_out; rgbd3[i+2] = b_out; rgbd3[i+3] = alpha_out;
+rgbd3[i] = r_out; rgbd3[i+1] = g_out; rgbd3[i+2] = b_out; rgbd3[i+3] = alpha_out;
         // Make others transparent for this pixel
-        rgbd[i+3] = 0; rgbd2[i+3] = 0;
-
-    } else { // Pure Yellow Zone (rgb between 128 and darkThreshold)
-        r_out = targetYellow.r;
-        g_out = targetYellow.g;
-        b_out = targetYellow.b;
+rgbd[i+3] = 0; rgbd2[i+3] = 0;
+} else { // Pure Yellow Zone (rgb between 128 and darkThreshold)
+r_out = targetYellow.r;
+g_out = targetYellow.g;
+b_out = targetYellow.b;
          // Assign to rgbd3
-        rgbd3[i] = r_out; rgbd3[i+1] = g_out; rgbd3[i+2] = b_out; rgbd3[i+3] = alpha_out;
+rgbd3[i] = r_out; rgbd3[i+1] = g_out; rgbd3[i+2] = b_out; rgbd3[i+3] = alpha_out;
         // Make others transparent for this pixel
-        rgbd[i+3] = 0; rgbd2[i+3] = 0;
-    }
-
-} else { // Dark/Transparent Zone
-    rgbd[i+3] = 0;
-    rgbd2[i+3] = 0;
-    rgbd3[i+3] = 0;
+rgbd[i+3] = 0; rgbd2[i+3] = 0;
 }
-
-  
+} else { // Dark/Transparent Zone
+rgbd[i+3] = 0;
+rgbd2[i+3] = 0;
+rgbd3[i+3] = 0;
+}
 // agavF.set(rgbdat.data);
 var ang=45;
 // Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[ang,ww,h,pointa,pointb]);
