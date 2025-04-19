@@ -407,7 +407,7 @@ powerPreference:'high-performance',
 antialias:false
 };
   var contxVarsB={
-colorType:'float32',
+colorType:'float64',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
@@ -505,7 +505,7 @@ ctx.getExtension('GL_ARB_direct_state_access');
  */
 // var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
-for(i=0;i<(canvasSize*canvasSize*4);i=i+4){
+for(i=0;i<(ww*h*4);i=i+4){
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
 var lightDark=128+((Math.abs(floatResult.average-128))/2);
 rgb=rgb+lightDark/2;
