@@ -444,34 +444,20 @@ let cnP=document.getElementById("cp");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
-// 1. Determine the size of the square to extract from the source
-var sourceSquareSize = Math.min(ww, h);
-// 2. Calculate the top-left (sx, sy) coordinates in the source video to center the square
-var sx = (ww - sourceSquareSize) / 2;
-var sy = (h - sourceSquareSize) / 2;
-        // 3. Define the destination rectangle (entire canvas)
-var canvasSize = scanvas.width; // Should be winSize
-var dx = 0;
-var dy = 0;
-var dWidth = canvasSize;
-var dHeight = canvasSize;
-        // 4. Draw the cropped and centered square onto the canvas
-        //    Replaces: ctx.drawImage(vd, 0, 0, ww, h);
-ctx.drawImage(vd, sx, sy, sourceSquareSize, sourceSquareSize, dx, dy, dWidth, dHeight);
-
+ctx.drawImage(vd,0,0,ww,h);
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
-var imgData=ctx.getImageData(0,0,canvasSize,canvasSize);
-var rgbdat=ctx.createImageData(canvasSize,canvasSize);
-var rgbdat2=ctxB.createImageData(canvasSize,canvasSize);
-var rgbdat3=ctxC.createImageData(canvasSize,canvasSize);
+var imgData=ctx.getImageData(0,0,ww,h);
+var rgbdat=ctx.createImageData(ww,h);
+var rgbdat2=ctxB.createImageData(ww,h);
+var rgbdat3=ctxC.createImageData(ww,h);
 var rgbd=rgbdat.data;
 var rgbd2=rgbdat2.data;
 var rgbd3=rgbdat3.data;
 var imgg=imgData.data;
 var i;
-var l=canvasSize*canvasSize;
-var la=canvasSize*canvasSize*4;
+var l=h*ww;
+var la=h*ww*4;
 var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
@@ -504,7 +490,7 @@ ctx.getExtension('GL_ARB_direct_state_access');
  */
 // var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
-for(i=0;i<(canvasSize*canvasSize*4);i=i+4){
+for(i=0;i<(ww*h*4);i=i+4){
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
 var lightDark=128+((Math.abs(floatResult.average-128))/2);
 rgb=rgb+lightDark/2;
