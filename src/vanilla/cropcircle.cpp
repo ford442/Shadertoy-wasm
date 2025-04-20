@@ -455,11 +455,13 @@ let vd=document.getElementById("myvideo");
 const paddedSize = Math.max(ww, h);
 if (!tempCanvas || tempCanvas.width !== paddedSize) {
 tempCanvas = document.createElement('canvas');
-tempCanvas.width = winSize;
-tempCanvas.height = winSize;
+
 tempCtx = tempCanvas.getContext('2d', contxVarsB); 
 console.log(`Created/Resized temp canvas to ${paddedSize}x${paddedSize}`);
 }
+  
+tempCanvas.width = winSize;
+tempCanvas.height = winSize;
 tempCtx.fillStyle = 'black'; // Set padding color
 tempCtx.fillRect(0, 0, winSize, winSize);
 const destX = (winSize - ww) / 2; // Horizontal offset on temp canvas
