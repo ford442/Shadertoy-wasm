@@ -95,27 +95,27 @@ maxSum+=aptr[i+200];
 aptr[200]=maxSum/32.0;
 return;
 }
+
 void nanoD_via_offsets(int Fnum, int leng, uintptr_t ptr_offset, uintptr_t aptr_offset) {
-    printf("nanoD_via_offsets called: Fnum=%d, leng=%d, ptr_offset=%p, aptr_offset=%p\n",
-           Fnum, leng, (void*)ptr_offset, (void*)aptr_offset); // Log addresses
+printf("nanoD_via_offsets called: Fnum=%d, leng=%d, ptr_offset=%p, aptr_offset=%p\n",
+Fnum, leng, (void*)ptr_offset, (void*)aptr_offset); // Log addresses
     // --- UNSAFE CASTS ---
     // Assume the offsets passed from JS are valid byte offsets in the Wasm HEAP
-    double* ptr = reinterpret_cast<double*>(ptr_offset);
-    double* aptr = reinterpret_cast<double*>(aptr_offset);
+double* ptr = reinterpret_cast<double*>(ptr_offset);
+double* aptr = reinterpret_cast<double*>(aptr_offset);
     // --- END UNSAFE CASTS ---
     // WARNING: We have lost the size information that typed_memory_view provided.
     // Any bounds checking inside avgFrmD must rely solely on Fnum/leng,
     // which might not be enough to prevent reading/writing past the end
     // of the actual underlying buffers if incorrect offsets/lengths are involved.
-
     // Call the original function with the cast pointers
-    avgFrmD(Fnum, leng, ptr, aptr);
+avgFrmD(Fnum, leng, ptr, aptr);
 }
 
 // Bind the offset-based wrapper
 EMSCRIPTEN_BINDINGS(my_video_module) {
     // Bind the function accepting offsets. Use a distinct name if desired.
-    emscripten::function("nanoD_unsafe", &nanoD_via_offsets);
+emscripten::function("nanoD_unsafe", &nanoD_via_offsets);
     // Note: You wouldn't bind the original nanoD directly if using this method,
     // unless you had another way to call it safely.
 }
@@ -129,104 +129,104 @@ var intervalForward;
 var intervalLoop;
 
 function back() {
-    clearInterval(intervalBackward);
-    intervalBackward = requestAnimationFrame(function loop() {
-        if (video.currentTime <= 0) {
-            cancelAnimationFrame(intervalBackward);
-        } else {
-            video.currentTime -= 0.032;
-            intervalBackward = requestAnimationFrame(loop);
-        }
-    });
+clearInterval(intervalBackward);
+intervalBackward = requestAnimationFrame(function loop() {
+if (video.currentTime <= 0) {
+cancelAnimationFrame(intervalBackward);
+} else {
+video.currentTime -= 0.032;
+intervalBackward = requestAnimationFrame(loop);
+}
+});
 }
 
 function forward() {
-    clearInterval(intervalForward);
-    intervalForward = requestAnimationFrame(function loop() {
-        video.currentTime += 0.032;
-        intervalForward = requestAnimationFrame(loop);
-    });
+clearInterval(intervalForward);
+intervalForward = requestAnimationFrame(function loop() {
+video.currentTime += 0.032;
+intervalForward = requestAnimationFrame(loop);
+});
 }
 
 function backForth(stp, strt, rate) {
-    var f = true;
-    clearInterval(intervalLoop);
-    intervalLoop = requestAnimationFrame(function loop() {
-        if (f) {
-            if (video.currentTime >= strt * 1000.0) {
-                video.currentTime -= 0.016;
-            } else {
-                video.currentTime = strt * 1000.0;
-                f = false;
-            }
-        } else if (video.currentTime <= stp * 1000.0) {
-            video.currentTime += 0.016;
-        } else {
-            video.currentTime = stp * 1000.0;
-            f = true;
-        }
-        setTimeout(() => requestAnimationFrame(loop), rate);
-    });
+var f = true;
+clearInterval(intervalLoop);
+intervalLoop = requestAnimationFrame(function loop() {
+if (f) {
+if (video.currentTime >= strt * 1000.0) {
+video.currentTime -= 0.016;
+} else {
+video.currentTime = strt * 1000.0;
+f = false;
+}
+} else if (video.currentTime <= stp * 1000.0) {
+video.currentTime += 0.016;
+} else {
+video.currentTime = stp * 1000.0;
+f = true;
+}
+setTimeout(() => requestAnimationFrame(loop), rate);
+});
 }
 
 function stopForward() {
-    clearInterval(intervalForward);
+clearInterval(intervalForward);
 }
 
 function stopBack() {
-    clearInterval(intervalBackward);
+clearInterval(intervalBackward);
 }
 
 function stopBackForth() {
-    clearInterval(intervalLoop);
+clearInterval(intervalLoop);
 }
 
 let playing = true;
 
 function handleKeydown(e) {
-    e.preventDefault();
-    if (e.code === 'Space') {
-        if (playing) {
-            video=document.querySelector("#mv");
-            video.pause();
-            playing = false;
-        } else {
-            video=document.querySelector("#mv");
-            video.play();
-            playing = true;
-        }
-    } else if (e.code === 'KeyW') {
-        video=document.querySelector("#mv");
-        video.pause();
-        forward();
-    } else if (e.code === 'KeyS') {
-        video=document.querySelector("#mv");
-        video.pause();
-        back();
-    } else if (e.code === 'KeyZ') {
-        video=document.querySelector("#mv");
-        video.pause();
-        let ends = video.currentTime / 1000.0;
-        let begins = (video.currentTime - 2.5) / 1000.0;
-        let fps = 1000.0 / video.frameRate;
-        backForth(ends, begins, fps);
-    } else if (e.code === 'KeyX') {
-        video=document.querySelector("#mv");
-        video.play();
-        stopBackForth();
-    }
+e.preventDefault();
+if (e.code === 'Space') {
+if (playing) {
+video=document.querySelector("#mv");
+video.pause();
+playing = false;
+} else {
+video=document.querySelector("#mv");
+video.play();
+playing = true;
+}
+} else if (e.code === 'KeyW') {
+video=document.querySelector("#mv");
+video.pause();
+forward();
+} else if (e.code === 'KeyS') {
+video=document.querySelector("#mv");
+video.pause();
+back();
+} else if (e.code === 'KeyZ') {
+video=document.querySelector("#mv");
+video.pause();
+let ends = video.currentTime / 1000.0;
+let begins = (video.currentTime - 2.5) / 1000.0;
+let fps = 1000.0 / video.frameRate;
+backForth(ends, begins, fps);
+} else if (e.code === 'KeyX') {
+video=document.querySelector("#mv");
+video.play();
+stopBackForth();
+}
 }
 
 function handleKeyup(e) {
-    if (e.code === 'KeyS') {
-        stopBack();
-        video=document.querySelector("#mv");
-        video.pause();
-    } else if (e.code === 'KeyW') {
-        stopForward();
-        video=document.querySelector("#mv");
-        video.pause();
-    }
+if (e.code === 'KeyS') {
+stopBack();
+video=document.querySelector("#mv");
+video.pause();
+} else if (e.code === 'KeyW') {
+stopForward();
+video=document.querySelector("#mv");
+video.pause();
+}
 }
 
 body.addEventListener('keydown', handleKeydown);
