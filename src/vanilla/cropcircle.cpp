@@ -445,19 +445,7 @@ let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
 
-   const paddedSize = Math.max(ww, h);
-            tempCanvas.width = paddedSize;
-            tempCanvas.height = paddedSize;
-        tempCtx.fillStyle = 'black'; // Set padding color
-        tempCtx.fillRect(0, 0, paddedSize, paddedSize);
-        const destX = (paddedSize - ww) / 2; // Horizontal offset on temp canvas
-        const destY = (paddedSize - h) / 2; // Vertical offset on temp canvas
-        tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
-        const mainCanvasSize = winSize; // Target size (should be winSize)
-        ctx.drawImage(tempCanvas, 0, 0, paddedSize, paddedSize, 0, 0, mainCanvasSize, mainCanvasSize);
-
-// ctx.drawImage(vd,0,0,ww,h);
-
+ctx.drawImage(vd,0,0,ww,h);
   
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
