@@ -439,8 +439,8 @@ var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb
 function set(){
      let tempCanvas = null;
     let tempCtx = null;
-ww=document.getElementById("iwid").innerHTML;
-h=document.getElementById("ihig").innerHTML;
+// ww=document.getElementById("iwid").innerHTML;
+// h=document.getElementById("ihig").innerHTML;
 // ow=document.getElementById("wid").innerHTML;
 // oh=document.getElementById("hig").innerHTML;
 let cnP=document.getElementById("cp");
@@ -449,7 +449,8 @@ let cnP=document.getElementById("cp");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
-
+ww=vd.width;
+h=vd.height;
   // ctx.drawImage(vd, 0, 0, ww, h);
 
 const paddedSize = Math.max(ww, h);
