@@ -431,7 +431,7 @@ dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 
 function set(){
-  var tempCanvas = document.querySelector('#tcanvas');
+var tempCanvas = document.querySelector('#tcanvas');
 var tempCtx = tempCanvas.getContext('2d', { alpha: false }); // alpha:false might be faster if using solid bg
 
 ww=document.getElementById("iwid").innerHTML;
@@ -453,7 +453,7 @@ let vd=document.getElementById("myvideo");
         const destX = (paddedSize - ww) / 2; // Horizontal offset on temp canvas
         const destY = (paddedSize - h) / 2; // Vertical offset on temp canvas
         tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
-        const mainCanvasSize = scanvas.width; // Target size (should be winSize)
+        const mainCanvasSize = winSize; // Target size (should be winSize)
         ctx.drawImage(tempCanvas, 0, 0, paddedSize, paddedSize, 0, 0, mainCanvasSize, mainCanvasSize);
 
 // ctx.drawImage(vd,0,0,ww,h);
