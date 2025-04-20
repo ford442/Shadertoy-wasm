@@ -449,6 +449,7 @@ let cnP=document.getElementById("cp");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
+  
 ww=vd.width;
 h=vd.height;
   // ctx.drawImage(vd, 0, 0, ww, h);
@@ -633,7 +634,7 @@ rgbd[i+3]=0;
 rgbd2[i+3]=0;
 rgbd3[i+3]=0;
 }
-
+/*
 if (rgb > darkThreshold) {
     alpha_out = 255; // Make it opaque
 
@@ -723,7 +724,7 @@ if (rgb > darkThreshold) {
     rgbd2[i+3] = 0;
     rgbd3[i+3] = 0;
 }
-  
+  */
 }
   
 // agavF.set(rgbdat.data);
