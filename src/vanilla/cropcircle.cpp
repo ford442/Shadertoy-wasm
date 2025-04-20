@@ -429,8 +429,8 @@ let dis=set();
 if(dis){dis();}
 dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
-let tempCanvas = document.createElement('canvas');
-let tempCtx = tempCanvas.getContext('2d', { alpha: false }); // alpha:false might be faster if using solid bg
+var tempCanvas = document.createElement('canvas');
+var tempCtx = tempCanvas.getContext('2d', { alpha: false }); // alpha:false might be faster if using solid bg
 
 function set(){
 ww=document.getElementById("iwid").innerHTML;
