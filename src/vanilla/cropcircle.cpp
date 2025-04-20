@@ -429,6 +429,9 @@ let dis=set();
 if(dis){dis();}
 dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
+let tempCanvas = document.createElement('canvas');
+let tempCtx = tempCanvas.getContext('2d', { alpha: false }); // alpha:false might be faster if using solid bg
+
 function set(){
 ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
@@ -440,7 +443,21 @@ let cnP=document.getElementById("cp");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
-ctx.drawImage(vd,0,0,ww,h);
+
+   const paddedSize = Math.max(ww, h);
+            tempCanvas.width = paddedSize;
+            tempCanvas.height = paddedSize;
+        tempCtx.fillStyle = 'black'; // Set padding color
+        tempCtx.fillRect(0, 0, paddedSize, paddedSize);
+        const destX = (paddedSize - ww) / 2; // Horizontal offset on temp canvas
+        const destY = (paddedSize - h) / 2; // Vertical offset on temp canvas
+        tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
+        const mainCanvasSize = scanvas.width; // Target size (should be winSize)
+        ctx.drawImage(tempCanvas, 0, 0, paddedSize, paddedSize, 0, 0, mainCanvasSize, mainCanvasSize);
+
+// ctx.drawImage(vd,0,0,ww,h);
+
+  
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
 var imgData=ctx.getImageData(0,0,ww,h);
