@@ -291,7 +291,8 @@ document.getElementById('blnnk').innerHTML=Math.max((this.width-this.height)/2.0
 var vide=document.querySelectorAll('video');
   }
     if(media_mode=='img'){
-var vide=document.querySelector('#images').querySelectorAll('img');
+var vide[0]=document.querySelector('#mv');
+var vide[1]=document.querySelector('#ldv');
     }
       
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
