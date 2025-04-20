@@ -437,8 +437,8 @@ dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 
 function set(){
-     let tempCanvas = null;
-    let tempCtx = null;
+     var tempCanvas = null;
+    var tempCtx = null;
 // ww=document.getElementById("iwid").innerHTML;
 // h=document.getElementById("ihig").innerHTML;
 // ow=document.getElementById("wid").innerHTML;
@@ -465,8 +465,8 @@ tempCanvas.width = paddedSize;
 tempCanvas.height = paddedSize;
 tempCtx.fillStyle = 'black'; // Set padding color
 tempCtx.fillRect(0, 0, paddedSize, paddedSize);
-const destX = (paddedSize - ww) / 2; // Horizontal offset on temp canvas
-const destY = (paddedSize - h) / 2; // Vertical offset on temp canvas
+var destX = (paddedSize - ww) / 2; // Horizontal offset on temp canvas
+var destY = (paddedSize - h) / 2; // Vertical offset on temp canvas
 tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
   
 // ctxB.drawImage(vd,0,0,ww,h);
