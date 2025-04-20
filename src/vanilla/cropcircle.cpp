@@ -431,13 +431,11 @@ dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 
 function set(){
-var tempCanvas = document.querySelector('#tcanvas');
-var tempCtx = tempCanvas.getContext('2d', { alpha: false }); // alpha:false might be faster if using solid bg
 
 ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
-ow=document.getElementById("wid").innerHTML;
-oh=document.getElementById("hig").innerHTML;
+console.log('got html size:',ww,' ',h);
+
 let cnP=document.getElementById("cp");
 // let cnPB=document.getElementById("cpB");
 // let cnPC=document.getElementById("cpC");
