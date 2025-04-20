@@ -351,8 +351,14 @@ var scanvas=document.createElement('canvas');
 var icanvas=document.getElementById('imag2');
 var bcanvas=document.getElementById('imag3');
 // icanvas.setAttribute("style","opacity:0.422");
+  scanvas.imageSmoothingEnabled=false;
+  icanvas.imageSmoothingEnabled=false;
+  bcanvas.imageSmoothingEnabled=false;
+
 scanvas.id='zimag';
-scanvas.imageRendering='auto';
+scanvas.imageRendering='pixelated';
+icanvas.imageRendering='pixelated';
+bcanvas.imageRendering='pixelated';
 scanvas.width=winSize;
 scanvas.height=winSize;
 scanvas.zoom=1;
@@ -390,10 +396,10 @@ colorType:'float64',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:true,
-stencil:true,
+depth:false,
+stencil:false,
 preserveDrawingBuffer:false,
-premultipliedAlpha:true,
+premultipliedAlpha:false,
 // imageSmoothingEnabled:false,
 willReadFrequently:false,
 lowLatency:false,
@@ -402,14 +408,14 @@ powerPreference:'high-performance',
 antialias:false
 };
   var contxVarsB={
-colorType:'float32',
+colorType:'float64',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:true,
-stencil:true,
+depth:false,
+stencil:false,
 preserveDrawingBuffer:false,
-premultipliedAlpha:true,
+premultipliedAlpha:false,
 // imageSmoothingEnabled:true,
 willReadFrequently:true,
 lowLatency:false,
