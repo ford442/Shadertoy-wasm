@@ -286,14 +286,15 @@ document.getElementById('blnnk').innerHTML=Math.max((this.width-this.height)/2.0
   }
 
   
-  if(media_mode=='vid'){
+if(media_mode=='vid'){
 
 var vide=document.querySelectorAll('video');
-  }
-    if(media_mode=='img'){
-var vide[0]=document.querySelector('#mv');
-var vide[1]=document.querySelector('#ldv');
-    }
+}
+if(media_mode=='img'){
+var vide=[];   
+vide[0]=document.querySelector('#mv');
+vide[1]=document.querySelector('#ldv');
+}
       
 document.getElementById('pmhig').innerHTML=parseInt(window.innerHeight,10);
 hii=window.innerHeight;
