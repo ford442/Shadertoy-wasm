@@ -241,10 +241,10 @@ S=(GLfloat)Size;
 // eglBindAPI(0);
 emscripten_webgl_init_context_attributes(&attr);
 attr.alpha=EM_TRUE;
-attr.stencil=EM_FALSE;
-attr.depth=EM_FALSE;
-attr.antialias=EM_FALSE;
-attr.premultipliedAlpha=EM_FALSE;
+attr.stencil=EM_TRUE;
+attr.depth=EM_TRUE;
+attr.antialias=EM_TRUE;
+attr.premultipliedAlpha=EM_TRUE;
 attr.preserveDrawingBuffer=EM_FALSE;
 attr.enableExtensionsByDefault=EM_FALSE;
 attr.renderViaOffscreenBackBuffer=EM_FALSE;
@@ -302,12 +302,15 @@ return;
 
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
     std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
+
     if (cpp_vector.size() == 0) {
          return emscripten::val::object();
     }
+
     double sum = 0.0;
     float min_val = std::numeric_limits<float>::max();
     float max_val = std::numeric_limits<float>::lowest();
+
     for(size_t i = 0; i < cpp_vector.size(); ++i) {
         float val = cpp_vector[i];
         sum += val;
@@ -315,12 +318,14 @@ emscripten::val processFloatData(emscripten::val js_float32_array_val) {
         if (val > max_val) max_val = val;
     }
      double avg = sum / cpp_vector.size();
+
     emscripten::val result = emscripten::val::object();
     result.set("average", avg);
     result.set("min", min_val);
     result.set("max", max_val);
     return result;
 }
+
 
 EMSCRIPTEN_BINDINGS(my_module) {
     emscripten::function("processFloatData", &processFloatData);
@@ -351,14 +356,8 @@ var scanvas=document.createElement('canvas');
 var icanvas=document.getElementById('imag2');
 var bcanvas=document.getElementById('imag3');
 // icanvas.setAttribute("style","opacity:0.422");
-scanvas.imageSmoothingEnabled=false;
-icanvas.imageSmoothingEnabled=false;
-bcanvas.imageSmoothingEnabled=false;
-icanvas.imageRendering='pixelated';
-bcanvas.imageRendering='pixelated';
-
 scanvas.id='zimag';
-scanvas.imageRendering='pixelated';
+scanvas.imageRendering='auto';
 scanvas.width=winSize;
 scanvas.height=winSize;
 scanvas.zoom=1;
@@ -392,14 +391,14 @@ zcanvas.style.backgroundColor='rgba(0,0,0,128)';
 // document.getElementById("cpB").appendChild(zcanvas);
   */
 var contxVars={
-colorType:'float32',
+colorType:'float64',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:false,
-stencil:false,
+depth:true,
+stencil:true,
 preserveDrawingBuffer:false,
-premultipliedAlpha:false,
+premultipliedAlpha:true,
 // imageSmoothingEnabled:false,
 willReadFrequently:false,
 lowLatency:false,
@@ -412,10 +411,10 @@ colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:false,
-stencil:false,
+depth:true,
+stencil:true,
 preserveDrawingBuffer:false,
-premultipliedAlpha:false,
+premultipliedAlpha:true,
 // imageSmoothingEnabled:true,
 willReadFrequently:true,
 lowLatency:false,
@@ -435,54 +434,31 @@ let dis=set();
 if(dis){dis();}
 dis=set();
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
-
 function set(){
-     var tempCanvas = null;
-    var tempCtx = null;
-// ww=document.getElementById("iwid").innerHTML;
-// h=document.getElementById("ihig").innerHTML;
-// ow=document.getElementById("wid").innerHTML;
-// oh=document.getElementById("hig").innerHTML;
+ww=document.getElementById("iwid").innerHTML;
+h=document.getElementById("ihig").innerHTML;
+ow=document.getElementById("wid").innerHTML;
+oh=document.getElementById("hig").innerHTML;
 let cnP=document.getElementById("cp");
 // let cnPB=document.getElementById("cpB");
 // let cnPC=document.getElementById("cpC");
 let flP=document.getElementById("flip");
 let flPB=document.getElementById("flipB");
 let vd=document.getElementById("myvideo");
-  
-ww=vd.width;
-h=vd.height;
-  // ctx.drawImage(vd, 0, 0, ww, h);
-
-let paddedSize = Math.max(ww, h);
-if (!tempCanvas || tempCanvas.width !== paddedSize) {
-tempCanvas = document.createElement('canvas');
-
-tempCtx = tempCanvas.getContext('2d', contxVarsB); 
-console.log(`Created/Resized temp canvas to ${paddedSize}x${paddedSize}`);
-}
-  
-tempCanvas.width = paddedSize;
-tempCanvas.height = paddedSize;
-tempCtx.fillStyle = 'black'; // Set padding color
-tempCtx.fillRect(0, 0, paddedSize, paddedSize);
-var destX = (paddedSize - ww) / 2; // Horizontal offset on temp canvas
-var destY = (paddedSize - h) / 2; // Vertical offset on temp canvas
-tempCtx.drawImage(vd, 0, 0, ww, h, destX, destY, ww, h);
-  
+ctx.drawImage(vd,0,0,ww,h);
 // ctxB.drawImage(vd,0,0,ww,h);
 // ctxC.drawImage(vd,0,0,ww,h);
-var imgData=tempCtx.getImageData(0,0,winSize,winSize);
-var rgbdat=ctx.createImageData(winSize,winSize);
-var rgbdat2=ctxB.createImageData(winSize,winSize);
-var rgbdat3=ctxC.createImageData(winSize,winSize);
+var imgData=ctx.getImageData(0,0,ww,h);
+var rgbdat=ctx.createImageData(ww,h);
+var rgbdat2=ctxB.createImageData(ww,h);
+var rgbdat3=ctxC.createImageData(ww,h);
 var rgbd=rgbdat.data;
 var rgbd2=rgbdat2.data;
 var rgbd3=rgbdat3.data;
 var imgg=imgData.data;
 var i;
-var l=ww*h;
-var la=ww*h*4;
+var l=h*ww;
+var la=h*ww*4;
 var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
@@ -499,6 +475,7 @@ console.log(`Average: ${floatResult.average}, Min: ${floatResult.min}, Max: ${fl
 } else {
 console.error("processFloatData returned invalid result.");
 }
+
   
 // var $H=Module.HEAPF32.buffer;
 // var agavF=new Float32Array(Module.HEAPF32.buffer,pointa,la);
@@ -514,13 +491,9 @@ ctx.getExtension('GL_ARB_direct_state_access');
  */
 // var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
-
-for(i=0;i<(winSize*winSize*4);i=i+4){
-  
+for(i=0;i<(ww*h*4);i=i+4){
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
-  
 var lightDark=128+((Math.abs(floatResult.average-128))/2);
-  
 rgb=rgb+lightDark/2;
  
  //  but run past a lighter pixel if the avg is darker 
@@ -608,6 +581,122 @@ rgbd2[i+3]=0;
 rgbd3[i+3]=0;
 }
 }
+
+let r_out = 0, g_out = 0, b_out = 0;
+let alpha_out = 0; // Default to transparent
+
+// Define target colors (incorporating diff)
+const targetRed = { r: 255 - diff, g: 0, b: 0 };
+const targetOrange = { r: 255, g: 128 - diff, b: 0 };
+const targetViolet = { r: 128 - diff, g: 0, b: 255 };
+const targetBlue = { r: 0, g: 0, b: 255 - diff };
+const targetGreen = { r: 0, g: 255 - diff, b: 0 };
+const targetYellow = { r: 255, g: 255 - diff, b: 0 };
+
+// Define thresholds (using the start of each main color band)
+const orangeThreshold = 209;
+const redThreshold = 193;
+const violetThreshold = 177;
+const blueThreshold = 161;
+const greenThreshold = 145;
+const yellowThreshold = 128;
+const darkThreshold = 126; // Below this is transparent
+
+function smoothstep(edge0, edge1, x) {
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+}
+
+if (rgb > darkThreshold) {
+    alpha_out = 255; // Make it opaque
+
+    if (rgb > orangeThreshold) { // Pure Orange Zone (or above)
+        r_out = targetOrange.r;
+        g_out = targetOrange.g;
+        b_out = targetOrange.b;
+        // Assign to rgbd
+        rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
+        // Make others transparent for this pixel
+        rgbd2[i+3] = 0; rgbd3[i+3] = 0;
+
+    } else if (rgb > redThreshold) { // --- Transition: Red to Orange ---
+     //   const factor = (rgb - redThreshold) / (orangeThreshold - redThreshold); // 0.0 to 1.0
+      const factor = smoothstep(redThreshold, orangeThreshold, rgb); // Use smoothstep
+
+        r_out = targetRed.r * (1 - factor) + targetOrange.r * factor;
+        g_out = targetRed.g * (1 - factor) + targetOrange.g * factor; // Blends from 0 to (128-diff)
+        b_out = targetRed.b * (1 - factor) + targetOrange.b * factor; // Stays 0
+         // Assign to rgbd
+        rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
+        // Make others transparent for this pixel
+        rgbd2[i+3] = 0; rgbd3[i+3] = 0;
+
+    } else if (rgb > violetThreshold) { // Pure Red Zone (or maybe transition Violet->Red?)
+         // You would need to decide if 193 is the end of Red or start of Red->Orange transition
+         // Assuming for now 193 is the START of the Red->Orange blend zone above.
+         // If you want a pure Red zone, you need another threshold. Let's assume pure Red is between, say, 190 and 193.
+         // This part needs careful planning of your exact ranges.
+         // Simplified: If not in transition above, it's pure Red before Violet.
+        r_out = targetRed.r;
+        g_out = targetRed.g;
+        b_out = targetRed.b;
+         // Assign to rgbd
+        rgbd[i] = r_out; rgbd[i+1] = g_out; rgbd[i+2] = b_out; rgbd[i+3] = alpha_out;
+         // Make others transparent for this pixel
+        rgbd2[i+3] = 0; rgbd3[i+3] = 0;
+
+    } else if (rgb > blueThreshold) { // --- Transition: Blue to Violet ---
+        // const factor = (rgb - blueThreshold) / (violetThreshold - blueThreshold);
+       factor = smoothstep(blueThreshold, violetThreshold, rgb); // Use smoothstep
+
+        r_out = targetBlue.r * (1 - factor) + targetViolet.r * factor; // Blends 0 to (128-diff)
+        g_out = targetBlue.g * (1 - factor) + targetViolet.g * factor; // Stays 0
+        b_out = targetBlue.b * (1 - factor) + targetViolet.b * factor; // Blends (255-diff) to 255
+         // Assign to rgbd2
+        rgbd2[i] = r_out; rgbd2[i+1] = g_out; rgbd2[i+2] = b_out; rgbd2[i+3] = alpha_out;
+        // Make others transparent for this pixel
+        rgbd[i+3] = 0; rgbd3[i+3] = 0;
+
+    } else if (rgb > greenThreshold) { // --- Transition: Green to Blue ---
+       //  const factor = (rgb - greenThreshold) / (blueThreshold - greenThreshold);
+         factor = smoothstep(greenThreshold, blueThreshold, rgb); // Use smoothstep
+
+         r_out = targetGreen.r * (1-factor) + targetBlue.r * factor; // Stays 0
+         g_out = targetGreen.g * (1-factor) + targetBlue.g * factor; // Blends (255-diff) to 0
+         b_out = targetGreen.b * (1-factor) + targetBlue.b * factor; // Blends 0 to (255-diff)
+          // Assign to rgbd2 (Blue/Violet target) or rgbd3 (Green/Yellow target)? Decide where the transition lives. Let's put it in rgbd2.
+        rgbd2[i] = r_out; rgbd2[i+1] = g_out; rgbd2[i+2] = b_out; rgbd2[i+3] = alpha_out;
+        // Make others transparent for this pixel
+        rgbd[i+3] = 0; rgbd3[i+3] = 0;
+
+    } else if (rgb > yellowThreshold) { // --- Transition: Yellow to Green ---
+      //   const factor = (rgb - yellowThreshold) / (greenThreshold - yellowThreshold);
+         factor = smoothstep(yellowThreshold, greenThreshold, rgb); // Use smoothstep
+
+         r_out = targetYellow.r * (1-factor) + targetGreen.r * factor; // Blends 255 to 0
+         g_out = targetYellow.g * (1-factor) + targetGreen.g * factor; // Stays (255-diff)
+         b_out = targetYellow.b * (1-factor) + targetGreen.b * factor; // Stays 0
+          // Assign to rgbd3
+         rgbd3[i] = r_out; rgbd3[i+1] = g_out; rgbd3[i+2] = b_out; rgbd3[i+3] = alpha_out;
+        // Make others transparent for this pixel
+        rgbd[i+3] = 0; rgbd2[i+3] = 0;
+
+    } else { // Pure Yellow Zone (rgb between 128 and darkThreshold)
+        r_out = targetYellow.r;
+        g_out = targetYellow.g;
+        b_out = targetYellow.b;
+         // Assign to rgbd3
+        rgbd3[i] = r_out; rgbd3[i+1] = g_out; rgbd3[i+2] = b_out; rgbd3[i+3] = alpha_out;
+        // Make others transparent for this pixel
+        rgbd[i+3] = 0; rgbd2[i+3] = 0;
+    }
+
+} else { // Dark/Transparent Zone
+    rgbd[i+3] = 0;
+    rgbd2[i+3] = 0;
+    rgbd3[i+3] = 0;
+}
+
   
 // agavF.set(rgbdat.data);
 var ang=45;
