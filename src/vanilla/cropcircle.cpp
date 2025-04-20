@@ -514,9 +514,39 @@ ctx.getExtension('GL_ARB_direct_state_access');
  */
 // var agav=new Float32Array(Module.HEAPF32.buffer,pointc,1);
 // console.log(agav[0]);
+
+
+let r_out = 0, g_out = 0, b_out = 0;
+let alpha_out = 0; // Default to transparent
+
+// Define target colors (incorporating diff)
+const targetRed = { r: 255 - diff, g: 0, b: 0 };
+const targetOrange = { r: 255, g: 128 - diff, b: 0 };
+const targetViolet = { r: 128 - diff, g: 0, b: 255 };
+const targetBlue = { r: 0, g: 0, b: 255 - diff };
+const targetGreen = { r: 0, g: 255 - diff, b: 0 };
+const targetYellow = { r: 255, g: 255 - diff, b: 0 };
+
+// Define thresholds (using the start of each main color band)
+const orangeThreshold = 209;
+const redThreshold = 193;
+const violetThreshold = 177;
+const blueThreshold = 161;
+const greenThreshold = 145;
+const yellowThreshold = 128;
+const darkThreshold = 126; // Below this is transparent
+
+function smoothstep(edge0, edge1, x) {
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+}
+
 for(i=0;i<(winSize*winSize*4);i=i+4){
+  
 var rgb=(imgg[i]*0.2126)+(imgg[i+1]*0.7152)+(imgg[i+2]*0.0722);
+  
 var lightDark=128+((Math.abs(floatResult.average-128))/2);
+  
 rgb=rgb+lightDark/2;
  
  //  but run past a lighter pixel if the avg is darker 
@@ -602,32 +632,6 @@ rgbd3[i+2]=255;
 rgbd[i+3]=0;
 rgbd2[i+3]=0;
 rgbd3[i+3]=0;
-}
-}
-
-let r_out = 0, g_out = 0, b_out = 0;
-let alpha_out = 0; // Default to transparent
-
-// Define target colors (incorporating diff)
-const targetRed = { r: 255 - diff, g: 0, b: 0 };
-const targetOrange = { r: 255, g: 128 - diff, b: 0 };
-const targetViolet = { r: 128 - diff, g: 0, b: 255 };
-const targetBlue = { r: 0, g: 0, b: 255 - diff };
-const targetGreen = { r: 0, g: 255 - diff, b: 0 };
-const targetYellow = { r: 255, g: 255 - diff, b: 0 };
-
-// Define thresholds (using the start of each main color band)
-const orangeThreshold = 209;
-const redThreshold = 193;
-const violetThreshold = 177;
-const blueThreshold = 161;
-const greenThreshold = 145;
-const yellowThreshold = 128;
-const darkThreshold = 126; // Below this is transparent
-
-function smoothstep(edge0, edge1, x) {
-    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-    return t * t * (3 - 2 * t);
 }
 
 if (rgb > darkThreshold) {
@@ -719,7 +723,8 @@ if (rgb > darkThreshold) {
     rgbd2[i+3] = 0;
     rgbd3[i+3] = 0;
 }
-
+  
+}
   
 // agavF.set(rgbdat.data);
 var ang=45;
