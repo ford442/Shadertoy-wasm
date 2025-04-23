@@ -654,10 +654,10 @@ b3_compute_mod_test64:
 	 -fexcess-precision=fast -m64 -sMEMORY64=2 --target=wasm64 \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -fno-omit-frame-pointer \
-	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
+	 -mextended-const -O2 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
 	 -I/content/RAMDRIVE2/b3/boost_1_86_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
-	 em++ $(mLDFLAGS) -O3 -m64 --bind -sMEMORY64=2 -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=2 \
+	 em++ $(mLDFLAGS) -O2 -m64 --bind -sMEMORY64=2 -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=2 \
 	 -sEXIT_RUNTIME=0 -ffast-math -mextended-const -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE \
 	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
