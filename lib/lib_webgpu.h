@@ -2562,6 +2562,7 @@ dictionary GPURenderBundleEncoderDescriptor : GPURenderPassLayout {
 typedef struct WGpuRenderBundleEncoderDescriptor
 {
   int numColorFormats;
+    char _padding_for_alignment[4];          // Offset 4, Ends at 8
   const WGPU_TEXTURE_FORMAT *colorFormats; // TODO: Wasm64
   WGPU_TEXTURE_FORMAT depthStencilFormat;
   uint32_t sampleCount;
