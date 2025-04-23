@@ -14,7 +14,7 @@
 #endif
 
 #ifdef __clang__
-// #pragma clang diagnostic error "-Wpadded"
+#pragma clang diagnostic error "-Wpadded"
 #endif
 
 #ifdef _MSC_VER
