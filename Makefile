@@ -646,7 +646,7 @@ b3_compute_mod_test5:
 	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
 	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
-	 -sMODULARIZE -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1
+	 -sMODULARIZE -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEAGCY_EXCEPTIONS=0
 
 
 b3_compute_mod_test64:
