@@ -248,7 +248,7 @@ if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
 mV.width=this.videoWidth;
 mV.height=this.videoHeight;
-}{ once: true });
+},{ once: true });
 loadV.addEventListener('canplay',function(){
 loadV.width=this.videoWidth;
 loadV.height=this.videoHeight;
@@ -266,13 +266,13 @@ $pt=Math.round($pt);
 $pt=$pt/1000000;
 document.getElementById('idur').innerHTML=mic/1000000;
 document.getElementById('itim').innerHTML=$pt;
-}{ once: true });
+},{ once: true });
   }
 if(media_mode=='img'){
 mV.addEventListener('load',function(){
 mV.width=this.naturalWidth;
 mV.height=this.naturalHeight;
-}{ once: true });
+},{ once: true });
 loadV.addEventListener('load',function(){
 loadV.width=this.naturalWidth;
 loadV.height=this.naturalHeight;
@@ -282,7 +282,7 @@ document.getElementById('hig').innerHTML=this.naturalHeight;
 document.getElementById('blnnk').innerHTML=Math.max((this.naturalWidth-this.naturalHeight)/2.0,0);
 // document.getElementById('wid').innerHTML=parseInt(window.innerHeight,10);
 //document.getElementById('hig').innerHTML=parseInt(window.innerHeight,10);
-}{ once: true });
+},{ once: true });
   }
 
   
