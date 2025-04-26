@@ -67,7 +67,7 @@ if(!ext.supportLinearFiltering){
 startGUI();
 function getWebGLContext(canvas){
 const params={
-colorType:'float64',
+colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 logarithmicDepthBuffer:true,
@@ -88,7 +88,7 @@ xrCompatible:false,
 majorVersion:2,
 minorVersion:0};
 var gl=canvas.getContext('webgl2',{
-colorType:'float64',
+colorType:'float32',
 preferLowPowerToHighPerformance:false,
 precision:'highp',
 logarithmicDepthBuffer:true,
