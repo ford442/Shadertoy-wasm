@@ -718,7 +718,7 @@ var imageData=image.data;
 let pixelData=new Uint8ClampedArray(imageData);
 var fileStream=FS.open('/video/frame.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-Module.frmOn();
+Module.cnvOn();
 setInterval(function(){
 gl3.clearRect(0,0,w$,h$);  
 gl3.drawImage(vvi,0,0,w$-offsetX,h$-offsetY,0,0,w$-offsetX,h$-offsetY);
@@ -906,7 +906,6 @@ let menuSz=parseInt(window.innerWidth*.5,10);
 
 document.querySelector('#startBtn').addEventListener('click',function(){
 
-
 var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
 const $iwid=document.querySelector('#iwid');
@@ -921,12 +920,11 @@ const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
 $vids[0]=preList.length;
 for(var i=1;i<preList.length;i++){
 var txxt=preList[i].href;
-
 let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
- let lastSlashIndex = pathName.lastIndexOf('/');
- let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
- txxt=txxt.replace('https://noahcohn.com/','');
- $vids[i]=basePath+'video/'+txxt;
+let lastSlashIndex = pathName.lastIndexOf('/');
+let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
+txxt=txxt.replace('https://noahcohn.com/','');
+$vids[i]=basePath+'video/'+txxt;
 $vids[i]='https://noahcohn.com/video/'+txxt;
 }}
 
@@ -937,6 +935,32 @@ if(this.readyState==4&&this.status==200){
 vids(this);
 }};
 fxhttp.open('GET','video/',true);
+fxhttp.send();
+}
+
+
+function imgs(xml){
+const vparser=new DOMParser();
+const htmlDocv=vparser.parseFromString(xml.responseText,'text/html');
+const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
+$vids[0]=preList.length;
+for(var i=1;i<preList.length;i++){
+var txxt=preList[i].href;
+let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
+let lastSlashIndex = pathName.lastIndexOf('/');
+let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
+txxt=txxt.replace('https://noahcohn.com/','');
+$vids[i]=basePath+'img/'+txxt;
+$vids[i]='https://noahcohn.com/img/'+txxt;
+}}
+
+function scanImages(){
+const fxhttp=new XMLHttpRequest();
+fxhttp.onreadystatechange=function(){
+if(this.readyState==4&&this.status==200){
+vids(this);
+}};
+fxhttp.open('GET','img/',true);
 fxhttp.send();
 }
 
@@ -978,8 +1002,12 @@ document.querySelector('#wrap').style.pointerEvents='auto';
 document.querySelector('#isrc').innerHTML=adr;
 if(media_mode=='vid'){
 mV.play();
-}
 var vv=document.querySelector('#mvi');
+}
+if(media_mode=='img'){
+var vv=document.querySelector('#mvi');
+}
+
 let lockVid;
 
 function spKey(e){
@@ -998,6 +1026,7 @@ pnnl.addEventListener('keydown',spKey);
 function loada(){
 if(lockVid!=1){
 document.querySelector('#ldv').height=window.innerHeight;
+document.querySelector('#lvi').height=window.innerHeight;
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
 mV.width=this.videoWidth;
@@ -1062,6 +1091,7 @@ vide[0].id=lo;
 vide[1].id=mv;
 if(media_mode=='vid'){
 document.querySelector('#mvi').play();
+
 }
 $iwid.innerHTML=parseInt($w,10);
 $ihig.innerHTML=parseInt(window.innerHeight,10);  
@@ -1070,15 +1100,20 @@ document.querySelector('#circle').height=parseInt(window.innerHeight,10);
 document.querySelector('#circle').width=parseInt(window.innerWidth,10);
 document.querySelector('#ldv').src=document.querySelector('#isrc').innerHTML;
 if(media_mode=='img'){
-document.querySelector('#mvi').height=window.innerHeight;
-document.querySelector('#ldv').height=window.innerHeight;
+document.querySelector('#lvi').src=document.querySelector('#isrc').innerHTML;
+document.querySelector('#ivi').height=window.innerHeight;
+document.querySelector('#lvi').height=window.innerHeight;
 }
 if(media_mode=='vid'){
 document.querySelector('#ldv').load();
 document.querySelector('#ldv').currentTime=document.querySelector('#itim').innerHTML;
-}
 document.querySelector('#ldv').height=he;
 document.querySelector('#ldv').width=wi;
+}
+if(media_mode=='img'){
+document.querySelector('#lvi').height=he;
+document.querySelector('#lvi').width=wi;
+}
 Module.sizeBuffer(hi);
 document.querySelector('#di').click();
 
@@ -1097,11 +1132,20 @@ getShader(pth2,'compute.wgsl');
 getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 
+if(media_mode=='vid'){
 scanVideos();
 setTimeout(function(){
 loada()},2200);
 setTimeout(function(){
 videoStart()},4200);
+}
+if(media_mode=='img'){
+scanImages();
+setTimeout(function(){
+loada()},2200);
+setTimeout(function(){
+imageStart()},4200);
+}
 });
 
 document.querySelector('#startBtn2').addEventListener('click',function(){
