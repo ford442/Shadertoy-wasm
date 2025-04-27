@@ -1121,7 +1121,7 @@ document.querySelector('#lvi').width=wi;
 }
 Module.sizeBuffer(he);
 document.querySelector('#di').click();
-
+imageStart();
 }
 setTimeout(function(){
 loada();
