@@ -309,7 +309,7 @@ pixel_buffer.resize(num_elements); // Resize pixel_buffer to hold floats
 const size_t simd_size = float_simd::size(); // How many floats fit in one SIMD register
 const size_t vec_size = data.size();
 size_t i = 0;
-const float_simd inv_255(1.0f / 255.0f);
+float_simd inv_255(1.0f / 255.0f);
 for (; i + simd_size <= vec_size; i += simd_size) {
     alignas(float_simd) std::array<uint8_t, simd_size> temp_u8;
     std::copy(data.begin() + i, data.begin() + i + simd_size, temp_u8.begin());
