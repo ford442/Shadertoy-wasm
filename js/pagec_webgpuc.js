@@ -244,11 +244,11 @@ function loada(){
 if(lockVid!=1){
 document.getElementById('ldv').height=window.innerHeight;
 if(media_mode=='vid'){
-mV.addEventListener('load',function(){
+mV.addEventListener('canplay',function(){
 mV.width=this.videoWidth;
 mV.height=this.videoHeight;
 },{ once: false });
-loadV.addEventListener('load',function(){
+loadV.addEventListener('canplay',function(){
 loadV.width=this.videoWidth;
 loadV.height=this.videoHeight;
 document.getElementById('wid').innerHTML=this.videoWidth;
