@@ -6,6 +6,16 @@
 #include <emscripten/val.h>
 // #include "/usr/include/eigen3/Eigen/Eigen"
 
+#include <experimental/simd> // Or <simd> depending on your setup
+
+#include <iterator> // For std::distance
+
+using float_simd = std::experimental::simd<float>;
+using uint8_simd = std::experimental::native_simd<uint8_t>; // Use native uint8_t SIMD size
+using uint16_simd = std::experimental::native_simd<uint16_t>;
+using uint32_simd = std::experimental::native_simd<uint32_t>;
+
+
 namespace fsm = boost::filesystem;
 
 boost::container::vector<emscripten_align1_float> pixel_buffer;
@@ -287,8 +297,35 @@ wrpd.at(1,1)=passDesc2;
 if(on_b.at(5,5)==1){
 fsm::ifstream fram(Fnm2,std::ios::binary);
 boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
+fram.close(); // Good practice to close the file handle
+
+/*      // regular
 std::transform(data.begin(),data.end(),pixel_buffer.begin(),[](uint8_t val){return val/255.0f;});
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
+*/
+     //  SIMD
+size_t num_elements = data.size();
+pixel_buffer.resize(num_elements); // Resize pixel_buffer to hold floats
+const size_t simd_size = float_simd::size(); // How many floats fit in one SIMD register
+const size_t vec_size = data.size();
+size_t i = 0;
+const float_simd inv_255(1.0f / 255.0f);
+for (; i + simd_size <= vec_size; i += simd_size) {
+    alignas(float_simd) std::array<uint8_t, simd_size> temp_u8;
+    std::copy(data.begin() + i, data.begin() + i + simd_size, temp_u8.begin());
+    float_simd data_chunk_f;
+    for(size_t k=0; k < simd_size; ++k) {
+        data_chunk_f[k] = static_cast<float>(temp_u8[k]); // Element-wise assignment for conversion
+    }
+    float_simd result_chunk = data_chunk_f * inv_255; // SIMD multiplication
+    result_chunk.copy_to(pixel_buffer.data() + i, std::experimental::element_aligned);
+}
+for (; i < vec_size; ++i) {
+    pixel_buffer[i] = static_cast<float>(data[i]) / 255.0f;
+}
+const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(emscripten_align1_float); // Should this be pixel_buffer.size() * sizeof(float) / height? Or width*4*sizeof(float)? Check calculation.
+
+      
 wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
 on_b.at(5,5)=0;
 }
