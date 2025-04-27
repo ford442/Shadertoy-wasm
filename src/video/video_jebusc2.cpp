@@ -705,7 +705,13 @@ var $B=new Float64Array($H,pointb,sz);
 var $F=1;
 var $Bu=33;
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({nblnk:nblank$,blnk:blank$$,h:h$,canvasSize:canvasSize});
+t.setConstants({
+    h: h$,           // Native image height (also size of the source square)
+    canvasSize: canvasSize, // Target canvas dimension
+    offX: blank$$,   // Horizontal offset in source image for the square's top-left
+    offY: nblank$    // Vertical offset in source image for the square's top-left
+    // w: w$         // Optionally pass width 'w' if needed for clamping reads
+});
 t.setOutput([canvasSize, canvasSize]); // Output matches canvas size
 
 var $$1=t(vv);
@@ -731,14 +737,26 @@ eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
 pointb=66*la;
 $B=new Float64Array($H,pointb,sz);
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({nblnk:nblank$,blnk:blank$$,h:h$,canvasSize:canvasSize});
+t.setConstants({
+    h: h$,           // Native image height (also size of the source square)
+    canvasSize: canvasSize, // Target canvas dimension
+    offX: blank$$,   // Horizontal offset in source image for the square's top-left
+    offY: nblank$    // Vertical offset in source image for the square's top-left
+    // w: w$         // Optionally pass width 'w' if needed for clamping reads
+});
 t.setOutput([canvasSize, canvasSize]); // Output matches canvas size
 
 var T=false;
 function M(){
 vv=document.querySelector("#mv");
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({nblnk:nblank$,blnk:blank$$,h:h$,canvasSize:canvasSize});
+t.setConstants({
+    h: h$,           // Native image height (also size of the source square)
+    canvasSize: canvasSize, // Target canvas dimension
+    offX: blank$$,   // Horizontal offset in source image for the square's top-left
+    offY: nblank$    // Vertical offset in source image for the square's top-left
+    // w: w$         // Optionally pass width 'w' if needed for clamping reads
+});
 t.setOutput([canvasSize, canvasSize]); // Output matches canvas size
 
 if(T){return;}
