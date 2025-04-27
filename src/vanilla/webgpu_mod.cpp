@@ -6,14 +6,14 @@
 #include <emscripten/val.h>
 // #include "/usr/include/eigen3/Eigen/Eigen"
 
-#include <experimental/simd> // Or <simd> depending on your setup
+// #include <simd> // Or <simd> depending on your setup
 
 #include <iterator> // For std::distance
 
-using float_simd = std::experimental::simd<float>;
-using uint8_simd = std::experimental::native_simd<uint8_t>; // Use native uint8_t SIMD size
-using uint16_simd = std::experimental::native_simd<uint16_t>;
-using uint32_simd = std::experimental::native_simd<uint32_t>;
+using float_simd = std::simd<float>;
+using uint8_simd = std::native_simd<uint8_t>; // Use native uint8_t SIMD size
+using uint16_simd = std::native_simd<uint16_t>;
+using uint32_simd = std::native_simd<uint32_t>;
 
 
 namespace fsm = boost::filesystem;
