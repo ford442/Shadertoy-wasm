@@ -960,7 +960,7 @@ function scanImages(){
 const fxhttp=new XMLHttpRequest();
 fxhttp.onreadystatechange=function(){
 if(this.readyState==4&&this.status==200){
-vids(this);
+imgs(this);
 }};
 fxhttp.open('GET','pics/',true);
 fxhttp.send();
