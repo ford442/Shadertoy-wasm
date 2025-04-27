@@ -531,9 +531,6 @@ g.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
 g2.addNativeFunction('Aveg',glslAveg,{returnType:'Number'});
 g2.addNativeFunction('Ave',glslAve,{returnType:'Number'});
 let t, r, R;
-const canvasElement = document.getElementById('scanvas');
-const canvasSize = canvasElement.height; // Use height (assuming square)
-
 var select=document.querySelector('#b3');
 var vid_mode=select.value;
 var select2=document.querySelector('#media');
@@ -544,25 +541,10 @@ var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLVideo"]).setOptimizeFloatMemory(true).setOutput([sz]);
 t=g.createKernel(function(v){
-    const x = this.thread.x; // Current canvas x coord being calculated
-    const y = this.thread.y; // Current canvas y coord being calculated
-    const normX = x / this.constants.canvasSize;
-    const normY = y / this.constants.canvasSize;
-    const squareX = normX * this.constants.h;
-    const squareY = normY * this.constants.h;
-    // Use floor() for nearest-neighbor sampling.
-    const sx = Math.floor(squareX + this.constants.offX);
-    const sy = Math.floor(squareY + this.constants.offY);
-    // If you encounter edge issues, you might need manual clamping:
-    // const clamped_sy = Math.max(0, Math.min(this.constants.h - 1, sy)); // Clamp sy based on h
-    // const clamped_sx = Math.max(0, Math.min(this.constants.w - 1, sx)); // Clamp sx based on w (requires 'w' constant)
-    const P = v[sy][sx]; // Use potentially non-clamped coords first
-    const R = P[0];
-    const G = P[1];
-    const B = P[2];
-    const A = Ave(R, G, B); // Your average function, result goes into alpha
-    return [R, G, B, A];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+var av$=Ave(P[0],P[1],P[2]);
+return[P[0],P[1],P[2],av$];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 var $fmax=this.constants.fmax;
@@ -577,7 +559,7 @@ var Min=((p[3]-$favg)+3.0101)*(($amax-($aavg-$fmin-($amin-$fmin)))/(4.0+($aavg-p
 var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
-}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
 }
 if(vid_mode=='B3_B'){
 R=g2.createKernel(function(tv){
@@ -585,25 +567,10 @@ var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLVideo"]).setOptimizeFloatMemory(true).setOutput([sz]);
 t=g.createKernel(function(v){
-    const x = this.thread.x; // Current canvas x coord being calculated
-    const y = this.thread.y; // Current canvas y coord being calculated
-    const normX = x / this.constants.canvasSize;
-    const normY = y / this.constants.canvasSize;
-    const squareX = normX * this.constants.h;
-    const squareY = normY * this.constants.h;
-    // Use floor() for nearest-neighbor sampling.
-    const sx = Math.floor(squareX + this.constants.offX);
-    const sy = Math.floor(squareY + this.constants.offY);
-    // If you encounter edge issues, you might need manual clamping:
-    // const clamped_sy = Math.max(0, Math.min(this.constants.h - 1, sy)); // Clamp sy based on h
-    // const clamped_sx = Math.max(0, Math.min(this.constants.w - 1, sx)); // Clamp sx based on w (requires 'w' constant)
-    const P = v[sy][sx]; // Use potentially non-clamped coords first
-    const R = P[0];
-    const G = P[1];
-    const B = P[2];
-    const A = Ave(R, G, B); // Your average function, result goes into alpha
-    return [R, G, B, A];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+var av$=Ave(P[0],P[1],P[2]);
+return[P[0],P[1],P[2],av$];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 var $fmax=this.constants.fmax;
@@ -619,7 +586,7 @@ var ouT=Math.max(Min,alph);
 var aveg=Aveg(p[3],ouT);
 this.color(p[0],p[1],p[2],aveg);
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
 if(vid_mode=='Video'){
 if(media_mode=='vid'){
@@ -628,30 +595,14 @@ var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLVideo"]).setOptimizeFloatMemory(true).setOutput([sz]);
 t=g.createKernel(function(v){
-    const x = this.thread.x; // Current canvas x coord being calculated
-    const y = this.thread.y; // Current canvas y coord being calculated
-    const normX = x / this.constants.canvasSize;
-    const normY = y / this.constants.canvasSize;
-    const squareX = normX * this.constants.h;
-    const squareY = normY * this.constants.h;
-    // Use floor() for nearest-neighbor sampling.
-    const sx = Math.floor(squareX + this.constants.offX);
-    const sy = Math.floor(squareY + this.constants.offY);
-    // If you encounter edge issues, you might need manual clamping:
-    // const clamped_sy = Math.max(0, Math.min(this.constants.h - 1, sy)); // Clamp sy based on h
-    // const clamped_sx = Math.max(0, Math.min(this.constants.w - 1, sx)); // Clamp sx based on w (requires 'w' constant)
-    const P = v[sy][sx]; // Use potentially non-clamped coords first
-    const R = P[0];
-    const G = P[1];
-    const B = P[2];
-    const A = Ave(R, G, B); // Your average function, result goes into alpha
-    return [R, G, B, A];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+var P=v[this.thread.y][this.thread.x+this.constants.blnk];
+return[P[0],P[1],P[2],P[3]];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 this.color(p[0],p[1],p[2],p[3]);
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLVideo"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
 if(media_mode=='img'){
 R=g2.createKernel(function(tv){
@@ -659,30 +610,14 @@ var Pa=tv[this.thread.y][this.thread.x*4];
 return Ave(Pa[0],Pa[1],Pa[2]);
 }).setImmutable(true).setTactic("speed").setDynamicOutput(true).setArgumentTypes(["HTMLImage"]).setOptimizeFloatMemory(true).setOutput([sz]);
 t=g.createKernel(function(v){
-    const x = this.thread.x; // Current canvas x coord being calculated
-    const y = this.thread.y; // Current canvas y coord being calculated
-    const normX = x / this.constants.canvasSize;
-    const normY = y / this.constants.canvasSize;
-    const squareX = normX * this.constants.h;
-    const squareY = normY * this.constants.h;
-    // Use floor() for nearest-neighbor sampling.
-    const sx = Math.floor(squareX + this.constants.offX);
-    const sy = Math.floor(squareY + this.constants.offY);
-    // If you encounter edge issues, you might need manual clamping:
-    // const clamped_sy = Math.max(0, Math.min(this.constants.h - 1, sy)); // Clamp sy based on h
-    // const clamped_sx = Math.max(0, Math.min(this.constants.w - 1, sx)); // Clamp sx based on w (requires 'w' constant)
-    const P = v[sy][sx]; // Use potentially non-clamped coords first
-    const R = P[0];
-    const G = P[1];
-    const B = P[2];
-    const A = Ave(R, G, B); // Your average function, result goes into alpha
-    return [R, G, B, A];
-}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+    var P = v[this.thread.y + this.constants.nblnk][this.thread.x + this.constants.blnk];
+return[P[0],P[1],P[2],P[3]];
+}).setImmutable(true).setTactic("precision").setPipeline(true).setPrecision('single').setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
 r=g.createKernel(function(f){
 var p=f[this.thread.y][this.thread.x];
 this.color(p[0],p[1],p[2],p[3]);
 // }).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(['HTMLVideo']).setDynamicOutput(true).setOutput([h$,h$]);
-}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([canvasSize,canvasSize]);
+}).setImmutable(true).setTactic("precision").setGraphical(true).setArgumentTypes(["HTMLImage"]).setDynamicOutput(true).setOutput([h$,h$]);
 }
 }
 w$=parseInt(document.querySelector("#wid").innerHTML,10);
@@ -705,15 +640,7 @@ var $B=new Float64Array($H,pointb,sz);
 var $F=1;
 var $Bu=33;
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({
-    h: h$,           // Native image height (also size of the source square)
-    canvasSize: canvasSize, // Target canvas dimension
-    offX: blank$$,   // Horizontal offset in source image for the square's top-left
-    offY: nblank$    // Vertical offset in source image for the square's top-left
-    // w: w$         // Optionally pass width 'w' if needed for clamping reads
-});
-t.setOutput([canvasSize, canvasSize]); // Output matches canvas size
-
+t.setConstants({nblnk:nblank$,blnk:blank$$});
 var $$1=t(vv);
 for (i=0;i<65;i++){
 var j=i+1;
@@ -737,28 +664,12 @@ eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
 pointb=66*la;
 $B=new Float64Array($H,pointb,sz);
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({
-    h: h$,           // Native image height (also size of the source square)
-    canvasSize: canvasSize, // Target canvas dimension
-    offX: blank$$,   // Horizontal offset in source image for the square's top-left
-    offY: nblank$    // Vertical offset in source image for the square's top-left
-    // w: w$         // Optionally pass width 'w' if needed for clamping reads
-});
-t.setOutput([canvasSize, canvasSize]); // Output matches canvas size
-
+t.setConstants({nblnk:nblank$,blnk:blank$$});
 var T=false;
 function M(){
 vv=document.querySelector("#mv");
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
-t.setConstants({
-    h: h$,           // Native image height (also size of the source square)
-    canvasSize: canvasSize, // Target canvas dimension
-    offX: blank$$,   // Horizontal offset in source image for the square's top-left
-    offY: nblank$    // Vertical offset in source image for the square's top-left
-    // w: w$         // Optionally pass width 'w' if needed for clamping reads
-});
-t.setOutput([canvasSize, canvasSize]); // Output matches canvas size
-
+t.setConstants({nblnk:nblank$,blnk:blank$$});
 if(T){return;}
 for(i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
