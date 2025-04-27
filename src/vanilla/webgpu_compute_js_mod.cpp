@@ -922,9 +922,9 @@ const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
 $vids[0]=preList.length;
 for(var i=1;i<preList.length;i++){
 var txxt=preList[i].href;
-let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
+let pathName = window.location.pathname;
 let lastSlashIndex = pathName.lastIndexOf('/');
-let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
+let basePath = pathName.substring(0, lastSlashIndex + 1);
 txxt=txxt.replace('https://noahcohn.com/','');
 $vids[i]=basePath+'video/'+txxt;
 $vids[i]='https://noahcohn.com/video/'+txxt;
@@ -940,7 +940,6 @@ fxhttp.open('GET','video/',true);
 fxhttp.send();
 }
 
-
 function imgs(xml){
 const vparser=new DOMParser();
 const htmlDocv=vparser.parseFromString(xml.responseText,'text/html');
@@ -948,9 +947,9 @@ const preList=htmlDocv.getElementsByTagName('pre')[0].getElementsByTagName('a');
 $vids[0]=preList.length;
 for(var i=1;i<preList.length;i++){
 var txxt=preList[i].href;
-let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" or "/"
+let pathName = window.location.pathname;
 let lastSlashIndex = pathName.lastIndexOf('/');
-let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
+let basePath = pathName.substring(0, lastSlashIndex + 1);
 txxt=txxt.replace('https://noahcohn.com/','');
 $vids[i]=basePath+'pics/'+txxt;
 $vids[i]='https://noahcohn.com/pics/'+txxt;
@@ -1116,7 +1115,7 @@ if(media_mode=='img'){
 document.querySelector('#lvi').height=he;
 document.querySelector('#lvi').width=wi;
 }
-Module.sizeBuffer(hi);
+Module.sizeBuffer(he);
 document.querySelector('#di').click();
 
 }
