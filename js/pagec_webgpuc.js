@@ -242,14 +242,13 @@ const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
 function loada(){
 if(lockVid!=1){
-// document.getElementById('ldv').height=window.innerHeight;
-  
+document.getElementById('ldv').height=window.innerHeight;
 if(media_mode=='vid'){
-mV.addEventListener('canplay',function(){
+mV.addEventListener('load',function(){
 mV.width=this.videoWidth;
 mV.height=this.videoHeight;
-},{ once: true });
-loadV.addEventListener('canplay',function(){
+},{ once: false });
+loadV.addEventListener('load',function(){
 loadV.width=this.videoWidth;
 loadV.height=this.videoHeight;
 document.getElementById('wid').innerHTML=this.videoWidth;
@@ -266,13 +265,13 @@ $pt=Math.round($pt);
 $pt=$pt/1000000;
 document.getElementById('idur').innerHTML=mic/1000000;
 document.getElementById('itim').innerHTML=$pt;
-},{ once: true });
+},{ once: false });
   }
 if(media_mode=='img'){
 mV.addEventListener('load',function(){
 mV.width=this.naturalWidth;
 mV.height=this.naturalHeight;
-},{ once: true });
+},{ once: false });
 loadV.addEventListener('load',function(){
 loadV.width=this.naturalWidth;
 loadV.height=this.naturalHeight;
@@ -282,7 +281,7 @@ document.getElementById('hig').innerHTML=this.naturalHeight;
 document.getElementById('blnnk').innerHTML=Math.max((this.naturalWidth-this.naturalHeight)/2.0,0);
 // document.getElementById('wid').innerHTML=parseInt(window.innerHeight,10);
 //document.getElementById('hig').innerHTML=parseInt(window.innerHeight,10);
-},{ once: true });
+},{ once: false });
   }
 
   
