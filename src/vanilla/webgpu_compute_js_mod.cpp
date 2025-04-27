@@ -911,6 +911,8 @@ var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 const $iwid=document.querySelector('#iwid');
 var mV=document.querySelector('#mvi');
 var loadV=document.querySelector('#ldv');
+var iV=document.querySelector('#ivi');
+var loadiV=document.querySelector('#lvi');
 var $vids=[];
 
 function vids(xml){
@@ -1005,7 +1007,7 @@ mV.play();
 var vv=document.querySelector('#mvi');
 }
 if(media_mode=='img'){
-var vv=document.querySelector('#mvi');
+var vv=document.querySelector('#ivi');
 }
 
 let lockVid;
@@ -1050,9 +1052,9 @@ document.querySelector('#itim').innerHTML=$pt;
 });
 }
 if(media_mode=='img'){
-mV.addEventListener('load',function(){
+iV.addEventListener('load',function(){
 });
-loadV.addEventListener('load',function(){
+loadiV.addEventListener('load',function(){
 document.querySelector('#wid').innerHTML=this.width;
 document.querySelector('#hig').innerHTML=this.height;
 document.querySelector('#blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
