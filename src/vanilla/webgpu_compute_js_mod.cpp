@@ -1120,7 +1120,7 @@ document.querySelector('#lvi').width=wi;
 }
 Module.sizeBuffer(he);
 document.querySelector('#di').click();
-imageStart();
+// imageStart();
 }
 setTimeout(function(){
 loada();
