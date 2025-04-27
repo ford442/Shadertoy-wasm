@@ -318,7 +318,7 @@ for (; i + simd_size <= vec_size; i += simd_size) {
     for(size_t k=0; k < simd_size; ++k) {
         data_chunk_f[k] = static_cast<float>(temp_u8[k]); // Element-wise assignment for conversion
     }
-    float_simd result_chunk = data_chunk_f * (1.0f / 255.0f); // SIMD multiplication
+    float_simd result_chunk = data_chunk_f * <simd<float>>(1.0f / 255.0f); // SIMD multiplication
     result_chunk.copy_to(pixel_buffer.data() + i, std::experimental::element_aligned);
 }
 for (; i < vec_size; ++i) {
