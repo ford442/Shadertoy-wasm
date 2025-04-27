@@ -950,8 +950,8 @@ let pathName = window.location.pathname; // e.g., "/path/page.html" or "/path/" 
 let lastSlashIndex = pathName.lastIndexOf('/');
 let basePath = pathName.substring(0, lastSlashIndex + 1); // e.g., "/path/to/"
 txxt=txxt.replace('https://noahcohn.com/','');
-$vids[i]=basePath+'img/'+txxt;
-$vids[i]='https://noahcohn.com/img/'+txxt;
+$vids[i]=basePath+'pics/'+txxt;
+$vids[i]='https://noahcohn.com/pics/'+txxt;
 }}
 
 function scanImages(){
@@ -960,7 +960,7 @@ fxhttp.onreadystatechange=function(){
 if(this.readyState==4&&this.status==200){
 vids(this);
 }};
-fxhttp.open('GET','img/',true);
+fxhttp.open('GET','pics/',true);
 fxhttp.send();
 }
 
