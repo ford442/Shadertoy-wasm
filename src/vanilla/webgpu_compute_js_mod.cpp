@@ -726,7 +726,7 @@ var image2=gl3.getImageData(0,0,w$-offsetX,h$-offsetY);
 var imageData=image2.data;
 var pixelData=new Float32Array(imageData);
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-Module.frmOn();
+Module.cnvOn();
 },16.666);
 }
 
