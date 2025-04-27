@@ -1052,8 +1052,8 @@ document.querySelector('#itim').innerHTML=$pt;
 }
 if(media_mode=='img'){
 iV.addEventListener('load',function(){
-this.width=this.naturalWidth;
-this.height=this.naturalHeight;
+// this.width=this.naturalWidth;
+// this.height=this.naturalHeight;
 });
 loadiV.addEventListener('load',function(){
 this.width=this.naturalWidth;
@@ -1097,7 +1097,6 @@ vide[1].id=mv;
 if(media_mode=='vid'){
 document.querySelector('#mvi').play();
 document.querySelector('#ldv').src=document.querySelector('#isrc').innerHTML;
-
 }
 $iwid.innerHTML=parseInt($w,10);
 $ihig.innerHTML=parseInt(window.innerHeight,10);  
@@ -1121,7 +1120,7 @@ document.querySelector('#lvi').width=wi;
 }
 Module.sizeBuffer(he);
 document.querySelector('#di').click();
-// imageStart();
+imageStart();
 }
 setTimeout(function(){
 loada();
