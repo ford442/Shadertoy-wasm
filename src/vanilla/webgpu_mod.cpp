@@ -6,7 +6,7 @@
 #include <emscripten/val.h>
 // #include "/usr/include/eigen3/Eigen/Eigen"
 
-#include <simd> // Or <simd> depending on your setup
+#include <std/simd> // Or <simd> depending on your setup
 
 #include <iterator> // For std::distance
 
