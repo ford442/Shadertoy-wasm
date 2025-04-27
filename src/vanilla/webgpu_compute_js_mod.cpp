@@ -1121,7 +1121,7 @@ document.querySelector('#lvi').width=wi;
 }
 Module.sizeBuffer(he);
 document.querySelector('#di').click();
-imageStart();
+// imageStart();
 }
 setTimeout(function(){
 loada();
@@ -1147,9 +1147,9 @@ videoStart()},4200);
 if(media_mode=='img'){
 scanImages();
 setTimeout(function(){
-loada()},2200);
+imageStart()},1200);
 setTimeout(function(){
-imageStart()},4200);
+loada()},2200);
 }
 });
 
