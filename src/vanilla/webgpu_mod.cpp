@@ -314,7 +314,7 @@ float_simd inv_255(1.0f / 255.0f);
 for (; i + simd_size <= vec_size; i += simd_size) {
     alignas(float_simd) std::array<uint8_t, simd_size> temp_u8;
     std::copy(data.begin() + i, data.begin() + i + simd_size, temp_u8.begin());
-    float_simd data_chunk_f;
+    stdx::simd<float> data_chunk_f;
     for(size_t k=0; k < simd_size; ++k) {
         data_chunk_f[k] = static_cast<float>(temp_u8[k]); // Element-wise assignment for conversion
     }
