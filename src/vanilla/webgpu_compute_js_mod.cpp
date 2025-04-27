@@ -1093,6 +1093,7 @@ vide[0].id=lo;
 vide[1].id=mv;
 if(media_mode=='vid'){
 document.querySelector('#mvi').play();
+document.querySelector('#ldv').src=document.querySelector('#isrc').innerHTML;
 
 }
 $iwid.innerHTML=parseInt($w,10);
@@ -1100,7 +1101,6 @@ $ihig.innerHTML=parseInt(window.innerHeight,10);
 document.querySelector('#pmhig').innerHTML=parseInt(window.innerHeight,10);
 document.querySelector('#circle').height=parseInt(window.innerHeight,10);
 document.querySelector('#circle').width=parseInt(window.innerWidth,10);
-document.querySelector('#ldv').src=document.querySelector('#isrc').innerHTML;
 if(media_mode=='img'){
 document.querySelector('#lvi').src=document.querySelector('#isrc').innerHTML;
 document.querySelector('#ivi').height=window.innerHeight;
