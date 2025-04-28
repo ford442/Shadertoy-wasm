@@ -449,8 +449,8 @@ contx.getExtension('EXT_texture_storage');
 */ // 'new' ext list
 
 //  'old' ext list
-gl.getExtension('WEBGL_color_buffer_float');
-gl.getExtension('WEBGL_color_buffer_half_float');
+// gl.getExtension('WEBGL_color_buffer_float');
+// gl.getExtension('WEBGL_color_buffer_half_float');
 gl.getExtension('GL_OES_texture_float_linear');
 gl.getExtension('GL_OES_texture_half_float_linear');
 gl.getExtension('GL_EXT_float_blend');
@@ -1053,6 +1053,10 @@ attr.failIfMajorPerformanceCaveat=EM_FALSE;
 attr.majorVersion=2;
 attr.minorVersion=0;
 ctx=emscripten_webgl_create_context("#scanvas",&attr);
+emscripten_webgl_enable_extension(ctx,"OES_texture_float");
+emscripten_webgl_enable_extension(ctx,"OES_texture_half_float");
+emscripten_webgl_enable_extension(ctx,"OES_texture_half_float_linear");
+
 // emscripten_webgl_enable_extension(ctx,"WEBGL_compatibility"); // limits to WebGL 1.0
   /*
 emscripten_webgl_enable_extension(ctx,"ARB_robust_buffer_access_behavior");
@@ -1072,9 +1076,11 @@ emscripten_webgl_enable_extension(ctx,"OES_blend_func_separate");
 emscripten_webgl_enable_extension(ctx,"OES_blend_subtract");
 // emscripten_webgl_enable_extension(ctx,"ARB_texture_float"); // OpenGL 1.5/2.0
 emscripten_webgl_enable_extension(ctx,"OES_texture_float");
+emscripten_webgl_enable_extension(ctx,"OES_texture_half_float");
+emscripten_webgl_enable_extension(ctx,"OES_texture_half_float_linear");
+
 emscripten_webgl_enable_extension(ctx,"ARB_compatibility");
 // emscripten_webgl_enable_extension(ctx,"ARB_texture_half_float"); // OpenGL 1.5/2.0
-emscripten_webgl_enable_extension(ctx,"OES_texture_half_float");
 emscripten_webgl_enable_extension(ctx,"OES_element_index_uint");
 emscripten_webgl_enable_extension(ctx,"OES_shader_multisample_interpolation");
 emscripten_webgl_enable_extension(ctx,"ARB_framebuffer_object");
