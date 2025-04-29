@@ -586,9 +586,9 @@ rgbd3[i]=255;
 rgbd3[i+1]=255;
 rgbd3[i+2]=255;
 // rgbd[i+3]=255-((rgb-128)*diff);
-rgbd[i+3]=255;
-rgbd2[i+3]=255;
-rgbd3[i+3]=255;
+rgbd[i+3]=255-diff;
+rgbd2[i+3]=255-diff;
+rgbd3[i+3]=255-diff;
 }
 }
 
