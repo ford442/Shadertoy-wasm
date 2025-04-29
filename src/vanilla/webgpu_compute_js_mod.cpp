@@ -1031,10 +1031,12 @@ document.querySelector('#lvi').height=window.innerHeight;
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
 // mV.width=this.videoWidth;
+mV.height=window.innerHeight;
 // mV.height=this.videoHeight;
 });
 loadV.addEventListener('canplay',function(){
 // loadV.width=this.videoWidth;
+loadV.height=window.innerHeight;
 // loadV.height=this.videoHeight;
 document.querySelector('#wid').innerHTML=this.width; // videoWidth;
 document.querySelector('#hig').innerHTML=this.height; // videoHeight;
