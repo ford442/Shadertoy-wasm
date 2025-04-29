@@ -353,7 +353,6 @@ var bcanvas=document.getElementById('imag3');
 scanvas.imageSmoothingEnabled=false;
 icanvas.imageSmoothingEnabled=false;
 bcanvas.imageSmoothingEnabled=false;
-
 scanvas.id='zimag';
 scanvas.imageRendering='pixelated';
 icanvas.imageRendering='pixelated';
@@ -521,7 +520,13 @@ rgb=rgb+lightDark/2;
  //
 var diff=(floatResult.average/255)*32;
 if(rgb>126){
-if(rgb>209){    // orange
+if(rgb>229){    // past orange
+rgbd[i]=255;
+rgbd[i+1]=255;
+rgbd[i+2]=255;
+rgbd[i+3]=0;// -((rgb-209)*diff);
+}
+else if(rgb>209){    // orange
 rgbd[i]=255;
 rgbd[i+1]=128-diff;
 rgbd[i+2]=0;
@@ -534,7 +539,7 @@ rgbd[i+2]=0;
 rgbd[i+3]=255;// -((rgb-193)*diff);
                    //  border
 }else if(rgb>190){  
-rgbd[i]=0;
+rgbd[i]=255;
 rgbd[i+1]=0;
 rgbd[i+2]=0;
 rgbd[i+3]=255;
@@ -552,7 +557,7 @@ rgbd2[i+3]=255;// -((rgb-161)*diff);
 }else if(rgb>158){
 rgbd2[i]=0;
 rgbd2[i+1]=0;
-rgbd2[i+2]=0;
+rgbd2[i+2]=255;
 rgbd2[i+3]=255;
 }else if(rgb>145){  // green
 rgbd3[i]=0;
@@ -565,8 +570,8 @@ rgbd3[i+1]=255-diff;
 rgbd3[i+2]=0;
 rgbd3[i+3]=255;// -((rgb-128)*diff);
 }else if(rgb>125){ //  border
-rgbd3[i]=0;
-rgbd3[i+1]=0;
+rgbd3[i]=255;
+rgbd3[i+1]=255;
 rgbd3[i+2]=0;
 rgbd3[i+3]=255;
 }
