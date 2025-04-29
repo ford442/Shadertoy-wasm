@@ -522,9 +522,9 @@ var diff=(floatResult.average/255)*32;
 var grey=(floatResult.average*255);
 if(rgb>126){
 if(rgb>229){    // past orange
-rgbd[i]=grey-(rgb-229);
-rgbd[i+1]=grey-(rgb-229);
-rgbd[i+2]=grey-(rgb-229);
+rgbd[i]=grey+(rgb-229);
+rgbd[i+1]=grey+(rgb-229);
+rgbd[i+2]=grey+(rgb-229);
 rgbd[i+3]=255;// -((rgb-209)*diff);
 }
 else if(rgb>209){    // orange
@@ -577,16 +577,16 @@ rgbd3[i+2]=0;
 rgbd3[i+3]=255;
 }
 }else{           // black / blank
-rgbd[i]=255-(grey-(rgb-229));
-rgbd[i+1]=255-(grey-(rgb-229));
-rgbd[i+2]=255-(grey-(rgb-229));
-rgbd2[i]=255-(grey-(rgb-229));
-rgbd2[i+1]=255-(grey-(rgb-229));
-rgbd2[i+2]=255-(grey-(rgb-229));
-rgbd3[i]=255-(grey-(rgb-229));
-rgbd3[i+1]=255-(grey-(rgb-229));
-rgbd3[i+2]=255-(grey-(rgb-229));
-// rgbd[i+3]=255-((rgb-128)*diff);
+rgbd[i]=(grey-(rgb-229));
+rgbd[i+1]=(grey-(rgb-229));
+rgbd[i+2]=(grey-(rgb-229));
+rgbd2[i]=(grey-(rgb-229));
+rgbd2[i+1]=(grey-(rgb-229));
+rgbd2[i+2]=(grey-(rgb-229));
+rgbd3[i]=(grey-(rgb-229));
+rgbd3[i+1]=(grey-(rgb-229));
+rgbd3[i+2]=(grey-(rgb-229));
+// rgbd[i+3]=((rgb-128)*diff);
 rgbd[i+3]=255;
 rgbd2[i+3]=255;
 rgbd3[i+3]=255;
