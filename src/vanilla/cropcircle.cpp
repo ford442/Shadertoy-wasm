@@ -577,15 +577,15 @@ rgbd3[i+2]=0;
 rgbd3[i+3]=255;
 }
 }else{           // black / blank
-rgbd[i]=(grey-(rgb-229));
-rgbd[i+1]=(grey-(rgb-229));
-rgbd[i+2]=(grey-(rgb-229));
-rgbd2[i]=(grey-(rgb-229));
-rgbd2[i+1]=(grey-(rgb-229));
-rgbd2[i+2]=(grey-(rgb-229));
-rgbd3[i]=(grey-(rgb-229));
-rgbd3[i+1]=(grey-(rgb-229));
-rgbd3[i+2]=(grey-(rgb-229));
+rgbd[i]=(grey+(rgb-229));
+rgbd[i+1]=(grey+(rgb-229));
+rgbd[i+2]=(grey+(rgb-229));
+rgbd2[i]=(grey+(rgb-229));
+rgbd2[i+1]=(grey+(rgb-229));
+rgbd2[i+2]=(grey+(rgb-229));
+rgbd3[i]=(grey+(rgb-229));
+rgbd3[i+1]=(grey+(rgb-229));
+rgbd3[i+2]=(grey+(rgb-229));
 // rgbd[i+3]=((rgb-128)*diff);
 rgbd[i+3]=255;
 rgbd2[i+3]=255;
