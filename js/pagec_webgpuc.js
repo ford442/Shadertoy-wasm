@@ -243,7 +243,6 @@ pnnl.addEventListener('keydown',spKey);
 function loada(){
 if(lockVid!=1){
 document.getElementById('ldv').height=window.innerHeight;
-document.getElementById('lvi').height=window.innerHeight;
   
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
