@@ -17374,7 +17374,7 @@ __MAIN_RESULT__;
             }
 
             initContext() {
-                const settings={colorType:'float32',alpha:true,depth:true,stencil:true,powerPreference:'high-performance',antialias:true};
+                const settings={alpha:true,depth:true,stencil:true,powerPreference:'high-performance',antialias:true};
 
                 return this.canvas.getContext('webgl2', settings);
             }
