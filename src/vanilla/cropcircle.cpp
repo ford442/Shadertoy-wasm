@@ -177,7 +177,7 @@ emscripten_webgl_enable_extension(ctx,"EGL_ANGLE_d3d_texture_client_buffer");
 emscripten_webgl_enable_extension(ctx,"EGL_ANGLE_direct3d_display");
 emscripten_webgl_enable_extension(ctx,"EGL_ANGLE_robust_resource_initialization");
 emscripten_webgl_enable_extension(ctx,"WEBGL_multi_draw");
-emscripten_webgl_enable_extension(ctx,"WEBGL_color_buffer_float");
+// emscripten_webgl_enable_extension(ctx,"WEBGL_color_buffer_float");
 emscripten_webgl_enable_extension(ctx,"WEBGL_render_shared_exponent");
 emscripten_webgl_enable_extension(ctx,"EGL_EXT_device_base");
 emscripten_webgl_enable_extension(ctx,"EGL_EXT_device_query");
@@ -244,8 +244,8 @@ attr.alpha=EM_TRUE;
 attr.stencil=EM_TRUE;
 attr.depth=EM_TRUE;
 attr.antialias=EM_TRUE;
-attr.premultipliedAlpha=EM_TRUE;
-attr.preserveDrawingBuffer=EM_FALSE;
+attr.premultipliedAlpha=EM_FALSE;
+attr.preserveDrawingBuffer=EM_TRUE;
 attr.enableExtensionsByDefault=EM_FALSE;
 attr.renderViaOffscreenBackBuffer=EM_FALSE;
 attr.powerPreference=EM_WEBGL_POWER_PREFERENCE_HIGH_PERFORMANCE;
@@ -299,31 +299,30 @@ NFptr[newIndex+3]=255;
 return;
 };
 
-
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
-    std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
-    if (cpp_vector.size() == 0) {
-         return emscripten::val::object();
-    }
-    double sum = 0.0;
-    float min_val = std::numeric_limits<float>::max();
-    float max_val = std::numeric_limits<float>::lowest();
-    for(size_t i = 0; i < cpp_vector.size(); ++i) {
-        float val = cpp_vector[i];
-        sum += val;
-        if (val < min_val) min_val = val;
-        if (val > max_val) max_val = val;
-    }
-     double avg = sum / cpp_vector.size();
-    emscripten::val result = emscripten::val::object();
-    result.set("average", avg);
-    result.set("min", min_val);
-    result.set("max", max_val);
-    return result;
+std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
+if (cpp_vector.size() == 0) {
+return emscripten::val::object();
+}
+double sum = 0.0;
+float min_val = std::numeric_limits<float>::max();
+float max_val = std::numeric_limits<float>::lowest();
+for(size_t i = 0; i < cpp_vector.size(); ++i) {
+float val = cpp_vector[i];
+sum += val;
+if (val < min_val) min_val = val;
+if (val > max_val) max_val = val;
+}
+double avg = sum / cpp_vector.size();
+emscripten::val result = emscripten::val::object();
+result.set("average", avg);
+result.set("min", min_val);
+result.set("max", max_val);
+return result;
 }
 
 EMSCRIPTEN_BINDINGS(my_module) {
-    emscripten::function("processFloatData", &processFloatData);
+emscripten::function("processFloatData", &processFloatData);
     // If you needed to return arrays back to JS you could bind std::vector
     // emscripten::register_vector<float>("FloatVector");
 }
@@ -351,9 +350,9 @@ var scanvas=document.createElement('canvas');
 var icanvas=document.getElementById('imag2');
 var bcanvas=document.getElementById('imag3');
 // icanvas.setAttribute("style","opacity:0.422");
-  scanvas.imageSmoothingEnabled=false;
-  icanvas.imageSmoothingEnabled=false;
-  bcanvas.imageSmoothingEnabled=false;
+scanvas.imageSmoothingEnabled=false;
+icanvas.imageSmoothingEnabled=false;
+bcanvas.imageSmoothingEnabled=false;
 
 scanvas.id='zimag';
 scanvas.imageRendering='pixelated';
@@ -398,23 +397,23 @@ preferLowPowerToHighPerformance:false,
 alpha:true,
 depth:false,
 stencil:false,
-preserveDrawingBuffer:false,
+preserveDrawingBuffer:true,
 premultipliedAlpha:false,
 // imageSmoothingEnabled:false,
 willReadFrequently:false,
 lowLatency:false,
 desynchronized:false,
 powerPreference:'high-performance',
-antialias:false
+antialias:true
 };
   var contxVarsB={
 colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:false,
-stencil:false,
-preserveDrawingBuffer:false,
+depth:true,
+stencil:true,
+preserveDrawingBuffer:true,
 premultipliedAlpha:false,
 // imageSmoothingEnabled:true,
 willReadFrequently:true,
@@ -431,9 +430,11 @@ const bgPicB=document.getElementById('imgB');
 // const ctxB=zcanvas.getContext('2d',contxVars);
 // var gpu=new GPUX({mode:'gpu',canvas:scanvas,webGl:ctx });
 // const gpuB=new GPUX({mode:'gpu',canvas:zcanvas,webGl:ctxB });
+
 let dis=set();
 if(dis){dis();}
 dis=set();
+
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 
 function set(){
@@ -607,8 +608,8 @@ const yellowThreshold = 128;
 const darkThreshold = 126; // Below this is transparent
 
 function smoothstep(edge0, edge1, x) {
-    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
-    return t * t * (3 - 2 * t);
+const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+return t * t * (3 - 2 * t);
 }
 
 if (rgb > darkThreshold) {
