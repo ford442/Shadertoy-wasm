@@ -522,9 +522,9 @@ var diff=(floatResult.average/255)*32;
 var grey=(floatResult.average*255);
 if(rgb>126){
 if(rgb>229){    // past orange
-rgbd[i]=(grey+(rgb-128));
-rgbd[i+1]=(grey+(rgb-128));
-rgbd[i+2]=(grey+(rgb-128));
+rgbd[i]=255-(grey-(rgb-229));
+rgbd[i+1]=255-(grey-(rgb-229));
+rgbd[i+2]=255-(grey-(rgb-229));
 rgbd[i+3]=255;// -((rgb-209)*diff);
 }
 else if(rgb>209){    // orange
