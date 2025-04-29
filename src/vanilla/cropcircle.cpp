@@ -524,7 +524,7 @@ if(rgb>229){    // past orange
 rgbd[i]=255;
 rgbd[i+1]=255;
 rgbd[i+2]=255;
-rgbd[i+3]=0;// -((rgb-209)*diff);
+rgbd[i+3]=255;// -((rgb-209)*diff);
 }
 else if(rgb>209){    // orange
 rgbd[i]=255;
@@ -586,9 +586,9 @@ rgbd3[i]=255;
 rgbd3[i+1]=255;
 rgbd3[i+2]=255;
 // rgbd[i+3]=255-((rgb-128)*diff);
-rgbd[i+3]=0;
-rgbd2[i+3]=0;
-rgbd3[i+3]=0;
+rgbd[i+3]=255;
+rgbd2[i+3]=255;
+rgbd3[i+3]=255;
 }
 }
 
