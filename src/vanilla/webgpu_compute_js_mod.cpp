@@ -138,14 +138,14 @@ const gl3=OffscCnv.getContext('2d',{
 colorType:'float32',
 alpha:true,
 willReadFrequently:true,
-stencil:false,
-depth:false,
+stencil:true,
+depth:true,
 colorSpace:"display-p3",
 desynchronized:false,
 antialias:true,
 powerPreference:"high-performance",
-premultipliedAlpha:true,
-preserveDrawingBuffer:false
+premultipliedAlpha:false,
+preserveDrawingBuffer:true
 });
 document.querySelector('#moveFwdb').addEventListener('click',function(){
 Module.ccall('frmsOff');
@@ -601,8 +601,8 @@ colorSpace:"display-p3",
 desynchronized:false,
 antialias:true,
 powerPreference:"high-performance",
-premultipliedAlpha:true,
-preserveDrawingBuffer:false
+premultipliedAlpha:false,
+preserveDrawingBuffer:true
 });
 gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
 // var image=flipImageData(gl3.getImageData(0,0,w$,h$));
@@ -709,8 +709,8 @@ colorSpace:"display-p3",
 desynchronized:false,
 antialias:true,
 powerPreference:"high-performance",
-premultipliedAlpha:true,
-preserveDrawingBuffer:false
+premultipliedAlpha:false,
+preserveDrawingBuffer:true
 });
 gl3.drawImage(vvi,0,0,w$-offsetX,h$-offsetY,0,0,w$-offsetX,h$-offsetY);
 var image=gl3.getImageData(0,0,w$-offsetX,h$-offsetY);
