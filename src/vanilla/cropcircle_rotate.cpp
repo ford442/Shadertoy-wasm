@@ -1,4 +1,14 @@
 #include "../../include/vanilla/cropcircle.hpp"
+#include <vector>
+#include <cmath>         // For cos, sin, M_PI, round
+#include <limits>        // For numeric_limits
+#include <algorithm>     // For std::fill (optional, for clearing output buffer)
+#include <cstdio>        // For printf (optional error logging)
+
+// Define M_PI if not available (often is in <cmath>)
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 EGLConfig eglconfig=NULL;
 
@@ -259,6 +269,92 @@ surface=eglCreateWindowSurface(display,eglconfig,0,attribut_list);
 eglMakeCurrent(display,surface,surface,contextegl);
 }
 
+
+/**
+ * @brief Rotates an image represented by a flat Float32Array (RGBA).
+ * @param angle The rotation angle in degrees.
+ * @param wid The width of the image.
+ * @param hig The height of the image.
+ * @param FptrView A memory view of the input float array (RGBA, values 0-255).
+ * @param NFptrView A memory view for the output rotated float array (RGBA, values 0-255).
+ * This buffer should be cleared or initialized before calling,
+ * as not all pixels might be written during rotation.
+ */
+void rotateFrameEmbind(int angle, int wid, int hig,
+                      emscripten::typed_memory_view<float> FptrView,
+                      emscripten::typed_memory_view<float> NFptrView)
+{
+    size_t num_elements = static_cast<size_t>(wid) * hig * 4; // RGBA
+
+    // --- Input Validation ---
+    if (wid <= 0 || hig <= 0) {
+        printf("Error (rotateFrameEmbind): Invalid dimensions (%d x %d).\n", wid, hig);
+        return;
+    }
+    if (FptrView.size() < num_elements) {
+        printf("Error (rotateFrameEmbind): Input buffer view is too small. Expected: %zu, Got: %zu\n",
+               num_elements, FptrView.size());
+        return;
+    }
+    if (NFptrView.size() < num_elements) {
+        printf("Error (rotateFrameEmbind): Output buffer view is too small. Expected: %zu, Got: %zu\n",
+               num_elements, NFptrView.size());
+        return;
+    }
+
+    // Convert angle to radians for C++ trigonometric functions
+    double angleRad = angle * M_PI / 180.0;
+    double cosAngle = cos(angleRad);
+    double sinAngle = sin(angleRad);
+
+    // --- Rotation Logic ---
+    // Assuming rotation around the top-left corner (0,0) as implied by original code
+    // If rotation around center is needed, adjust coordinates relative to center.
+
+    // Note: The original code used integer math for new coordinates, which can cause aliasing.
+    // We'll stick to that for consistency, but using interpolation would yield smoother results.
+
+    // IMPORTANT: Ensure the output buffer (NFptrView) is cleared before use,
+    // especially its alpha channel, if input alpha isn't always 255 or if pixels
+    // outside the rotated area should be transparent/black.
+    // Example: std::fill(NFptrView.begin(), NFptrView.end(), 0.0f); // Call this from JS using .fill(0) is easier
+
+    for (int y = 0; y < hig; ++y) {
+        for (int x = 0; x < wid; ++x) {
+            size_t index = static_cast<size_t>(y * wid + x) * 4;
+
+            // Read pixel data from the input view
+            // Assuming data is RGBA floats in the 0.0 - 255.0 range based on JS context
+            float red   = FptrView[index];
+            float green = FptrView[index + 1];
+            float blue  = FptrView[index + 2];
+            float alpha = FptrView[index + 3]; // Preserve original alpha
+
+            // Calculate the destination coordinates after rotation
+            // (Relative to origin 0,0)
+            double rotatedX_double = x * cosAngle - y * sinAngle;
+            double rotatedY_double = x * sinAngle + y * cosAngle;
+
+            // Round to nearest integer pixel coordinates for the destination
+            int newX = static_cast<int>(std::round(rotatedX_double));
+            int newY = static_cast<int>(std::round(rotatedY_double));
+
+            // --- Boundary Check for Destination ---
+            // Check if the calculated destination pixel is within the image bounds
+            if (newX >= 0 && newX < wid && newY >= 0 && newY < hig) {
+                size_t newIndex = static_cast<size_t>(newY * wid + newX) * 4;
+
+                // Write the original pixel data to the new location in the output view
+                NFptrView[newIndex]     = red;
+                NFptrView[newIndex + 1] = green;
+                NFptrView[newIndex + 2] = blue;
+                NFptrView[newIndex + 3] = alpha; // Use preserved alpha
+            }
+            // Pixels mapping outside the bounds are simply ignored (not drawn).
+        }
+    }
+}
+
 boost::function<void(int,float *,float *)>avgFrm=[](int leng,float *ptr,float *aptr){
 max=0.0f;
 min=255.0f;
@@ -323,6 +419,7 @@ return result;
 
 EMSCRIPTEN_BINDINGS(my_module) {
 emscripten::function("processFloatData", &processFloatData);
+emscripten::function("rotat", &rotateFrameEmbind);
     // If you needed to return arrays back to JS you could bind std::vector
     // emscripten::register_vector<float>("FloatVector");
 }
@@ -333,9 +430,11 @@ void nano(int leng,float *ptr,float *aptr){
 avgFrm(leng,ptr,aptr);
 }
 
+/*
 void rotat(int angle,int wd,int hi,float *Fptr,float *NFptr){
 rotateFrame(angle,wd,hi,Fptr,NFptr);
 }
+*/
 
 void emem(int leng,float *ptr){
 emsc(leng,ptr);
@@ -436,6 +535,11 @@ dis=set();
 
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 
+// Buffers for rotation - declared outside set to persist if needed, or inside if recreated each time
+    var FptrView = null; // Input buffer view
+    var NFptrView = null; // Output buffer view
+    var la = 0; // length in elements
+
 function set(){
 
 ww=document.getElementById("iwid").innerHTML;
@@ -463,11 +567,62 @@ var rgbd3=rgbdat3.data;
 var imgg=imgData.data;
 var i;
 var l=h*ww;
-var la=h*ww*4;
+ la=h*ww*4;
 var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
 
+  var bytes_la = la * Float32Array.BYTES_PER_ELEMENT; // Size in bytes
+
+          // --- Allocate or Re-use Buffers for Rotation ---
+        // We need Float32Arrays that C++ can access via typed_memory_view.
+        // These should ideally live on the Emscripten HEAP.
+        // We need two buffers: one for input (FptrView), one for output (NFptrView).
+
+        // Method 1: Fixed offsets (like original code - careful, layout might change)
+        // These offsets seem very large, ensure they are correct byte offsets into HEAPF32
+        // var offset_bytes_a = la * 2.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for input
+        // var offset_bytes_b = la * 3.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for output
+        // if (Module.HEAPF32.buffer.byteLength < offset_bytes_b + bytes_la) {
+        //     console.error("HEAP buffer too small for specified offsets!");
+        //     // Handle error - perhaps request more memory during compilation? (-sALLOW_MEMORY_GROWTH=1)
+        //     return () => {};
+        // }
+        // FptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_a, la);
+        // NFptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_b, la);
+
+        // Method 2: Dynamic Allocation using _malloc (safer, recommended)
+        // Ensure _malloc is exported (usually is by default)
+        // Free memory in the cleanup function if using malloc!
+        var ptr_a = Module._malloc(bytes_la);
+        var ptr_b = Module._malloc(bytes_la);
+        if (!ptr_a || !ptr_b) {
+             console.error("Failed to allocate memory using _malloc!");
+             if (ptr_a) Module._free(ptr_a); // Clean up if one allocation succeeded
+             return () => {}; // Return empty cleanup
+        }
+        FptrView = new Float32Array(Module.HEAPF32.buffer, ptr_a, la);
+        NFptrView = new Float32Array(Module.HEAPF32.buffer, ptr_b, la);
+        console.log(`Allocated buffers via malloc: ptr_a=${ptr_a}, ptr_b=${ptr_b}, size=${bytes_la} bytes`);
+
+        // --- Populate the Input Float32Array (FptrView) ---
+        // Copy the initial image data (0-255 integers) into the float buffer.
+        // The C++ code expects floats, but the values seem to represent 0-255 range.
+        for (let i = 0; i < la; i++) {
+            FptrView[i] = imgg[i]; // Direct copy of 0-255 values
+        }
+        console.log("Copied initial image data to FptrView.");
+
+  
+        // --- Populate the Input Float32Array (FptrView) ---
+        // Copy the initial image data (0-255 integers) into the float buffer.
+        // The C++ code expects floats, but the values seem to represent 0-255 range.
+        for (let i = 0; i < la; i++) {
+            FptrView[i] = imgg[i]; // Direct copy of 0-255 values
+        }
+        console.log("Copied initial image data to FptrView.");
+
+  
 const floatArray = new Float32Array(imgData.data.length);
 for(let i = 0; i < imgData.data.length; i++) {
 floatArray[i] = imgData.data[i] / 255.0;
@@ -730,28 +885,68 @@ function Rb(){
 // bgPicA.setAttribute("style","position:absolute;");
 // bgPicA.setAttribute("style","z-index:999991;");
 // bgPicB.setAttribute("style","z-index:999990;");
-flP.setAttribute("style","transform: scaleX(1.0)");
-cnP.setAttribute("style","transform: scaleY(-1.0)");
+    // flP.setAttribute("style","transform: scaleX(1.0)");
+    // cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
-function rrra(rta){
-// cnP.setAttribute("style","transform: rotate("+rta+"deg)");
-Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[rta,ww,h,pointa,pointb]);
 
-// cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
-}
-function rrrb(rtb){
-// cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
-Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[rtb,ww,h,pointa,pointb]);
 
-// cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
-}
-function rrrc(rtc) {
-// cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
-// cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
-Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[rtc,ww,h,pointa,pointb]);
+        // Helper to copy rotated float data (0-255) back to a Uint8ClampedArray for canvas display
+        function copyFloatToUint8(floatView, uint8Data) {
+             if (floatView.length !== uint8Data.length) {
+                 console.error("Buffer length mismatch in copyFloatToUint8");
+                 return;
+             }
+             for (let i = 0; i < floatView.length; ++i) {
+                 // Clamp values to 0-255 and round to nearest integer
+                 uint8Data[i] = Math.max(0, Math.min(255, Math.round(floatView[i])));
+             }
+        }
 
-}
+        function rrra(rta) { // Rotates and updates canvas 1 (ctx)
+            console.log("Calling rotat for canvas 1, angle:", rta);
+            if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrra"); return; }
+            try {
+                // Clear the output buffer before rotation (important!)
+                NFptrView.fill(0); // Fill with 0.0f
+                // Call the bound C++ function
+                Module.rotat(rta, ww, h, FptrView, NFptrView); // Pass views directly
+                // Copy the result from NFptrView (float) back to rgbdat.data (Uint8)
+                copyFloatToUint8(NFptrView, rgbdat.data);
+                // Update the canvas
+                ctx.putImageData(rgbdat, 0, 0);
+            } catch (e) {
+                console.error("Error calling Module.rotat for canvas 1:", e);
+            }
+        }
+
+        function rrrb(rtb) { // Rotates and updates canvas 2 (ctxB)
+             console.log("Calling rotat for canvas 2, angle:", rtb);
+             if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrrb"); return; }
+            try {
+                NFptrView.fill(0);
+                Module.rotat(rtb, ww, h, FptrView, NFptrView);
+                copyFloatToUint8(NFptrView, rgbdat2.data);
+                ctxB.putImageData(rgbdat2, 0, 0);
+            } catch (e) {
+                console.error("Error calling Module.rotat for canvas 2:", e);
+            }
+        }
+
+        function rrrc(rtc) { // Rotates and updates canvas 3 (ctxC)
+             console.log("Calling rotat for canvas 3, angle:", rtc);
+             if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrrc"); return; }
+            try {
+                NFptrView.fill(0);
+                Module.rotat(rtc, ww, h, FptrView, NFptrView);
+                copyFloatToUint8(NFptrView, rgbdat3.data);
+                ctxC.putImageData(rgbdat3, 0, 0);
+            } catch (e) {
+                console.error("Error calling Module.rotat for canvas 3:", e);
+            }
+        }
+
+
 knb=document.getElementById("rra");
 kna=document.getElementById("mainr");
 knc=document.getElementById("rrb");
