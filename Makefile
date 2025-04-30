@@ -35,7 +35,7 @@ LINK_FLAGS = -DQUAD $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 -sEMULA
 	 -sTEXTDECODER=0 --use-preload-plugins --closure 0 --closureFriendly -sEXIT_RUNTIME=0 \
 	 -march=haswell -sWASM=1 -sTOTAL_STACK=65536 -sENVIRONMENT='web,worker' -sSTRICT_JS=1 \
 	 -sGLOBAL_BASE=352321536 -sSUPPORT_ERRNO=0 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
-	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=3221225472 --output_eol linux -mllvm -mtune=wasm32 -wasm-enable-eh \
+	 -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=3221225472 --output_eol linux -mllvm -mtune=wasm32 -wasm-enable-eh \
 	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
 
 WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
@@ -52,7 +52,7 @@ b3_cropcircle_rot:
 	 em++ $(STDS) -c src/vanilla/cropcircle_rotate.cpp -O2 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS)
 	 emcc $(STDS) -o $(BIN_NAME)r.js -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 --bind -lembind \
-	 -sEXPORTED_FUNCTIONS='["_main","_nano","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall","malloc"]' \
+	 -sEXPORTED_FUNCTIONS='["_main","_nano","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall","_malloc"]' \
 	 --extern-pre-js gpujsx.js cropcircle_rotate.o
 
 b3_cropcircle_rot_avg:
