@@ -4,7 +4,6 @@
 #include <limits>        // For numeric_limits
 #include <algorithm>     // For std::fill (optional, for clearing output buffer)
 #include <cstdio>        // For printf (optional error logging)
-#include <emscripten/heap.h> // For _emscripten_get_heap_size etc if needed, or just use HEAPF32
 
 // Define M_PI if not available (often is in <cmath>)
 #ifndef M_PI
@@ -271,14 +270,6 @@ eglMakeCurrent(display,surface,surface,contextegl);
 }
 
 
-/**
- * @brief Rotates an image represented by JavaScript Float32Array views passed as emscripten::val.
- * @param angle The rotation angle in degrees.
- * @param wid The width of the image.
- * @param hig The height of the image.
- * @param FptrVal An emscripten::val representing the input Float32Array view (RGBA, values 0-255). MUST be a view into Module.HEAPF32.buffer.
- * @param NFptrVal An emscripten::val representing the output Float32Array view (RGBA, values 0-255). MUST be a view into Module.HEAPF32.buffer.
- */
 void rotateFrameEmbindVal(int angle, int wid, int hig,
                          emscripten::val FptrVal,
                          emscripten::val NFptrVal)
@@ -288,28 +279,32 @@ void rotateFrameEmbindVal(int angle, int wid, int hig,
         return;
     }
 
-    // --- Extract pointer and size info from emscripten::val ---
-    // Access JS TypedArray properties directly from the val object
-    // Note: .as<T>() can throw if the property doesn't exist or type is wrong. Error handling could be added.
     size_t fptr_byte_offset = 0;
     size_t fptr_length = 0; // length in elements
     size_t nfptr_byte_offset = 0;
     size_t nfptr_length = 0; // length in elements
 
+    // --- Extract pointer and size info from emscripten::val ---
     try {
-        fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
-        fptr_length = FptrVal["length"].as<size_t>();
-        nfptr_byte_offset = NFptrVal["byteOffset"].as<size_t>();
-        nfptr_length = NFptrVal["length"].as<size_t>();
+        // Check if the properties exist and are numbers before accessing
+        if (!FptrVal["byteOffset"].isUndefined() && FptrVal["byteOffset"].isNumber()) {
+             fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.byteOffset missing or not a number"); }
+
+        if (!FptrVal["length"].isUndefined() && FptrVal["length"].isNumber()) {
+             fptr_length = FptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.length missing or not a number"); }
+
+        if (!NFptrVal["byteOffset"].isUndefined() && NFptrVal["byteOffset"].isNumber()) {
+            nfptr_byte_offset = NFptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.byteOffset missing or not a number"); }
+
+        if (!NFptrVal["length"].isUndefined() && NFptrVal["length"].isNumber()) {
+            nfptr_length = NFptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.length missing or not a number"); }
+
     } catch (const std::exception& e) {
          printf("Error (rotateFrameEmbindVal): Failed to get properties from JS TypedArray val: %s\n", e.what());
-         // Attempt to access underlying buffer directly if properties fail? Could be risky.
-         // Check if it's an arraybuffer view directly?
-         // Example using isNumber/isUndefined checks
-         if(!FptrVal["byteOffset"].isUndefined() && FptrVal["byteOffset"].isNumber()){
-             fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
-         } else { printf("Error: FptrVal.byteOffset missing or not a number\n"); return; }
-         // ... repeat for other properties ...
          return; // Exit if properties can't be read reliably
     }
 
@@ -329,40 +324,14 @@ void rotateFrameEmbindVal(int angle, int wid, int hig,
     }
 
     // --- Get direct pointers into the Emscripten HEAP ---
-    // THIS IS THE CRITICAL ASSUMPTION: FptrVal/NFptrVal MUST be views over Module.HEAPF32.buffer
-    // Use emscripten_memory_view - safer way if available
-    #ifdef __EMSCRIPTEN_major__ // Check if Emscripten headers are likely available
-        // Use the safer C API if possible to get heap base - less direct but avoids assumptions
-        // float* heap_base = reinterpret_cast<float*>(emscripten_get_heap_base()); // May not be easily available or correct type
-        // A common (though technically internal) way is via HEAP8 etc.
-        unsigned char* heap_base_ptr = emscripten::internal::getHeap<unsigned char>().raw();
-        if (!heap_base_ptr) {
-             printf("Error (rotateFrameEmbindVal): Could not get heap base pointer!\n");
-             return;
-        }
-
-        float* Fptr = reinterpret_cast<float*>(heap_base_ptr + fptr_byte_offset);
-        float* NFptr = reinterpret_cast<float*>(heap_base_ptr + nfptr_byte_offset);
-         // Optional: Check if pointers are within heap bounds
-         // size_t heap_size = emscripten_get_heap_size();
-         // if ((fptr_byte_offset + fptr_length * sizeof(float) > heap_size) ||
-         //     (nfptr_byte_offset + nfptr_length * sizeof(float) > heap_size)) {
-         //      printf("Error: Calculated pointers seem to be outside heap bounds!\n");
-         //      return;
-         // }
-
-    #else
-        // Fallback if Emscripten internals aren't directly accessible (less likely)
-         printf("Warning: Cannot access Emscripten heap internals directly, pointer casting might fail.\n");
-         // This part would likely fail without direct heap access method
-         float* Fptr = reinterpret_cast<float*>(fptr_byte_offset); // Highly unlikely to work
-         float* NFptr = reinterpret_cast<float*>(nfptr_byte_offset);
-    #endif
-
+    // CRITICAL ASSUMPTION: FptrVal/NFptrVal MUST be views over Module.HEAPF32.buffer.
+    // Cast the byteOffset directly to a pointer. uintptr_t ensures the integer
+    // is wide enough to hold the address before casting to float*.
+    float* Fptr = reinterpret_cast<float*>(static_cast<uintptr_t>(fptr_byte_offset));
+    float* NFptr = reinterpret_cast<float*>(static_cast<uintptr_t>(nfptr_byte_offset);
 
     // --- Rotation Logic (using raw pointers Fptr, NFptr) ---
-    // The rest of the logic is identical to the original boost::function
-    // or the raw pointer version inside the typed_memory_view implementation.
+    // The rest of the logic remains identical.
 
     double angleRad = angle * M_PI / 180.0;
     double cosAngle = cos(angleRad);
@@ -375,8 +344,8 @@ void rotateFrameEmbindVal(int angle, int wid, int hig,
         for (int x = 0; x < wid; ++x) {
             size_t index = static_cast<size_t>(y * wid + x) * 4;
 
-            // Bounds check for safety accessing Fptr (though checked via fptr_length earlier)
-             // if (index + 3 >= fptr_length) continue; // Should not happen if length check passed
+            // Minimal bounds check based on length (should be okay given initial check)
+            // if (index + 3 >= fptr_length) continue;
 
             float red   = Fptr[index];
             float green = Fptr[index + 1];
@@ -391,8 +360,8 @@ void rotateFrameEmbindVal(int angle, int wid, int hig,
 
             if (newX >= 0 && newX < wid && newY >= 0 && newY < hig) {
                 size_t newIndex = static_cast<size_t>(newY * wid + newX) * 4;
-                // Bounds check for safety accessing NFptr
-                 // if (newIndex + 3 >= nfptr_length) continue; // Should not happen
+                 // Minimal bounds check based on length
+                 // if (newIndex + 3 >= nfptr_length) continue;
 
                 NFptr[newIndex]     = red;
                 NFptr[newIndex + 1] = green;
