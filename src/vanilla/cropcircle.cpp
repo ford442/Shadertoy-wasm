@@ -390,7 +390,7 @@ zcanvas.style.backgroundColor='rgba(0,0,0,128)';
 // document.getElementById("cpB").appendChild(zcanvas);
   */
 var contxVars={
-colorType:'float64',
+// colorType:'float64',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
@@ -406,7 +406,7 @@ powerPreference:'high-performance',
 antialias:true
 };
   var contxVarsB={
-colorType:'float32',
+// colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
