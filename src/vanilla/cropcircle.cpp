@@ -794,7 +794,7 @@ rrrc(rottc);
 // bgPicB.hidden=false;
 setTimeout(function(){
 $rn();
-},rate);
+},rate*4);
 }
 $rn();
 document.getElementById("di").onclick=function(){
