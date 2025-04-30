@@ -906,8 +906,8 @@ function Rb(){
 // bgPicA.setAttribute("style","position:absolute;");
 // bgPicA.setAttribute("style","z-index:999991;");
 // bgPicB.setAttribute("style","z-index:999990;");
-    // flP.setAttribute("style","transform: scaleX(1.0)");
-    // cnP.setAttribute("style","transform: scaleY(-1.0)");
+     flP.setAttribute("style","transform: scaleX(1.0)");
+     cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 
