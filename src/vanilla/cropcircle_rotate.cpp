@@ -1,5 +1,6 @@
 #include "../../include/vanilla/cropcircle.hpp"
 #include <vector>
+#include <ctime>         // For sleep
 #include <cmath>         // For cos, sin, M_PI, round
 #include <limits>        // For numeric_limits
 #include <algorithm>     // For std::fill (optional, for clearing output buffer)
@@ -1000,6 +1001,7 @@ dsd=true;
 
 int main(){
 emscA();
+  sleep(2);
 ma();
 return 1;
 }
