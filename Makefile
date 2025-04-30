@@ -59,7 +59,7 @@ b3_cropcircle_rot_avg:
 	 em++ $(STDS) -c src/vanilla/cropcircle_rotate_avg.cpp -O2 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS)
 	 emcc $(STDS) -o $(BIN_NAME)ra.js -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 --bind -lembind \
-	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
+	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF32"]' \
 	 --extern-pre-js gpujsx.js cropcircle_rotate_avg.o
 
 b3_cropcircle_3canvas:
