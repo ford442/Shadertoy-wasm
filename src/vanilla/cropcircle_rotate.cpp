@@ -898,6 +898,7 @@ flPB.setAttribute("style","transform:scaleY(1.0)");
 // cnP.setAttribute("style","transform: scaleY(1.0)");
 // cnPB.setAttribute("style","transform:scaleY(-1);");
 }
+
 function Rb(){
 // bgPicA.setAttribute("style","position:absolute;");
 // bgPicA.setAttribute("style","z-index:999991;");
@@ -907,60 +908,31 @@ function Rb(){
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 
-
-        // Helper to copy rotated float data (0-255) back to a Uint8ClampedArray for canvas display
 function copyFloatToUint8(floatView, uint8Data) {
-             if (floatView.length !== uint8Data.length) {
-                 console.error("Buffer length mismatch in copyFloatToUint8");
-                 return;
-             }
-             for (let i = 0; i < floatView.length; ++i) {
-                 // Clamp values to 0-255 and round to nearest integer
-                 uint8Data[i] = Math.max(0, Math.min(255, Math.round(floatView[i])));
-             }
+for (let i = 0; i < floatView.length; ++i) {
+uint8Data[i] = Math.max(0, Math.min(255, Math.round(floatView[i])));
+}
 }
 
 function rrra(rta) { // Rotates and updates canvas 1 (ctx)
-            console.log("Calling rotat for canvas 1, angle:", rta);
-            if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrra"); return; }
-            try {
-                // Clear the output buffer before rotation (important!)
-                NFptrView.fill(0); // Fill with 0.0f
-                // Call the bound C++ function
-                Module.rotat(rta, ww, h, FptrView, NFptrView); // Pass views directly
-                // Copy the result from NFptrView (float) back to rgbdat.data (Uint8)
-                copyFloatToUint8(NFptrView, rgbdat.data);
-                // Update the canvas
-                ctx.putImageData(rgbdat, 0, 0);
-} catch (e) {
-                console.error("Error calling Module.rotat for canvas 1:", e);
-            }
+NFptrView.fill(0); // Fill with 0.0f
+Module.rotat(rta, ww, h, FptrView, NFptrView); // Pass views directly
+copyFloatToUint8(NFptrView, rgbdat.data);
+ctx.putImageData(rgbdat, 0, 0);
 }
 
 function rrrb(rtb) { // Rotates and updates canvas 2 (ctxB)
-             console.log("Calling rotat for canvas 2, angle:", rtb);
-             if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrrb"); return; }
-            try {
-                NFptrView.fill(0);
-                Module.rotat(rtb, ww, h, FptrView, NFptrView);
-                copyFloatToUint8(NFptrView, rgbdat2.data);
-                ctxB.putImageData(rgbdat2, 0, 0);
-            } catch (e) {
-                console.error("Error calling Module.rotat for canvas 2:", e);
-            }
+NFptrView.fill(0);
+Module.rotat(rtb, ww, h, FptrView, NFptrView);
+copyFloatToUint8(NFptrView, rgbdat2.data);
+ctxB.putImageData(rgbdat2, 0, 0);
 }
 
 function rrrc(rtc) { // Rotates and updates canvas 3 (ctxC)
-             console.log("Calling rotat for canvas 3, angle:", rtc);
-             if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrrc"); return; }
-            try {
-                NFptrView.fill(0);
-                Module.rotat(rtc, ww, h, FptrView, NFptrView);
-                copyFloatToUint8(NFptrView, rgbdat3.data);
-                ctxC.putImageData(rgbdat3, 0, 0);
-            } catch (e) {
-                console.error("Error calling Module.rotat for canvas 3:", e);
-            }
+NFptrView.fill(0);
+Module.rotat(rtc, ww, h, FptrView, NFptrView);
+copyFloatToUint8(NFptrView, rgbdat3.data);
+ctxC.putImageData(rgbdat3, 0, 0);
 }
 
 
@@ -977,6 +949,7 @@ rottb=0;
 rottc=0;
 let dur=document.getElementById("temptime").innerHTML/10;
 let dsd=false;
+
 function $rn(){
 if(dsd){
 return;
