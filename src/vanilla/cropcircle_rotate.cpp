@@ -596,7 +596,7 @@ var pointc=la*4.0;
         // We need Float32Arrays that C++ can access via typed_memory_view.
         // These should ideally live on the Emscripten HEAP.
         // We need two buffers: one for input (FptrView), one for output (NFptrView).
-
+/*
         // Method 1: Fixed offsets (like original code - careful, layout might change)
         // These offsets seem very large, ensure they are correct byte offsets into HEAPF32
         var offset_bytes_a = la * 2.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for input
@@ -608,8 +608,8 @@ var pointc=la*4.0;
         }
        FptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_a, la);
       NFptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_b, la);
-  
-/*
+  */
+
         // Method 2: Dynamic Allocation using _malloc (safer, recommended)
         // Ensure _malloc is exported (usually is by default)
         // Free memory in the cleanup function if using malloc!
@@ -623,7 +623,6 @@ var pointc=la*4.0;
         FptrView = new Float32Array(Module.HEAPF32.buffer, ptr_a, la);
         NFptrView = new Float32Array(Module.HEAPF32.buffer, ptr_b, la);
         console.log(`Allocated buffers via malloc: ptr_a=${ptr_a}, ptr_b=${ptr_b}, size=${bytes_la} bytes`);
-*/
   
         // --- Populate the Input Float32Array (FptrView) ---
         // Copy the initial image data (0-255 integers) into the float buffer.
