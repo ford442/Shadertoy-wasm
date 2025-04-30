@@ -1,6 +1,5 @@
 #include "../../include/vanilla/cropcircle.hpp"
 #include <vector>
-#include <ctime>         // For sleep
 #include <cmath>         // For cos, sin, M_PI, round
 #include <limits>        // For numeric_limits
 #include <algorithm>     // For std::fill (optional, for clearing output buffer)
@@ -271,47 +270,36 @@ eglMakeCurrent(display,surface,surface,contextegl);
 }
 
 
-void rotateFrameEmbindVal(int angle, int wid, int hig,
-                         emscripten::val FptrVal,
-                         emscripten::val NFptrVal)
+void rotateFrameEmbindVal(int angle, int wid, int hig,emscripten::val FptrVal,emscripten::val NFptrVal)
 {
     if (wid <= 0 || hig <= 0) {
         printf("Error (rotateFrameEmbindVal): Invalid dimensions (%d x %d).\n", wid, hig);
         return;
     }
-
     size_t fptr_byte_offset = 0;
     size_t fptr_length = 0; // length in elements
     size_t nfptr_byte_offset = 0;
     size_t nfptr_length = 0; // length in elements
-
     // --- Extract pointer and size info from emscripten::val ---
     try {
         // Check if the properties exist and are numbers before accessing
         if (!FptrVal["byteOffset"].isUndefined() && FptrVal["byteOffset"].isNumber()) {
              fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
         } else { throw std::runtime_error("FptrVal.byteOffset missing or not a number"); }
-
         if (!FptrVal["length"].isUndefined() && FptrVal["length"].isNumber()) {
              fptr_length = FptrVal["length"].as<size_t>();
         } else { throw std::runtime_error("FptrVal.length missing or not a number"); }
-
         if (!NFptrVal["byteOffset"].isUndefined() && NFptrVal["byteOffset"].isNumber()) {
             nfptr_byte_offset = NFptrVal["byteOffset"].as<size_t>();
         } else { throw std::runtime_error("NFptrVal.byteOffset missing or not a number"); }
-
         if (!NFptrVal["length"].isUndefined() && NFptrVal["length"].isNumber()) {
             nfptr_length = NFptrVal["length"].as<size_t>();
         } else { throw std::runtime_error("NFptrVal.length missing or not a number"); }
-
     } catch (const std::exception& e) {
          printf("Error (rotateFrameEmbindVal): Failed to get properties from JS TypedArray val: %s\n", e.what());
          return; // Exit if properties can't be read reliably
     }
-
-
     size_t expected_elements = static_cast<size_t>(wid) * hig * 4; // RGBA
-
     // --- Input Validation ---
     if (fptr_length < expected_elements) {
         printf("Error (rotateFrameEmbindVal): Input buffer view is too small. Expected elements: %zu, Got: %zu\n",
@@ -323,47 +311,36 @@ void rotateFrameEmbindVal(int angle, int wid, int hig,
                expected_elements, nfptr_length);
         return;
     }
-
     // --- Get direct pointers into the Emscripten HEAP ---
     // CRITICAL ASSUMPTION: FptrVal/NFptrVal MUST be views over Module.HEAPF32.buffer.
     // Cast the byteOffset directly to a pointer. uintptr_t ensures the integer
     // is wide enough to hold the address before casting to float*.
     float* Fptr = reinterpret_cast<float*>(static_cast<uintptr_t>(fptr_byte_offset));
     float* NFptr = reinterpret_cast<float*>(static_cast<uintptr_t>(nfptr_byte_offset));
-
     // --- Rotation Logic (using raw pointers Fptr, NFptr) ---
     // The rest of the logic remains identical.
-
     double angleRad = angle * M_PI / 180.0;
     double cosAngle = cos(angleRad);
     double sinAngle = sin(angleRad);
-
     // IMPORTANT: Caller (JavaScript) should ensure NFptr buffer is cleared beforehand.
     // std::fill(NFptr, NFptr + nfptr_length, 0.0f); // Can do here, but JS is often easier
-
     for (int y = 0; y < hig; ++y) {
         for (int x = 0; x < wid; ++x) {
             size_t index = static_cast<size_t>(y * wid + x) * 4;
-
             // Minimal bounds check based on length (should be okay given initial check)
             // if (index + 3 >= fptr_length) continue;
-
             float red   = Fptr[index];
             float green = Fptr[index + 1];
             float blue  = Fptr[index + 2];
             float alpha = Fptr[index + 3];
-
             double rotatedX_double = x * cosAngle - y * sinAngle;
             double rotatedY_double = x * sinAngle + y * cosAngle;
-
             int newX = static_cast<int>(std::round(rotatedX_double));
             int newY = static_cast<int>(std::round(rotatedY_double));
-
             if (newX >= 0 && newX < wid && newY >= 0 && newY < hig) {
                 size_t newIndex = static_cast<size_t>(newY * wid + newX) * 4;
                  // Minimal bounds check based on length
                  // if (newIndex + 3 >= nfptr_length) continue;
-
                 NFptr[newIndex]     = red;
                 NFptr[newIndex + 1] = green;
                 NFptr[newIndex + 2] = blue;
@@ -392,27 +369,6 @@ aptr[2]=max;
 return;
 };
 
-boost::function<void(int,int,int,float *,float *)>rotateFrame=[](int angle,int wid,int hig,float *Fptr,float *NFptr){
-for(int y=0;y<hig;y++){
-for(int x=0;x<wid;x++){
-int index=4*(y*hig+x);
-unsigned char red=Fptr[index];
-unsigned char green=Fptr[index+1];
-unsigned char blue=Fptr[index+2];
-int newX=x*cos(angle)-y*sin(angle);
-int newY=x*sin(angle)+y*cos(angle);
-if (newX>=0&&newX<hig&&newY>=0&&newY<wid){
-int newIndex=4*(newY*wid+newX);
-NFptr[newIndex]=red;
-NFptr[newIndex+1]=green;
-NFptr[newIndex+2]=blue;
-NFptr[newIndex+3]=255;
-}
-}
-}
-return;
-};
-
 emscripten::val processFloatData(emscripten::val js_float32_array_val) {
 std::vector<float> cpp_vector = emscripten::vecFromJSArray<float>(js_float32_array_val);
 if (cpp_vector.size() == 0) {
@@ -437,7 +393,7 @@ return result;
 
 EMSCRIPTEN_BINDINGS(my_module) {
 emscripten::function("processFloatData", &processFloatData);
-    emscripten::function("rotat", &rotateFrameEmbindVal);
+emscripten::function("rotat", &rotateFrameEmbindVal);
     // If you needed to return arrays back to JS you could bind std::vector
     // emscripten::register_vector<float>("FloatVector");
 }
@@ -590,7 +546,7 @@ var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
 
-  var bytes_la = la * Float32Array.BYTES_PER_ELEMENT; // Size in bytes
+var bytes_la = la * Float32Array.BYTES_PER_ELEMENT; // Size in bytes
 
           // --- Allocate or Re-use Buffers for Rotation ---
         // We need Float32Arrays that C++ can access via typed_memory_view.
@@ -623,25 +579,14 @@ var pointc=la*4.0;
         FptrView = new Float32Array(Module.HEAPF32.buffer, ptr_a, la);
         NFptrView = new Float32Array(Module.HEAPF32.buffer, ptr_b, la);
         console.log(`Allocated buffers via malloc: ptr_a=${ptr_a}, ptr_b=${ptr_b}, size=${bytes_la} bytes`);
-  
-        // --- Populate the Input Float32Array (FptrView) ---
+          // --- Populate the Input Float32Array (FptrView) ---
         // Copy the initial image data (0-255 integers) into the float buffer.
         // The C++ code expects floats, but the values seem to represent 0-255 range.
         for (let i = 0; i < la; i++) {
             FptrView[i] = imgg[i]; // Direct copy of 0-255 values
         }
         console.log("Copied initial image data to FptrView.");
-
-  
-        // --- Populate the Input Float32Array (FptrView) ---
-        // Copy the initial image data (0-255 integers) into the float buffer.
-        // The C++ code expects floats, but the values seem to represent 0-255 range.
-        for (let i = 0; i < la; i++) {
-            FptrView[i] = imgg[i]; // Direct copy of 0-255 values
-        }
-        console.log("Copied initial image data to FptrView.");
-
-  
+   
 const floatArray = new Float32Array(imgData.data.length);
 for(let i = 0; i < imgData.data.length; i++) {
 floatArray[i] = imgData.data[i] / 255.0;
@@ -1002,7 +947,6 @@ dsd=true;
 
 int main(){
 emscA();
-  sleep(2);
 ma();
 return 1;
 }
