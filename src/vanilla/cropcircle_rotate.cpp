@@ -735,16 +735,22 @@ cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 function rrra(rta){
-cnP.setAttribute("style","transform: rotate("+rta+"deg)");
+// cnP.setAttribute("style","transform: rotate("+rta+"deg)");
+Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[rta,ww,h,pointa,pointb]);
+
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
 function rrrb(rtb){
-cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
+// cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
+Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[rtb,ww,h,pointa,pointb]);
+
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
+// cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
+Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[rtc,ww,h,pointa,pointb]);
+
 }
 knb=document.getElementById("rra");
 kna=document.getElementById("mainr");
