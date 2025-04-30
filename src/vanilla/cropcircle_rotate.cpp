@@ -328,7 +328,7 @@ void rotateFrameEmbindVal(int angle, int wid, int hig,
     // Cast the byteOffset directly to a pointer. uintptr_t ensures the integer
     // is wide enough to hold the address before casting to float*.
     float* Fptr = reinterpret_cast<float*>(static_cast<uintptr_t>(fptr_byte_offset));
-    float* NFptr = reinterpret_cast<float*>(static_cast<uintptr_t>(nfptr_byte_offset);
+    float* NFptr = reinterpret_cast<float*>(static_cast<uintptr_t>(nfptr_byte_offset));
 
     // --- Rotation Logic (using raw pointers Fptr, NFptr) ---
     // The rest of the logic remains identical.
