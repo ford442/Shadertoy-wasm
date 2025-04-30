@@ -599,16 +599,17 @@ var pointc=la*4.0;
 
         // Method 1: Fixed offsets (like original code - careful, layout might change)
         // These offsets seem very large, ensure they are correct byte offsets into HEAPF32
-        // var offset_bytes_a = la * 2.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for input
-        // var offset_bytes_b = la * 3.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for output
-        // if (Module.HEAPF32.buffer.byteLength < offset_bytes_b + bytes_la) {
-        //     console.error("HEAP buffer too small for specified offsets!");
-        //     // Handle error - perhaps request more memory during compilation? (-sALLOW_MEMORY_GROWTH=1)
-        //     return () => {};
-        // }
-        // FptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_a, la);
-        // NFptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_b, la);
-
+        var offset_bytes_a = la * 2.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for input
+       var offset_bytes_b = la * 3.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for output
+       if (Module.HEAPF32.buffer.byteLength < offset_bytes_b + bytes_la) {
+          console.error("HEAP buffer too small for specified offsets!");
+         // Handle error - perhaps request more memory during compilation? (-sALLOW_MEMORY_GROWTH=1)
+         return () => {};
+        }
+       FptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_a, la);
+      NFptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_b, la);
+  
+/*
         // Method 2: Dynamic Allocation using _malloc (safer, recommended)
         // Ensure _malloc is exported (usually is by default)
         // Free memory in the cleanup function if using malloc!
@@ -622,7 +623,8 @@ var pointc=la*4.0;
         FptrView = new Float32Array(Module.HEAPF32.buffer, ptr_a, la);
         NFptrView = new Float32Array(Module.HEAPF32.buffer, ptr_b, la);
         console.log(`Allocated buffers via malloc: ptr_a=${ptr_a}, ptr_b=${ptr_b}, size=${bytes_la} bytes`);
-
+*/
+  
         // --- Populate the Input Float32Array (FptrView) ---
         // Copy the initial image data (0-255 integers) into the float buffer.
         // The C++ code expects floats, but the values seem to represent 0-255 range.
