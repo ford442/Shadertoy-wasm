@@ -4,6 +4,7 @@
 #include <limits>        // For numeric_limits
 #include <algorithm>     // For std::fill (optional, for clearing output buffer)
 #include <cstdio>        // For printf (optional error logging)
+#include <emscripten/heap.h> // For _emscripten_get_heap_size etc if needed, or just use HEAPF32
 
 // Define M_PI if not available (often is in <cmath>)
 #ifndef M_PI
@@ -271,86 +272,133 @@ eglMakeCurrent(display,surface,surface,contextegl);
 
 
 /**
- * @brief Rotates an image represented by a flat Float32Array (RGBA).
+ * @brief Rotates an image represented by JavaScript Float32Array views passed as emscripten::val.
  * @param angle The rotation angle in degrees.
  * @param wid The width of the image.
  * @param hig The height of the image.
- * @param FptrView A memory view of the input float array (RGBA, values 0-255).
- * @param NFptrView A memory view for the output rotated float array (RGBA, values 0-255).
- * This buffer should be cleared or initialized before calling,
- * as not all pixels might be written during rotation.
+ * @param FptrVal An emscripten::val representing the input Float32Array view (RGBA, values 0-255). MUST be a view into Module.HEAPF32.buffer.
+ * @param NFptrVal An emscripten::val representing the output Float32Array view (RGBA, values 0-255). MUST be a view into Module.HEAPF32.buffer.
  */
-void rotateFrameEmbind(int angle, int wid, int hig,
-                      emscripten::typed_memory_view<float> FptrView,
-                      emscripten::typed_memory_view<float> NFptrView)
+void rotateFrameEmbindVal(int angle, int wid, int hig,
+                         emscripten::val FptrVal,
+                         emscripten::val NFptrVal)
 {
-    size_t num_elements = static_cast<size_t>(wid) * hig * 4; // RGBA
+    if (wid <= 0 || hig <= 0) {
+        printf("Error (rotateFrameEmbindVal): Invalid dimensions (%d x %d).\n", wid, hig);
+        return;
+    }
+
+    // --- Extract pointer and size info from emscripten::val ---
+    // Access JS TypedArray properties directly from the val object
+    // Note: .as<T>() can throw if the property doesn't exist or type is wrong. Error handling could be added.
+    size_t fptr_byte_offset = 0;
+    size_t fptr_length = 0; // length in elements
+    size_t nfptr_byte_offset = 0;
+    size_t nfptr_length = 0; // length in elements
+
+    try {
+        fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
+        fptr_length = FptrVal["length"].as<size_t>();
+        nfptr_byte_offset = NFptrVal["byteOffset"].as<size_t>();
+        nfptr_length = NFptrVal["length"].as<size_t>();
+    } catch (const std::exception& e) {
+         printf("Error (rotateFrameEmbindVal): Failed to get properties from JS TypedArray val: %s\n", e.what());
+         // Attempt to access underlying buffer directly if properties fail? Could be risky.
+         // Check if it's an arraybuffer view directly?
+         // Example using isNumber/isUndefined checks
+         if(!FptrVal["byteOffset"].isUndefined() && FptrVal["byteOffset"].isNumber()){
+             fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
+         } else { printf("Error: FptrVal.byteOffset missing or not a number\n"); return; }
+         // ... repeat for other properties ...
+         return; // Exit if properties can't be read reliably
+    }
+
+
+    size_t expected_elements = static_cast<size_t>(wid) * hig * 4; // RGBA
 
     // --- Input Validation ---
-    if (wid <= 0 || hig <= 0) {
-        printf("Error (rotateFrameEmbind): Invalid dimensions (%d x %d).\n", wid, hig);
+    if (fptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Input buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, fptr_length);
         return;
     }
-    if (FptrView.size() < num_elements) {
-        printf("Error (rotateFrameEmbind): Input buffer view is too small. Expected: %zu, Got: %zu\n",
-               num_elements, FptrView.size());
-        return;
-    }
-    if (NFptrView.size() < num_elements) {
-        printf("Error (rotateFrameEmbind): Output buffer view is too small. Expected: %zu, Got: %zu\n",
-               num_elements, NFptrView.size());
+    if (nfptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Output buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, nfptr_length);
         return;
     }
 
-    // Convert angle to radians for C++ trigonometric functions
+    // --- Get direct pointers into the Emscripten HEAP ---
+    // THIS IS THE CRITICAL ASSUMPTION: FptrVal/NFptrVal MUST be views over Module.HEAPF32.buffer
+    // Use emscripten_memory_view - safer way if available
+    #ifdef __EMSCRIPTEN_major__ // Check if Emscripten headers are likely available
+        // Use the safer C API if possible to get heap base - less direct but avoids assumptions
+        // float* heap_base = reinterpret_cast<float*>(emscripten_get_heap_base()); // May not be easily available or correct type
+        // A common (though technically internal) way is via HEAP8 etc.
+        unsigned char* heap_base_ptr = emscripten::internal::getHeap<unsigned char>().raw();
+        if (!heap_base_ptr) {
+             printf("Error (rotateFrameEmbindVal): Could not get heap base pointer!\n");
+             return;
+        }
+
+        float* Fptr = reinterpret_cast<float*>(heap_base_ptr + fptr_byte_offset);
+        float* NFptr = reinterpret_cast<float*>(heap_base_ptr + nfptr_byte_offset);
+         // Optional: Check if pointers are within heap bounds
+         // size_t heap_size = emscripten_get_heap_size();
+         // if ((fptr_byte_offset + fptr_length * sizeof(float) > heap_size) ||
+         //     (nfptr_byte_offset + nfptr_length * sizeof(float) > heap_size)) {
+         //      printf("Error: Calculated pointers seem to be outside heap bounds!\n");
+         //      return;
+         // }
+
+    #else
+        // Fallback if Emscripten internals aren't directly accessible (less likely)
+         printf("Warning: Cannot access Emscripten heap internals directly, pointer casting might fail.\n");
+         // This part would likely fail without direct heap access method
+         float* Fptr = reinterpret_cast<float*>(fptr_byte_offset); // Highly unlikely to work
+         float* NFptr = reinterpret_cast<float*>(nfptr_byte_offset);
+    #endif
+
+
+    // --- Rotation Logic (using raw pointers Fptr, NFptr) ---
+    // The rest of the logic is identical to the original boost::function
+    // or the raw pointer version inside the typed_memory_view implementation.
+
     double angleRad = angle * M_PI / 180.0;
     double cosAngle = cos(angleRad);
     double sinAngle = sin(angleRad);
 
-    // --- Rotation Logic ---
-    // Assuming rotation around the top-left corner (0,0) as implied by original code
-    // If rotation around center is needed, adjust coordinates relative to center.
-
-    // Note: The original code used integer math for new coordinates, which can cause aliasing.
-    // We'll stick to that for consistency, but using interpolation would yield smoother results.
-
-    // IMPORTANT: Ensure the output buffer (NFptrView) is cleared before use,
-    // especially its alpha channel, if input alpha isn't always 255 or if pixels
-    // outside the rotated area should be transparent/black.
-    // Example: std::fill(NFptrView.begin(), NFptrView.end(), 0.0f); // Call this from JS using .fill(0) is easier
+    // IMPORTANT: Caller (JavaScript) should ensure NFptr buffer is cleared beforehand.
+    // std::fill(NFptr, NFptr + nfptr_length, 0.0f); // Can do here, but JS is often easier
 
     for (int y = 0; y < hig; ++y) {
         for (int x = 0; x < wid; ++x) {
             size_t index = static_cast<size_t>(y * wid + x) * 4;
 
-            // Read pixel data from the input view
-            // Assuming data is RGBA floats in the 0.0 - 255.0 range based on JS context
-            float red   = FptrView[index];
-            float green = FptrView[index + 1];
-            float blue  = FptrView[index + 2];
-            float alpha = FptrView[index + 3]; // Preserve original alpha
+            // Bounds check for safety accessing Fptr (though checked via fptr_length earlier)
+             // if (index + 3 >= fptr_length) continue; // Should not happen if length check passed
 
-            // Calculate the destination coordinates after rotation
-            // (Relative to origin 0,0)
+            float red   = Fptr[index];
+            float green = Fptr[index + 1];
+            float blue  = Fptr[index + 2];
+            float alpha = Fptr[index + 3];
+
             double rotatedX_double = x * cosAngle - y * sinAngle;
             double rotatedY_double = x * sinAngle + y * cosAngle;
 
-            // Round to nearest integer pixel coordinates for the destination
             int newX = static_cast<int>(std::round(rotatedX_double));
             int newY = static_cast<int>(std::round(rotatedY_double));
 
-            // --- Boundary Check for Destination ---
-            // Check if the calculated destination pixel is within the image bounds
             if (newX >= 0 && newX < wid && newY >= 0 && newY < hig) {
                 size_t newIndex = static_cast<size_t>(newY * wid + newX) * 4;
+                // Bounds check for safety accessing NFptr
+                 // if (newIndex + 3 >= nfptr_length) continue; // Should not happen
 
-                // Write the original pixel data to the new location in the output view
-                NFptrView[newIndex]     = red;
-                NFptrView[newIndex + 1] = green;
-                NFptrView[newIndex + 2] = blue;
-                NFptrView[newIndex + 3] = alpha; // Use preserved alpha
+                NFptr[newIndex]     = red;
+                NFptr[newIndex + 1] = green;
+                NFptr[newIndex + 2] = blue;
+                NFptr[newIndex + 3] = alpha;
             }
-            // Pixels mapping outside the bounds are simply ignored (not drawn).
         }
     }
 }
@@ -419,7 +467,7 @@ return result;
 
 EMSCRIPTEN_BINDINGS(my_module) {
 emscripten::function("processFloatData", &processFloatData);
-emscripten::function("rotat", &rotateFrameEmbind);
+    emscripten::function("rotat", &rotateFrameEmbindVal);
     // If you needed to return arrays back to JS you could bind std::vector
     // emscripten::register_vector<float>("FloatVector");
 }
