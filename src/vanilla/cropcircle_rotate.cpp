@@ -909,7 +909,7 @@ function Rb(){
 
 
         // Helper to copy rotated float data (0-255) back to a Uint8ClampedArray for canvas display
-        function copyFloatToUint8(floatView, uint8Data) {
+function copyFloatToUint8(floatView, uint8Data) {
              if (floatView.length !== uint8Data.length) {
                  console.error("Buffer length mismatch in copyFloatToUint8");
                  return;
@@ -918,9 +918,9 @@ function Rb(){
                  // Clamp values to 0-255 and round to nearest integer
                  uint8Data[i] = Math.max(0, Math.min(255, Math.round(floatView[i])));
              }
-        }
+}
 
-        function rrra(rta) { // Rotates and updates canvas 1 (ctx)
+function rrra(rta) { // Rotates and updates canvas 1 (ctx)
             console.log("Calling rotat for canvas 1, angle:", rta);
             if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrra"); return; }
             try {
@@ -932,12 +932,12 @@ function Rb(){
                 copyFloatToUint8(NFptrView, rgbdat.data);
                 // Update the canvas
                 ctx.putImageData(rgbdat, 0, 0);
-            } catch (e) {
+} catch (e) {
                 console.error("Error calling Module.rotat for canvas 1:", e);
             }
-        }
+}
 
-        function rrrb(rtb) { // Rotates and updates canvas 2 (ctxB)
+function rrrb(rtb) { // Rotates and updates canvas 2 (ctxB)
              console.log("Calling rotat for canvas 2, angle:", rtb);
              if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrrb"); return; }
             try {
@@ -948,9 +948,9 @@ function Rb(){
             } catch (e) {
                 console.error("Error calling Module.rotat for canvas 2:", e);
             }
-        }
+}
 
-        function rrrc(rtc) { // Rotates and updates canvas 3 (ctxC)
+function rrrc(rtc) { // Rotates and updates canvas 3 (ctxC)
              console.log("Calling rotat for canvas 3, angle:", rtc);
              if (!FptrView || !NFptrView) { console.error("Buffers not ready for rrrc"); return; }
             try {
@@ -961,7 +961,7 @@ function Rb(){
             } catch (e) {
                 console.error("Error calling Module.rotat for canvas 3:", e);
             }
-        }
+}
 
 
 knb=document.getElementById("rra");
