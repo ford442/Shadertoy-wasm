@@ -777,7 +777,7 @@ rottb=(rottb-knc.innerHTML);
 }
 setTimeout(function(){
 rrrb(rottb);
-},rate);
+},rate*2);
 //  bgPicB.hidden=true;
 // setTimeout(function(){
 // Rb();
@@ -789,7 +789,7 @@ rottc=((rottc+knb.innerHTML)-360);
 rottc=(rottc+knb.innerHTML);
 }
 rrrc(rottc);
-},rate);
+},rate*3);
 //  bgPicA.hidden=true;
 // bgPicB.hidden=false;
 setTimeout(function(){
