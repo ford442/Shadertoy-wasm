@@ -256,7 +256,7 @@ b3_wasm_loader_lto_32_test3:
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -fno-omit-frame-pointer \
 	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64=1 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64
-	 em++ -O3 -sEVAL_CTORS=2 -sEXIT_RUNTIME=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
+	 em++ -O3 -sEVAL_CTORS=2 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
 	 -sDEFAULT_TO_CXX=0 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
@@ -626,7 +626,7 @@ b3_compute_mod_test5:
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
 	 -I/content/RAMDRIVE2/b3/boost_1_86_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
 	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=2 \
-	 -sEXIT_RUNTIME=0 -ffast-math -mextended-const -mbulk-memory \
+	 -ffast-math -mextended-const -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
 	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
