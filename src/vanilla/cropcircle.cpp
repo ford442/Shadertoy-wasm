@@ -775,13 +775,9 @@ rottb=(rottb+360-knc.innerHTML);
 }else{
 rottb=(rottb-knc.innerHTML);
 }
+  
 setTimeout(function(){
 rrrb(rottb);
-},rate*2);
-//  bgPicB.hidden=true;
-// setTimeout(function(){
-// Rb();
-// },rate);
 setTimeout(function(){
 if((rottc+knb.innerHTML)>360){
 rottc=((rottc+knb.innerHTML)-360);
@@ -789,13 +785,25 @@ rottc=((rottc+knb.innerHTML)-360);
 rottc=(rottc+knb.innerHTML);
 }
 rrrc(rottc);
-},rate*3);
-//  bgPicA.hidden=true;
-// bgPicB.hidden=false;
 setTimeout(function(){
 $rn();
-},rate*4);
+},rate);
 }
+},rate);
+},rate);
+  
+//  bgPicB.hidden=true;
+// setTimeout(function(){
+// Rb();
+// },rate);
+  
+
+  
+//  bgPicA.hidden=true;
+// bgPicB.hidden=false;
+  
+
+  
 $rn();
 document.getElementById("di").onclick=function(){
 dsd=true;
