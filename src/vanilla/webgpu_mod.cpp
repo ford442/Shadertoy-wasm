@@ -185,7 +185,7 @@ return EM_TRUE;
 }
 
 void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
-                              std::vector<float>& pixel_buffer)
+                              boost::container::vector<float>& pixel_buffer)
 {
     size_t num_elements = data.size();
      if (num_elements == 0) {
