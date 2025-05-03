@@ -47,15 +47,9 @@ on_b.at(4,4)=1;
 }
 
 bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
-try {
-emscripten::typed_memory_view<uint8_t> u8_view{uint8_pixel_data_val};
+emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
 convert_u8_to_float_wasm_simd(u8_view, g_processed_pixel_buffer);
 return true;
-} catch (const std::exception& e) {
-return false;
-} catch (...) {
-return false;
-}
 }
 
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
@@ -239,8 +233,7 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
     }
 }
 
-
-void convert_u8_to_float_wasm_simd(emscripten::typed_memory_view<uint8_t> u8_view,
+void convert_u8_to_float_wasm_simd(emscripten::typed_memory_view<uint8_t> u8_view, 
 std::vector<float>& pixel_buffer){
 size_t num_elements = data.size();
 if (num_elements == 0) {
