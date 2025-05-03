@@ -182,6 +182,103 @@ setInterval(drawFrame, 16.6);
 }
 }
 
+function canvasStartEmbind(){
+const vvic=document.querySelector('#mvi');
+const srsiz=document.querySelector('#srsiz').innerHTML;
+const vsiz=document.querySelector('#vsiz').innerHTML;
+const SiZ=window.innerHeight;
+// vvic.width=vsiz;
+// vvic.height=vsiz;
+let w$; //=vsiz;
+let h$; //=vsiz;
+if(vvic.tagName=='CANVAS'){
+vvic.width=vsiz;
+vvic.height=vsiz;
+w$=vsiz;
+h$=vsiz;
+}
+if(vvic.tagName=='IMG'){
+w$=vvic.width; // naturalWidth;
+h$=vvic.height; // naturalHeight;
+// vvic.width=vvic.naturalWidth;
+// vvic.height=vvic.naturalHeight;
+}
+if(vvic.tagName=='VIDEO'){
+w$=vvic.width; // videoWidth;
+h$=vvic.height; // videoHeight;
+// vvic.width=vvic.videoWidth;
+// vvic.height=vvic.videoHeight;
+}
+const keepSizea = Math.max(h$, w$);
+const keepSize = Math.min(keepSizea, vsiz);
+const drawX = (keepSize - w$) / 2;
+const drawY = (keepSize - h$) / 2;
+console.log("canvas size: ",keepSize,", ",keepSize);
+const OffscCnv=new OffscreenCanvas(keepSize,keepSize); 
+// document.querySelector('#contain2').appendChild(OffscCnv);
+const scnv=document.querySelector('#scanvas');
+const bcnv=document.querySelector('#bcanvas');
+scnv.height=SiZ;
+OffscCnv.height=keepSize;
+bcnv.height=keepSize;
+bcnv.style.height=keepSize+'px';
+scnv.width=SiZ;
+OffscCnv.width=keepSize;
+bcnv.width=keepSize;
+bcnv.style.width=keepSize+'px';
+const gl3=OffscCnv.getContext('2d',{
+colorType:'float32',
+alpha:true,
+willReadFrequently:true,
+stencil:true,
+depth:true,
+colorSpace:"display-p3",
+desynchronized:false,
+antialias:true,
+powerPreference:"high-performance",
+premultipliedAlpha:false,
+preserveDrawingBuffer:true
+});
+document.querySelector('#moveFwdb').addEventListener('click',function(){
+Module.ccall('frmsOff');
+console.log('stopping frames for move');
+pause = 'loading';
+setTimeout(function(){
+pause = 'ready';
+Module.ccall('frmsOn');
+// console.log('restarting frames for move');
+}, 1900);
+});
+if (running == 0) {
+setTimeout(() => {
+console.log('sending: ',keepSize,vsiz,srsiz);
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
+running = 1;
+frameBufferViewF32 = Module.getPixelBufferView();
+console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+}, 250);
+} else {
+Module.ccall("startWebGPUC", null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
+frameBufferViewF32 = Module.getPixelBufferView();
+console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+}
+setInterval(function() {
+if (pause === 'ready') {
+gl3.clearRect(0, 0, keepSize, keepSize);
+gl3.drawImage(vvic, 0, 0, w$, h$, drawX, drawY, w$, h$); 
+}
+const image = gl3.getImageData(0, 0, keepSize, keepSize);
+const imageData = image.data;
+const pixelCount = keepSize * keepSize * 4; // RGBA
+for (let i = 0; i < pixelCount; ++i) {
+// Normalize uint8 (0-255) to float (0.0-1.0)
+const normalizedValue = imageData[i] / 255.0;
+frameBufferViewF32[i] = normalizedValue;
+}
+Module.frmOn();
+},16);
+}
+
 function canvasStartSizeBFR(){
 const vvic=document.querySelector('#mvi');
 const srsiz=document.querySelector('#srsiz').innerHTML;
@@ -1176,7 +1273,7 @@ getShader(pth2,'compute.wgsl');
 getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 setTimeout(function(){
-canvasStartSize();
+canvasStartEmbind();
 },3000);
 });
 
