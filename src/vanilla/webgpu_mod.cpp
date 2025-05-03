@@ -46,6 +46,18 @@ on_b.at(4,4)=1;
 }
 }
 
+bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
+try {
+emscripten::typed_memory_view<uint8_t> u8_view{uint8_pixel_data_val};
+convert_u8_to_float_wasm_simd(u8_view, g_processed_pixel_buffer);
+return true;
+} catch (const std::exception& e) {
+return false;
+} catch (...) {
+return false;
+}
+}
+
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
 if(eventType==EMSCRIPTEN_EVENT_MOUSEDOWN&&e->buttons!=0){
@@ -226,6 +238,50 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
 }
+
+
+void convert_u8_to_float_wasm_simd(emscripten::typed_memory_view<uint8_t> u8_view,
+std::vector<float>& pixel_buffer){
+size_t num_elements = data.size();
+if (num_elements == 0) {
+pixel_buffer.clear();
+return;
+}
+pixel_buffer.resize(num_elements);
+const float scale = 1.0f / 255.0f;
+    // AVX version: 8 floats
+const __m256 inv_255_ps_avx = _mm256_set1_ps(scale);
+size_t i = 0;
+    // Process 32 elements (bytes) at a time with AVX2 (load 32 uint8_t)
+    // Although we load 32 bytes, the conversion path easily yields 8 floats,
+    // so we process 8 elements per main SIMD step inside the loop.
+const size_t avx_bytes_load = 32; // Load 32 bytes (__m256i)
+const size_t sse_floats_process = 4; // Process 4 floats at a time from the loaded data
+const uint8_t* data_ptr = data.data();
+float* buffer_ptr = pixel_buffer.data();
+    // Main AVX2 loop (iterates processing 8 floats derived from 8 bytes)
+for (; i + 8 <= num_elements; i += 8) {
+         // Load 8 uint8_t values into the lower 64 bits of an SSE register
+__m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i)); // Loads lower 8 bytes
+        // --- Convert uint8 to float (using SSE/AVX steps) ---
+        // Stage 1: Zero-extend 8x uint8_t to 8x int16_t (in one SSE register)
+__m128i data_i16 = _mm_unpacklo_epi8(data_u8_sse, _mm_setzero_si128());
+        // Stage 2: Zero-extend 8x int16_t to 8x int32_t (in one AVX register)
+__m256i data_i32_avx = _mm256_cvtepi16_epi32(data_i16); // AVX2 instruction
+        // Stage 3: Convert 8x int32_t to 8x float (in one AVX register)
+__m256 data_f32_avx = _mm256_cvtepi32_ps(data_i32_avx); // AVX instruction
+        // --- Scale (normalize) floats ---
+data_f32_avx = _mm256_mul_ps(data_f32_avx, inv_255_ps_avx); // AVX instruction
+        // --- Store results back to memory ---
+        // Store 8 floats (256 bits)
+_mm256_storeu_ps(buffer_ptr + i, data_f32_avx); // AVX instruction (u for unaligned)
+}
+    // Process remaining elements (< 8) using a standard loop.
+for (; i < num_elements; ++i) {
+buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
+}
+}
+
 
 boost::function<EM_BOOL()>render=[](){
 u64_uni.at(3,3)++; 
