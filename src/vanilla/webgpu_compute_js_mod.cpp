@@ -269,12 +269,7 @@ gl3.drawImage(vvic, 0, 0, w$, h$, drawX, drawY, w$, h$);
 }
 const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
-const pixelCount = keepSize * keepSize * 4; // RGBA
-for (let i = 0; i < pixelCount; ++i) {
-// Normalize uint8 (0-255) to float (0.0-1.0)
-const normalizedValue = imageData[i] / 255.0;
-frameBufferViewF32[i] = normalizedValue;
-}
+Module.processFrameAndConvert(imageData);
 Module.frmOn();
 },16);
 }
