@@ -4,7 +4,6 @@
 
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
-#include <emscripten/typed_memory_view.h>
 // #include "/usr/include/eigen3/Eigen/Eigen"
 
 #include <experimental/simd>
