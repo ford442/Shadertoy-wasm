@@ -44,14 +44,14 @@ on_b.at(4,4)=1;
 }
 }
 
+/*
 bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
-  
 // emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
 //  convert_u8_to_float_wasm_simd(u8_view, pixel_buffer);
 convert_u8_to_float_wasm_simd(emscripten::typed_memory_view(pixel_buffer.size(),&uint8_pixel_data_val), pixel_buffer);
-  
 return true;
 }
+*/
 
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
@@ -233,7 +233,7 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
 }
-
+/*
 void convert_u8_to_float_wasm_simd(const emscripten::typed_memory_view<uint8_t>& u8_view,
 std::vector<float>& pixel_buffer){
 size_t num_elements = data.size();
@@ -275,7 +275,7 @@ for (; i < num_elements; ++i) {
 buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
 }
 }
-
+*/
 
 boost::function<EM_BOOL()>render=[](){
 u64_uni.at(3,3)++; 
