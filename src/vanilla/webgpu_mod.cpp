@@ -45,8 +45,11 @@ on_b.at(4,4)=1;
 }
 
 bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
-emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
-convert_u8_to_float_wasm_simd(u8_view, pixel_buffer);
+  
+// emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
+//  convert_u8_to_float_wasm_simd(u8_view, pixel_buffer);
+convert_u8_to_float_wasm_simd(emscripten::typed_memory_view(uint8_pixel_data_val.size(),uint8_pixel_data_val.data()), pixel_buffer);
+  
 return true;
 }
 
