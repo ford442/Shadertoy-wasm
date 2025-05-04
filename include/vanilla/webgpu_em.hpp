@@ -87,12 +87,13 @@ using namespace std;
 #include <cfloat>
 #include <new>
 #include <emscripten.h>
+#include <emscripten/bind.h>
+
 // #include <emscripten/threading.h>
 #include <emscripten/em_types.h>
 #include <emscripten/val.h>
 
 // #include <emscripten/wasmfs.h>
-#include <emscripten/bind.h>
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgpu.h>
 #include <iostream>
