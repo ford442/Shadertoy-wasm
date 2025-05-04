@@ -231,7 +231,7 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
     }
 }
 
-void convert_u8_to_float_wasm_simd(emscripten::typed_memory_view<uint8_t> u8_view, 
+void convert_u8_to_float_wasm_simd(const emscripten::typed_memory_view<uint8_t>& u8_view,
 std::vector<float>& pixel_buffer){
 size_t num_elements = data.size();
 if (num_elements == 0) {
