@@ -1,4 +1,6 @@
 #include <boost/cstdfloat.hpp>  // must be first include
+#include <emscripten/bind.h>
+
 #include "../../include/vanilla/avx.hpp"
 #include "../../include/vanilla/defs.hpp"
 #include "../../include/vanilla/gl.hpp"
@@ -87,7 +89,6 @@ using namespace std;
 #include <cfloat>
 #include <new>
 #include <emscripten.h>
-#include <emscripten/bind.h>
 
 // #include <emscripten/threading.h>
 #include <emscripten/em_types.h>
