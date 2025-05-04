@@ -15,7 +15,6 @@ using uint8_simd = stdx::native_simd<uint8_t>; // Use native uint8_t SIMD size
 using uint16_simd = stdx::native_simd<uint16_t>;
 using uint32_simd = stdx::native_simd<uint32_t>;
 
-
 namespace fsm = boost::filesystem;
 
 boost::container::vector<emscripten_align1_float> pixel_buffer;
@@ -47,7 +46,7 @@ on_b.at(4,4)=1;
 
 bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
 emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
-convert_u8_to_float_wasm_simd(u8_view, g_processed_pixel_buffer);
+convert_u8_to_float_wasm_simd(u8_view, pixel_buffer);
 return true;
 }
 
