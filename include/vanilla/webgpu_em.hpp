@@ -1,4 +1,6 @@
 #include <boost/cstdfloat.hpp>  // must be first include
+#include <stdfloat.hpp>  // must be first include
+
 #include <emscripten/bind.h>
 
 #include "../../include/vanilla/avx.hpp"
@@ -248,7 +250,7 @@ using wdc_tensor=boost::numeric::ublas::tensor<WGpuOnSubmittedWorkDoneCallback>;
 using mouse_tensor=boost::numeric::ublas::tensor<boost::compute::double_>;
 using c_tensor=boost::numeric::ublas::tensor<const char *>;
 using c32_tensor=boost::numeric::ublas::tensor<const char32_t *>;
-using f_tensor=boost::numeric::ublas::tensor<emscripten_align1_float>;
+using f_tensor=boost::numeric::ublas::tensor<std::bfloat16_t>;
 using vec4_tensor = boost::numeric::ublas::tensor<boost::numeric::ublas::vec4>;
 using fptr_tensor=boost::numeric::ublas::tensor<emscripten_align1_float *>;
 using wce_tensor=boost::numeric::ublas::tensor<WGpuCommandEncoder>;
