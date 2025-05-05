@@ -1,6 +1,5 @@
 #include <boost/cstdfloat.hpp>  // must be first include
-#include <stdfloat.hpp>  // must be first include
-
+// #include <stdfloat.hpp>  // wait for clang 16
 #include <emscripten/bind.h>
 
 #include "../../include/vanilla/avx.hpp"
