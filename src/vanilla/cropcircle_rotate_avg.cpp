@@ -1,4 +1,19 @@
 #include "../../include/vanilla/cropcircle.hpp"
+#include <vector>
+#include <numbers>
+#include <cmath>         // For cos, sin, M_PI, round
+#include <limits>        // For numeric_limits
+#include <algorithm>     // For std::fill (optional, for clearing output buffer)
+#include <cstdio>        // For printf (optional error logging)
+
+// Define M_PI if not available (often is in <cmath>)
+#ifndef M_PI
+// #define M_PI 3.14159265358979323846
+#define M_PI std::numbers::pi_v
+#endif
+
+std::vector<float> rotatedStreamData[3]; // Array of 3 vectors to store data for stream 0, 1, 2
+std::vector<float> combinedStreamData[3]; // Array of 3 vectors to store data for stream 0, 1, 2
 
 EGLConfig eglconfig=NULL;
 
@@ -259,6 +274,234 @@ surface=eglCreateWindowSurface(display,eglconfig,0,attribut_list);
 eglMakeCurrent(display,surface,surface,contextegl);
 }
 
+void initializeCppImageStorage(int wid, int hig) {
+    g_cppImageWidth = wid;
+    g_cppImageHeight = hig;
+    g_cppImageExpectedElements = static_cast<size_t>(wid) * hig * 4; // RGBA
+    for (int i = 0; i < 3; ++i) {
+        // Initialize temporal average accumulators (e.g., to black or first frame if passed)
+        rotatedStreamData[i].assign(g_cppImageExpectedElements, 0.0f);
+        // Initialize buffers for the rotated versions
+        combinedStreamData[i].assign(g_cppImageExpectedElements, 0.0f);
+    }
+    printf("C++: Image storage initialized for 3 streams (temporal unrotated, final rotated). Dimensions: %d x %d\n", wid, hig);
+}
+
+void rotateFrameEmbindVal(int angle, int wid, int hig, emscripten::val FptrVal, emscripten::val NFptrVal, int abc)
+{
+    if (wid <= 0 || hig <= 0) {
+        printf("Error (rotateFrameEmbindVal): Invalid dimensions (%d x %d).\n", wid, hig);
+        return;
+    }
+
+    size_t fptr_byte_offset = 0;
+    size_t fptr_length = 0; // length in elements
+    size_t nfptr_byte_offset = 0;
+    size_t nfptr_length = 0; // length in elements
+
+    try {
+        if (!FptrVal["byteOffset"].isUndefined() && FptrVal["byteOffset"].isNumber()) {
+            fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.byteOffset missing or not a number"); }
+
+        if (!FptrVal["length"].isUndefined() && FptrVal["length"].isNumber()) {
+            fptr_length = FptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.length missing or not a number"); }
+
+        if (!NFptrVal["byteOffset"].isUndefined() && NFptrVal["byteOffset"].isNumber()) {
+            nfptr_byte_offset = NFptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.byteOffset missing or not a number"); }
+
+        if (!NFptrVal["length"].isUndefined() && NFptrVal["length"].isNumber()) {
+            nfptr_length = NFptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.length missing or not a number"); }
+    } catch (const std::exception& e) {
+        printf("Error (rotateFrameEmbindVal): Failed to get properties from JS TypedArray val: %s\n", e.what());
+        return;
+    }
+
+    size_t expected_elements = static_cast<size_t>(wid) * hig * 4; // RGBA
+
+    if (fptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Input buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, fptr_length);
+        return;
+    }
+    if (nfptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Output buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, nfptr_length);
+        return;
+    }
+
+    // --- Get direct pointers into the Emscripten HEAP ---
+    // CRITICAL ASSUMPTION: FptrVal/NFptrVal MUST be views over Module.HEAPF32.buffer.
+    float* Fptr = reinterpret_cast<float*>(static_cast<uintptr_t>(fptr_byte_offset));
+    float* NFptr = reinterpret_cast<float*>(static_cast<uintptr_t>(nfptr_byte_offset));
+
+    // --- Rotation Logic ---
+    double angleRad = angle * M_PI / 180.0;
+    double cosAngle = std::cos(angleRad);
+    double sinAngle = std::sin(angleRad);
+
+    // Calculate the center of the image
+    // Using floating point for precision in center calculation
+    double centerX = static_cast<double>(wid) / 2.0;
+    double centerY = static_cast<double>(hig) / 2.0;
+
+    // Caller (JavaScript) should ensure NFptr buffer is cleared beforehand.
+    // Example: NFptrView.fill(0) in JS.
+    // If not cleared, old pixel data might remain in areas not overwritten.
+
+    for (int y = 0; y < hig; ++y) {
+        for (int x = 0; x < wid; ++x) {
+            size_t source_index = (static_cast<size_t>(y) * wid + x) * 4;
+
+            // Original pixel coordinates (as doubles for precision)
+            double currentX_double = static_cast<double>(x);
+            double currentY_double = static_cast<double>(y);
+
+            // 1. Translate coordinates so the center of the image is the origin
+            double translatedX = currentX_double - centerX;
+            double translatedY = currentY_double - centerY;
+
+            // 2. Rotate the translated coordinates
+            double rotatedX_at_origin = translatedX * cosAngle - translatedY * sinAngle;
+            double rotatedY_at_origin = translatedX * sinAngle + translatedY * cosAngle;
+
+            // 3. Translate the rotated coordinates back to the original system
+            double newX_double = rotatedX_at_origin + centerX;
+            double newY_double = rotatedY_at_origin + centerY;
+
+            // Round to the nearest integer pixel
+            int newX = static_cast<int>(std::round(newX_double));
+            int newY = static_cast<int>(std::round(newY_double));
+
+            // Check if the new coordinates are within the bounds of the output image
+            if (newX >= 0 && newX < wid && newY >= 0 && newY < hig) {
+                size_t target_index = (static_cast<size_t>(newY) * wid + newX) * 4;
+
+                // Copy pixel data (RGBA)
+                // Bounds check on source_index is implicitly handled by loop bounds
+                // Bounds check on target_index + 3 vs nfptr_length should be fine due to newX/newY check and initial nfptr_length check
+                NFptr[target_index]     = Fptr[source_index];
+                NFptr[target_index + 1] = Fptr[source_index + 1];
+                NFptr[target_index + 2] = Fptr[source_index + 2];
+                NFptr[target_index + 3] = Fptr[source_index + 3];
+            }
+        }
+    }
+}
+
+
+void rotateFrameEmbindValFloat(int angle, int wid, int hig, emscripten::val FptrVal, emscripten::val NFptrVal, int abc)
+{
+    if (wid <= 0 || hig <= 0) {
+        printf("Error (rotateFrameEmbindVal): Invalid dimensions (%d x %d).\n", wid, hig);
+        return;
+    }
+
+    size_t fptr_byte_offset = 0;
+    size_t fptr_length = 0; // length in elements
+    size_t nfptr_byte_offset = 0;
+    size_t nfptr_length = 0; // length in elements
+
+    try {
+        if (!FptrVal["byteOffset"].isUndefined() && FptrVal["byteOffset"].isNumber()) {
+            fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.byteOffset missing or not a number"); }
+
+        if (!FptrVal["length"].isUndefined() && FptrVal["length"].isNumber()) {
+            fptr_length = FptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.length missing or not a number"); }
+
+        if (!NFptrVal["byteOffset"].isUndefined() && NFptrVal["byteOffset"].isNumber()) {
+            nfptr_byte_offset = NFptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.byteOffset missing or not a number"); }
+
+        if (!NFptrVal["length"].isUndefined() && NFptrVal["length"].isNumber()) {
+            nfptr_length = NFptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.length missing or not a number"); }
+    } catch (const std::exception& e) {
+        printf("Error (rotateFrameEmbindVal): Failed to get properties from JS TypedArray val: %s\n", e.what());
+        return;
+    }
+
+    size_t expected_elements = static_cast<size_t>(wid) * hig * 4; // RGBA
+
+    if (fptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Input buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, fptr_length);
+        return;
+    }
+    if (nfptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Output buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, nfptr_length);
+        return;
+    }
+
+    // --- Get direct pointers into the Emscripten HEAP ---
+    // CRITICAL ASSUMPTION: FptrVal/NFptrVal MUST be views over Module.HEAPF32.buffer.
+    float* Fptr = reinterpret_cast<float*>(static_cast<uintptr_t>(fptr_byte_offset));
+    float* NFptr = reinterpret_cast<float*>(static_cast<uintptr_t>(nfptr_byte_offset));
+
+    // --- Rotation Logic ---
+    float angleRad = angle * M_PI / 180.0;
+    float cosAngle = std::cos(angleRad);
+    float sinAngle = std::sin(angleRad);
+
+    // Calculate the center of the image
+    // Using floating point for precision in center calculation
+    float centerX = static_cast<float>(wid) / 2.0;
+    float centerY = static_cast<float>(hig) / 2.0;
+
+    // Caller (JavaScript) should ensure NFptr buffer is cleared beforehand.
+    // Example: NFptrView.fill(0) in JS.
+    // If not cleared, old pixel data might remain in areas not overwritten.
+
+    for (int y = 0; y < hig; ++y) {
+        for (int x = 0; x < wid; ++x) {
+            size_t source_index = (static_cast<size_t>(y) * wid + x) * 4;
+
+            // Original pixel coordinates (as floats for precision)
+            float currentX_float = static_cast<float>(x);
+            float currentY_float = static_cast<float>(y);
+
+            // 1. Translate coordinates so the center of the image is the origin
+            float translatedX = currentX_float - centerX;
+            float translatedY = currentY_float - centerY;
+
+            // 2. Rotate the translated coordinates
+            float rotatedX_at_origin = translatedX * cosAngle - translatedY * sinAngle;
+            float rotatedY_at_origin = translatedX * sinAngle + translatedY * cosAngle;
+
+            // 3. Translate the rotated coordinates back to the original system
+            float newX_float = rotatedX_at_origin + centerX;
+            float newY_float = rotatedY_at_origin + centerY;
+
+            // Round to the nearest integer pixel
+            int newX = static_cast<int>(std::round(newX_float));
+            int newY = static_cast<int>(std::round(newY_float));
+
+            // Check if the new coordinates are within the bounds of the output image
+            if (newX >= 0 && newX < wid && newY >= 0 && newY < hig) {
+                size_t target_index = (static_cast<size_t>(newY) * wid + newX) * 4;
+
+                // Copy pixel data (RGBA)
+                // Bounds check on source_index is implicitly handled by loop bounds
+                // Bounds check on target_index + 3 vs nfptr_length should be fine due to newX/newY check and initial nfptr_length check
+                NFptr[target_index] = Fptr[source_index];
+                rotatedStreamData[abc][source_index]= .2 * Fptr[source_index] + .8 * rotatedStreamData[abc][source_index];
+                NFptr[target_index + 1] = Fptr[source_index + 1];
+                rotatedStreamData[abc][source_index+ 1]= .2 * Fptr[source_index+ 1] + .8 * rotatedStreamData[abc][source_index+ 1];
+                NFptr[target_index + 2] = Fptr[source_index + 2];
+                rotatedStreamData[abc][source_index+ 2]= .2 * Fptr[source_index+ 2] + .8 * rotatedStreamData[abc][source_index+ 2];
+                NFptr[target_index + 3] = Fptr[source_index + 3];
+                rotatedStreamData[abc][source_index+ 3]= .2 * Fptr[source_index+ 3] + .8 * rotatedStreamData[abc][source_index+ 3];
+            }
+        }
+    }
+}
+
 boost::function<void(int,float *,float *)>avgFrm=[](int leng,float *ptr,float *aptr){
 max=0.0f;
 min=255.0f;
@@ -275,27 +518,6 @@ sum=sum/leng;
 aptr[0]=sum;
 aptr[1]=min;
 aptr[2]=max;
-return;
-};
-
-boost::function<void(int,int,int,float *,float *)>rotateFrame=[](int angle,int wid,int hig,float *Fptr,float *NFptr){
-for(int y=0;y<hig;y++){
-for(int x=0;x<wid;x++){
-int index=4*(y*hig+x);
-unsigned char red=Fptr[index];
-unsigned char green=Fptr[index+1];
-unsigned char blue=Fptr[index+2];
-int newX=x*cos(angle)-y*sin(angle);
-int newY=x*sin(angle)+y*cos(angle);
-if (newX>=0&&newX<hig&&newY>=0&&newY<wid){
-int newIndex=4*(newY*wid+newX);
-NFptr[newIndex]=red;
-NFptr[newIndex+1]=green;
-NFptr[newIndex+2]=blue;
-NFptr[newIndex+3]=255;
-}
-}
-}
 return;
 };
 
@@ -322,7 +544,11 @@ return result;
 }
 
 EMSCRIPTEN_BINDINGS(my_module) {
+emscripten::function("initStorage", &initializeCppImageStorage);
 emscripten::function("processFloatData", &processFloatData);
+emscripten::function("rotat", &rotateFrameEmbindVal);
+emscripten::function("rotatF", &rotateFrameEmbindValFloat);
+  
     // If you needed to return arrays back to JS you could bind std::vector
     // emscripten::register_vector<float>("FloatVector");
 }
@@ -333,9 +559,11 @@ void nano(int leng,float *ptr,float *aptr){
 avgFrm(leng,ptr,aptr);
 }
 
+/*
 void rotat(int angle,int wd,int hi,float *Fptr,float *NFptr){
 rotateFrame(angle,wd,hi,Fptr,NFptr);
 }
+*/
 
 void emem(int leng,float *ptr){
 emsc(leng,ptr);
@@ -436,7 +664,14 @@ dis=set();
 
 var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb,rott,rottb,rottc;
 
+// Buffers for rotation - declared outside set to persist if needed, or inside if recreated each time
+    var FptrView = null; // Input buffer view
+    var NFptrView = null; // Output buffer view
+    var la = 0; // length in elements
+
 function set(){
+
+Module.initStorage(winSize);
 
 ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
@@ -463,11 +698,45 @@ var rgbd3=rgbdat3.data;
 var imgg=imgData.data;
 var i;
 var l=h*ww;
-var la=h*ww*4;
+ la=h*ww*4;
 var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
 
+var bytes_la = la * Float32Array.BYTES_PER_ELEMENT; // Size in bytes
+
+          // --- Allocate or Re-use Buffers for Rotation ---
+        // We need Float32Arrays that C++ can access via typed_memory_view.
+        // These should ideally live on the Emscripten HEAP.
+        // We need two buffers: one for input (FptrView), one for output (NFptrView).
+/*
+        // Method 1: Fixed offsets (like original code - careful, layout might change)
+        // These offsets seem very large, ensure they are correct byte offsets into HEAPF32
+var offset_bytes_a = la * 2.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for input
+var offset_bytes_b = la * 3.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for output
+if (Module.HEAPF32.buffer.byteLength < offset_bytes_b + bytes_la) {
+console.error("HEAP buffer too small for specified offsets!");
+         // Handle error - perhaps request more memory during compilation? (-sALLOW_MEMORY_GROWTH=1)
+return () => {};
+}
+FptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_a, la);
+NFptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_b, la);
+  */
+
+        // Method 2: Dynamic Allocation using _malloc (safer, recommended)
+        // Ensure _malloc is exported (usually is by default)
+        // Free memory in the cleanup function if using malloc!
+var ptr_a1 = Module._malloc(bytes_la);
+var ptr_a2 = Module._malloc(bytes_la);
+var ptr_a3 = Module._malloc(bytes_la);
+var ptr_b = Module._malloc(bytes_la);
+
+FptrViewA = new Float32Array(Module.HEAPF32.buffer, ptr_a1, la);
+FptrViewB = new Float32Array(Module.HEAPF32.buffer, ptr_a2, la);
+FptrViewC = new Float32Array(Module.HEAPF32.buffer, ptr_a3, la);
+NFptrView = new Float32Array(Module.HEAPF32.buffer, ptr_b, la);
+console.log(`Allocated buffers via malloc: ptr_a1=${ptr_a1}, ptr_b=${ptr_b}, size=${bytes_la} bytes`);
+   
 const floatArray = new Float32Array(imgData.data.length);
 for(let i = 0; i < imgData.data.length; i++) {
 floatArray[i] = imgData.data[i] / 255.0;
@@ -696,6 +965,19 @@ if (rgb > darkThreshold) {
     rgbd3[i+3] = 0;
 }
 
+          // --- Populate the Input Float32Array (FptrView) ---
+        // Copy the initial image data (0-255 integers) into the float buffer.
+        // The C++ code expects floats, but the values seem to represent 0-255 range.
+for (let i = 0; i < la; i++) {
+FptrViewA[i] = rgbd[i]; // Direct copy of 0-255 values
+}
+for (let i = 0; i < la; i++) {
+FptrViewB[i] = rgbd2[i]; // Direct copy of 0-255 values
+}
+for (let i = 0; i < la; i++) {
+FptrViewC[i] = rgbd3[i]; // Direct copy of 0-255 values
+}
+
 // agavF.set(rgbdat.data);
 var ang=45;
 // Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[ang,ww,h,pointa,pointb]);
@@ -726,26 +1008,43 @@ flPB.setAttribute("style","transform:scaleY(1.0)");
 // cnP.setAttribute("style","transform: scaleY(1.0)");
 // cnPB.setAttribute("style","transform:scaleY(-1);");
 }
+
 function Rb(){
 // bgPicA.setAttribute("style","position:absolute;");
 // bgPicA.setAttribute("style","z-index:999991;");
 // bgPicB.setAttribute("style","z-index:999990;");
-flP.setAttribute("style","transform: scaleX(1.0)");
-cnP.setAttribute("style","transform: scaleY(-1.0)");
+     flP.setAttribute("style","transform: scaleX(1.0)");
+     cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
-function rrra(rta){
-cnP.setAttribute("style","transform: rotate("+rta+"deg)");
-// cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
+
+function copyFloatToUint8(floatView, uint8Data) {
+for (let i = 0; i < floatView.length; ++i) {
+uint8Data[i] = Math.max(0, Math.min(255, Math.round(floatView[i])));
 }
-function rrrb(rtb){
-cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
-// cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
-function rrrc(rtc) {
-cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
-// cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
+
+function rrra(rta) { // Rotates and updates canvas 1 (ctx)
+NFptrView.fill(0); // Fill with 0.0f
+Module.rotatF(rta, ww, h, FptrViewA, NFptrView, 0); // Pass views directly
+copyFloatToUint8(NFptrView, rgbdat.data);
+ctx.putImageData(rgbdat, 0, 0);
 }
+
+function rrrb(rtb) { // Rotates and updates canvas 2 (ctxB)
+NFptrView.fill(0);
+Module.rotatF(rtb, ww, h, FptrViewB, NFptrView, 1);
+copyFloatToUint8(NFptrView, rgbdat2.data);
+ctxB.putImageData(rgbdat2, 0, 0);
+}
+
+function rrrc(rtc) { // Rotates and updates canvas 3 (ctxC)
+NFptrView.fill(0);
+Module.rotatF(rtc, ww, h, FptrViewC, NFptrView, 2);
+copyFloatToUint8(NFptrView, rgbdat3.data);
+ctxC.putImageData(rgbdat3, 0, 0);
+}
+
 knb=document.getElementById("rra");
 kna=document.getElementById("mainr");
 knc=document.getElementById("rrb");
@@ -753,42 +1052,55 @@ knd=document.getElementById("rrc");
 knbb=document.getElementById("rrab");
 kncb=document.getElementById("rrbb");
 kndb=document.getElementById("rrcb");
-rate=(kna.innerHTML);
+rate=kna.innerHTML;
 rott=0;
 rottb=0;
 rottc=0;
 let dur=document.getElementById("temptime").innerHTML/10;
 let dsd=false;
+
 function $rn(){
 if(dsd){
 return;
 }
 Ra();
+/*
 if((rott-knd.innerHTML)<0){
 rott=(rott+360-knd.innerHTML);
 }else{
 rott=rott-knd.innerHTML;
 }
+*/
+rott=rott-knd.innerHTML;
+rott = (rott % 360 + 360) % 360;
 rrra(rott);
-if((rottb-knc.innerHTML)<0){
-rottb=(rottb+360-knc.innerHTML);
-}else{
-rottb=(rottb-knc.innerHTML);
-}
 setTimeout(function(){
-rrrb(rottb);
+/*
+if((rottc+knb.innerHTML)>360){
+rottc=((rottc+knb.innerHTML)-360);
+}else{
+rottc=(rottc+knb.innerHTML);
+}
+*/
+rottc=(rottc+knb.innerHTML);
+rottc = (rottc % 360 + 360) % 360;
+rrrc(rottc);
 },rate);
 //  bgPicB.hidden=true;
 // setTimeout(function(){
 // Rb();
 // },rate);
 setTimeout(function(){
-if((rottc+knb.innerHTML)>360){
-rottc=((rottc+knb.innerHTML)-360);
+/*
+if((rottb-knc.innerHTML)<0){
+rottb=(rottb+360-knc.innerHTML);
 }else{
-rottc=(rottc+knb.innerHTML);
+rottb=(rottb-knc.innerHTML);
 }
-rrrc(rottc);
+*/
+rottb=(rottb-knc.innerHTML);
+rottb = (rottb % 360 + 360) % 360;
+rrrb(rottb);
 },rate);
 //  bgPicA.hidden=true;
 // bgPicB.hidden=false;
@@ -808,6 +1120,7 @@ dsd=true;
 });
 
 int main(){
+  
 emscA();
 ma();
 return 1;
