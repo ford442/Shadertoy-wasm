@@ -1047,19 +1047,8 @@ rott=(rott+360-knd.innerHTML);
 rott=rott-knd.innerHTML;
 }
 rrra(rott);
-if((rottb-knc.innerHTML)<0){
-rottb=(rottb+360-knc.innerHTML);
-}else{
-rottb=(rottb-knc.innerHTML);
-}
-setTimeout(function(){
-rrrb(rottb);
 
-//  bgPicB.hidden=true;
-// setTimeout(function(){
-// Rb();
-// },rate);
-setTimeout(function(){
+  setTimeout(function(){
 if((rottc+knb.innerHTML)>360){
 rottc=((rottc+knb.innerHTML)-360);
 }else{
@@ -1067,14 +1056,27 @@ rottc=(rottc+knb.innerHTML);
 }
 rrrc(rottc);
 
+//  bgPicB.hidden=true;
+// setTimeout(function(){
+// Rb();
+// },rate);
+  
+if((rottb-knc.innerHTML)<0){
+rottb=(rottb+360-knc.innerHTML);
+}else{
+rottb=(rottb-knc.innerHTML);
+}
+
+setTimeout(function(){
+rrrb(rottb);
+},rate);
 //  bgPicA.hidden=true;
 // bgPicB.hidden=false;
-  
+  },rate);
 setTimeout(function(){
 $rn();
 },rate);
-},rate);
-},rate);
+
 }
 $rn();
 document.getElementById("di").onclick=function(){
