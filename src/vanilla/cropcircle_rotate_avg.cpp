@@ -544,7 +544,7 @@ return result;
 EMSCRIPTEN_BINDINGS(my_module) {
 emscripten::function("initStorage", &initializeCppImageStorage);
 emscripten::function("processFloatData", &processFloatData);
-emscripten::function("rotat", &rotateFrameEmbindVal);
+// emscripten::function("rotat", &rotateFrameEmbindVal);
 emscripten::function("rotatF", &rotateFrameEmbindValFloat);
   
     // If you needed to return arrays back to JS you could bind std::vector
