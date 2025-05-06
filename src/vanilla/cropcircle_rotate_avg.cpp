@@ -275,7 +275,7 @@ eglMakeCurrent(display,surface,surface,contextegl);
 }
 
 void initializeCppImageStorage(int wid, int hig) {
-    g_cppImageExpectedElements = static_cast<size_t>(wid) * hig * 4; // RGBA
+    size_t g_cppImageExpectedElements = static_cast<size_t>(wid) * hig * 4; // RGBA
     for (int i = 0; i < 3; ++i) {
         // Initialize temporal average accumulators (e.g., to black or first frame if passed)
         rotatedStreamData[i].assign(g_cppImageExpectedElements, 0.0f);
