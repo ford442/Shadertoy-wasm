@@ -669,10 +669,11 @@ var $,$r,z,w,R,h,ww,o,l,r,m,rotm,rotmb,rottm,kna,knab,knb,knbb,knc,kncb,knd,kndb
 
 function set(){
 
-Module.initStorage(winSize);
-
 ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
+
+Module.initStorage(ww,h);
+
 console.log('got html size:',ww,' ',h);
 
 let cnP=document.getElementById("cp");
