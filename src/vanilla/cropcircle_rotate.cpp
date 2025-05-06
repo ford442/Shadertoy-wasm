@@ -1003,21 +1003,21 @@ uint8Data[i] = Math.max(0, Math.min(255, Math.round(floatView[i])));
 
 function rrra(rta) { // Rotates and updates canvas 1 (ctx)
 NFptrView.fill(0); // Fill with 0.0f
-Module.rotat(rta, ww, h, FptrViewA, NFptrView); // Pass views directly
+Module.rotatF(rta, ww, h, FptrViewA, NFptrView); // Pass views directly
 copyFloatToUint8(NFptrView, rgbdat.data);
 ctx.putImageData(rgbdat, 0, 0);
 }
 
 function rrrb(rtb) { // Rotates and updates canvas 2 (ctxB)
 NFptrView.fill(0);
-Module.rotat(rtb, ww, h, FptrViewB, NFptrView);
+Module.rotatF(rtb, ww, h, FptrViewB, NFptrView);
 copyFloatToUint8(NFptrView, rgbdat2.data);
 ctxB.putImageData(rgbdat2, 0, 0);
 }
 
 function rrrc(rtc) { // Rotates and updates canvas 3 (ctxC)
 NFptrView.fill(0);
-Module.rotat(rtc, ww, h, FptrViewC, NFptrView);
+Module.rotatF(rtc, ww, h, FptrViewC, NFptrView);
 copyFloatToUint8(NFptrView, rgbdat3.data);
 ctxC.putImageData(rgbdat3, 0, 0);
 }
