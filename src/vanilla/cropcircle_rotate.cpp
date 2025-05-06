@@ -934,7 +934,7 @@ function $rn(){
 if(dsd){
 return;
 }
-// Ra();
+Ra();
 if((rott-knd.innerHTML)<0){
 rott=(rott+360-knd.innerHTML);
 }else{
@@ -948,7 +948,7 @@ rottb=(rottb-knc.innerHTML);
 }
 setTimeout(function(){
 rrrb(rottb);
-},rate);
+
 //  bgPicB.hidden=true;
 // setTimeout(function(){
 // Rb();
@@ -960,11 +960,14 @@ rottc=((rottc+knb.innerHTML)-360);
 rottc=(rottc+knb.innerHTML);
 }
 rrrc(rottc);
-},rate);
+
 //  bgPicA.hidden=true;
 // bgPicB.hidden=false;
+  
 setTimeout(function(){
 $rn();
+},rate);
+},rate);
 },rate);
 }
 $rn();
