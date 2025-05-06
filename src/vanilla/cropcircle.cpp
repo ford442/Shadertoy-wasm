@@ -347,7 +347,7 @@ EM_JS(void,ma,(),{
 "use strict";
 var winSize=parseInt(window.innerHeight,10);
 // var scanvas=document.createElement('canvas');
-var scanvas=document.createElement('imag');
+var scanvas=document.getElementById('imag');
 var icanvas=document.getElementById('imag2');
 var bcanvas=document.getElementById('imag3');
 // icanvas.setAttribute("style","opacity:0.422");
