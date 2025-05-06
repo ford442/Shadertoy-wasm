@@ -1040,7 +1040,7 @@ function $rn(){
 if(dsd){
 return;
 }
-Ra();
+// Ra();
 /*
 if((rott-knd.innerHTML)<0){
 rott=(rott+360-knd.innerHTML);
