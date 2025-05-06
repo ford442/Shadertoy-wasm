@@ -1072,9 +1072,9 @@ rrrc(rottc);
   
 setTimeout(function(){
 $rn();
-},rate);
-},rate);
-},rate);
+},16);
+},16+(rate/2));
+},16+rate);
 }
 $rn();
 document.getElementById("di").onclick=function(){
