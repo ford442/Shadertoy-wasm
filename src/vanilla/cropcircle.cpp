@@ -235,7 +235,7 @@ glViewport(0,0,GLint(Size),GLint(Size));
 }
 
 void emscA(){
-emscripten_get_element_css_size("imag",&wi,&hi);
+emscripten_get_element_css_size("imag1",&wi,&hi);
 Size=(int)hi;
 S=(GLfloat)Size;
 // eglBindAPI(0);
@@ -249,7 +249,7 @@ attr.preserveDrawingBuffer=EM_TRUE;
 attr.enableExtensionsByDefault=EM_FALSE;
 attr.renderViaOffscreenBackBuffer=EM_FALSE;
 attr.powerPreference=EM_WEBGL_POWER_PREFERENCE_HIGH_PERFORMANCE;
-ctx=emscripten_webgl_create_context("#imag",&attr);
+ctx=emscripten_webgl_create_context("#imag1",&attr);
 display=eglGetDisplay(EGL_DEFAULT_DISPLAY);
 eglInitialize(display,&major,&minor);
 eglChooseConfig(display,attribute_list,&eglconfig,1,&config_size);
@@ -346,16 +346,15 @@ emsc(leng,ptr);
 EM_JS(void,ma,(),{
 "use strict";
 var winSize=parseInt(window.innerHeight,10);
-// var scanvas=document.createElement('canvas');
-var scanvas=document.getElementById('imag');
+var scanvas=document.createElement('canvas');
 var icanvas=document.getElementById('imag2');
 var bcanvas=document.getElementById('imag3');
 // icanvas.setAttribute("style","opacity:0.422");
-  /*
+
 scanvas.imageSmoothingEnabled=false;
 icanvas.imageSmoothingEnabled=false;
 bcanvas.imageSmoothingEnabled=false;
-scanvas.id='zimag';
+scanvas.id='imag1';
 scanvas.imageRendering='pixelated';
 icanvas.imageRendering='pixelated';
 bcanvas.imageRendering='pixelated';
@@ -373,7 +372,7 @@ scanvas.style.height='100vh';
 scanvas.style.width='100vh';
 scanvas.style.backgroundColor='rgba(255,255,255,0.0)';
 document.getElementById("cp").appendChild(scanvas);
-
+/*
 const zcanvas=document.createElement('canvas');
 zcanvas.id='jimag';
 zcanvas.imageRendering='pixelated';
