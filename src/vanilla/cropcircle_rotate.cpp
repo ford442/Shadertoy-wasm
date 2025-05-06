@@ -1041,42 +1041,49 @@ if(dsd){
 return;
 }
 Ra();
+/*
 if((rott-knd.innerHTML)<0){
 rott=(rott+360-knd.innerHTML);
 }else{
 rott=rott-knd.innerHTML;
 }
+*/
+rott=rott-knd.innerHTML;
+rott = (rott % 360 + 360) % 360;
 rrra(rott);
-
-  setTimeout(function(){
+setTimeout(function(){
+/*
 if((rottc+knb.innerHTML)>360){
 rottc=((rottc+knb.innerHTML)-360);
 }else{
 rottc=(rottc+knb.innerHTML);
 }
+*/
+rottc=(rottc+knb.innerHTML);
+rottc = (rottc % 360 + 360) % 360;
 rrrc(rottc);
-  },rate);
+},rate);
 //  bgPicB.hidden=true;
 // setTimeout(function(){
 // Rb();
 // },rate);
-  
+setTimeout(function(){
+/*
 if((rottb-knc.innerHTML)<0){
 rottb=(rottb+360-knc.innerHTML);
 }else{
 rottb=(rottb-knc.innerHTML);
 }
-
-setTimeout(function(){
+*/
+rottb=(rottb-knc.innerHTML);
+rottb = (rottb % 360 + 360) % 360;
 rrrb(rottb);
 },rate);
 //  bgPicA.hidden=true;
 // bgPicB.hidden=false;
-
 setTimeout(function(){
 $rn();
 },rate);
-
 }
 $rn();
 document.getElementById("di").onclick=function(){
