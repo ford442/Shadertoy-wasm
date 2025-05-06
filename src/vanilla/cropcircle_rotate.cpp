@@ -557,37 +557,30 @@ var bytes_la = la * Float32Array.BYTES_PER_ELEMENT; // Size in bytes
 /*
         // Method 1: Fixed offsets (like original code - careful, layout might change)
         // These offsets seem very large, ensure they are correct byte offsets into HEAPF32
-        var offset_bytes_a = la * 2.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for input
-       var offset_bytes_b = la * 3.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for output
-       if (Module.HEAPF32.buffer.byteLength < offset_bytes_b + bytes_la) {
-          console.error("HEAP buffer too small for specified offsets!");
+var offset_bytes_a = la * 2.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for input
+var offset_bytes_b = la * 3.0 * Float32Array.BYTES_PER_ELEMENT; // Example offset for output
+if (Module.HEAPF32.buffer.byteLength < offset_bytes_b + bytes_la) {
+console.error("HEAP buffer too small for specified offsets!");
          // Handle error - perhaps request more memory during compilation? (-sALLOW_MEMORY_GROWTH=1)
-         return () => {};
-        }
-       FptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_a, la);
-      NFptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_b, la);
+return () => {};
+}
+FptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_a, la);
+NFptrView = new Float32Array(Module.HEAPF32.buffer, offset_bytes_b, la);
   */
 
         // Method 2: Dynamic Allocation using _malloc (safer, recommended)
         // Ensure _malloc is exported (usually is by default)
         // Free memory in the cleanup function if using malloc!
-        var ptr_a = Module._malloc(bytes_la);
-        var ptr_b = Module._malloc(bytes_la);
-        if (!ptr_a || !ptr_b) {
-             console.error("Failed to allocate memory using _malloc!");
-             if (ptr_a) Module._free(ptr_a); // Clean up if one allocation succeeded
-             return () => {}; // Return empty cleanup
-        }
-        FptrView = new Float32Array(Module.HEAPF32.buffer, ptr_a, la);
-        NFptrView = new Float32Array(Module.HEAPF32.buffer, ptr_b, la);
-        console.log(`Allocated buffers via malloc: ptr_a=${ptr_a}, ptr_b=${ptr_b}, size=${bytes_la} bytes`);
-          // --- Populate the Input Float32Array (FptrView) ---
-        // Copy the initial image data (0-255 integers) into the float buffer.
-        // The C++ code expects floats, but the values seem to represent 0-255 range.
-        for (let i = 0; i < la; i++) {
-            FptrView[i] = imgg[i]; // Direct copy of 0-255 values
-        }
-        console.log("Copied initial image data to FptrView.");
+var ptr_a1 = Module._malloc(bytes_la);
+var ptr_a2 = Module._malloc(bytes_la);
+var ptr_a3 = Module._malloc(bytes_la);
+var ptr_b = Module._malloc(bytes_la);
+
+FptrViewA = new Float32Array(Module.HEAPF32.buffer, ptr_a1, la);
+FptrViewB = new Float32Array(Module.HEAPF32.buffer, ptr_a2, la);
+FptrViewC = new Float32Array(Module.HEAPF32.buffer, ptr_a3, la);
+NFptrView = new Float32Array(Module.HEAPF32.buffer, ptr_b, la);
+console.log(`Allocated buffers via malloc: ptr_a1=${ptr_a1}, ptr_b=${ptr_b}, size=${bytes_la} bytes`);
    
 const floatArray = new Float32Array(imgData.data.length);
 for(let i = 0; i < imgData.data.length; i++) {
@@ -817,6 +810,19 @@ if (rgb > darkThreshold) {
     rgbd3[i+3] = 0;
 }
 
+          // --- Populate the Input Float32Array (FptrView) ---
+        // Copy the initial image data (0-255 integers) into the float buffer.
+        // The C++ code expects floats, but the values seem to represent 0-255 range.
+for (let i = 0; i < la; i++) {
+FptrViewA[i] = rgbd[i]; // Direct copy of 0-255 values
+}
+for (let i = 0; i < la; i++) {
+FptrViewB[i] = rgbd2[i]; // Direct copy of 0-255 values
+}
+for (let i = 0; i < la; i++) {
+FptrViewC[i] = rgbd3[i]; // Direct copy of 0-255 values
+}
+
 // agavF.set(rgbdat.data);
 var ang=45;
 // Module.ccall("rotat",null,["Number","Number","Number","Number","Number"],[ang,ww,h,pointa,pointb]);
@@ -865,25 +871,24 @@ uint8Data[i] = Math.max(0, Math.min(255, Math.round(floatView[i])));
 
 function rrra(rta) { // Rotates and updates canvas 1 (ctx)
 NFptrView.fill(0); // Fill with 0.0f
-Module.rotat(rta, ww, h, FptrView, NFptrView); // Pass views directly
+Module.rotat(rta, ww, h, FptrViewA, NFptrView); // Pass views directly
 copyFloatToUint8(NFptrView, rgbdat.data);
 ctx.putImageData(rgbdat, 0, 0);
 }
 
 function rrrb(rtb) { // Rotates and updates canvas 2 (ctxB)
 NFptrView.fill(0);
-Module.rotat(rtb, ww, h, FptrView, NFptrView);
+Module.rotat(rtb, ww, h, FptrViewB, NFptrView);
 copyFloatToUint8(NFptrView, rgbdat2.data);
 ctxB.putImageData(rgbdat2, 0, 0);
 }
 
 function rrrc(rtc) { // Rotates and updates canvas 3 (ctxC)
 NFptrView.fill(0);
-Module.rotat(rtc, ww, h, FptrView, NFptrView);
+Module.rotat(rtc, ww, h, FptrViewC, NFptrView);
 copyFloatToUint8(NFptrView, rgbdat3.data);
 ctxC.putImageData(rgbdat3, 0, 0);
 }
-
 
 knb=document.getElementById("rra");
 kna=document.getElementById("mainr");
