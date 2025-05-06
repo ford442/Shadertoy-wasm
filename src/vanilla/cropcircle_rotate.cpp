@@ -1055,7 +1055,7 @@ rottc=((rottc+knb.innerHTML)-360);
 rottc=(rottc+knb.innerHTML);
 }
 rrrc(rottc);
-
+  },rate);
 //  bgPicB.hidden=true;
 // setTimeout(function(){
 // Rb();
@@ -1072,7 +1072,7 @@ rrrb(rottb);
 },rate);
 //  bgPicA.hidden=true;
 // bgPicB.hidden=false;
-  },rate);
+
 setTimeout(function(){
 $rn();
 },rate);
