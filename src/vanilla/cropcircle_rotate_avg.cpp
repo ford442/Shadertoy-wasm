@@ -275,8 +275,6 @@ eglMakeCurrent(display,surface,surface,contextegl);
 }
 
 void initializeCppImageStorage(int wid, int hig) {
-    g_cppImageWidth = wid;
-    g_cppImageHeight = hig;
     g_cppImageExpectedElements = static_cast<size_t>(wid) * hig * 4; // RGBA
     for (int i = 0; i < 3; ++i) {
         // Initialize temporal average accumulators (e.g., to black or first frame if passed)
