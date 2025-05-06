@@ -378,6 +378,111 @@ void rotateFrameEmbindVal(int angle, int wid, int hig, emscripten::val FptrVal, 
 }
 
 
+void rotateFrameEmbindValFloat(int angle, int wid, int hig, emscripten::val FptrVal, emscripten::val NFptrVal)
+{
+    if (wid <= 0 || hig <= 0) {
+        printf("Error (rotateFrameEmbindVal): Invalid dimensions (%d x %d).\n", wid, hig);
+        return;
+    }
+
+    size_t fptr_byte_offset = 0;
+    size_t fptr_length = 0; // length in elements
+    size_t nfptr_byte_offset = 0;
+    size_t nfptr_length = 0; // length in elements
+
+    try {
+        if (!FptrVal["byteOffset"].isUndefined() && FptrVal["byteOffset"].isNumber()) {
+            fptr_byte_offset = FptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.byteOffset missing or not a number"); }
+
+        if (!FptrVal["length"].isUndefined() && FptrVal["length"].isNumber()) {
+            fptr_length = FptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("FptrVal.length missing or not a number"); }
+
+        if (!NFptrVal["byteOffset"].isUndefined() && NFptrVal["byteOffset"].isNumber()) {
+            nfptr_byte_offset = NFptrVal["byteOffset"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.byteOffset missing or not a number"); }
+
+        if (!NFptrVal["length"].isUndefined() && NFptrVal["length"].isNumber()) {
+            nfptr_length = NFptrVal["length"].as<size_t>();
+        } else { throw std::runtime_error("NFptrVal.length missing or not a number"); }
+    } catch (const std::exception& e) {
+        printf("Error (rotateFrameEmbindVal): Failed to get properties from JS TypedArray val: %s\n", e.what());
+        return;
+    }
+
+    size_t expected_elements = static_cast<size_t>(wid) * hig * 4; // RGBA
+
+    if (fptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Input buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, fptr_length);
+        return;
+    }
+    if (nfptr_length < expected_elements) {
+        printf("Error (rotateFrameEmbindVal): Output buffer view is too small. Expected elements: %zu, Got: %zu\n",
+               expected_elements, nfptr_length);
+        return;
+    }
+
+    // --- Get direct pointers into the Emscripten HEAP ---
+    // CRITICAL ASSUMPTION: FptrVal/NFptrVal MUST be views over Module.HEAPF32.buffer.
+    float* Fptr = reinterpret_cast<float*>(static_cast<uintptr_t>(fptr_byte_offset));
+    float* NFptr = reinterpret_cast<float*>(static_cast<uintptr_t>(nfptr_byte_offset));
+
+    // --- Rotation Logic ---
+    float angleRad = angle * M_PI / 180.0;
+    float cosAngle = std::cos(angleRad);
+    float sinAngle = std::sin(angleRad);
+
+    // Calculate the center of the image
+    // Using floating point for precision in center calculation
+    float centerX = static_cast<float>(wid) / 2.0;
+    float centerY = static_cast<float>(hig) / 2.0;
+
+    // Caller (JavaScript) should ensure NFptr buffer is cleared beforehand.
+    // Example: NFptrView.fill(0) in JS.
+    // If not cleared, old pixel data might remain in areas not overwritten.
+
+    for (int y = 0; y < hig; ++y) {
+        for (int x = 0; x < wid; ++x) {
+            size_t source_index = (static_cast<size_t>(y) * wid + x) * 4;
+
+            // Original pixel coordinates (as floats for precision)
+            float currentX_float = static_cast<float>(x);
+            float currentY_float = static_cast<float>(y);
+
+            // 1. Translate coordinates so the center of the image is the origin
+            float translatedX = currentX_float - centerX;
+            float translatedY = currentY_float - centerY;
+
+            // 2. Rotate the translated coordinates
+            float rotatedX_at_origin = translatedX * cosAngle - translatedY * sinAngle;
+            float rotatedY_at_origin = translatedX * sinAngle + translatedY * cosAngle;
+
+            // 3. Translate the rotated coordinates back to the original system
+            float newX_float = rotatedX_at_origin + centerX;
+            float newY_float = rotatedY_at_origin + centerY;
+
+            // Round to the nearest integer pixel
+            int newX = static_cast<int>(std::round(newX_float));
+            int newY = static_cast<int>(std::round(newY_float));
+
+            // Check if the new coordinates are within the bounds of the output image
+            if (newX >= 0 && newX < wid && newY >= 0 && newY < hig) {
+                size_t target_index = (static_cast<size_t>(newY) * wid + newX) * 4;
+
+                // Copy pixel data (RGBA)
+                // Bounds check on source_index is implicitly handled by loop bounds
+                // Bounds check on target_index + 3 vs nfptr_length should be fine due to newX/newY check and initial nfptr_length check
+                NFptr[target_index]     = Fptr[source_index];
+                NFptr[target_index + 1] = Fptr[source_index + 1];
+                NFptr[target_index + 2] = Fptr[source_index + 2];
+                NFptr[target_index + 3] = Fptr[source_index + 3];
+            }
+        }
+    }
+}
+
 boost::function<void(int,float *,float *)>avgFrm=[](int leng,float *ptr,float *aptr){
 max=0.0f;
 min=255.0f;
@@ -422,6 +527,7 @@ return result;
 EMSCRIPTEN_BINDINGS(my_module) {
 emscripten::function("processFloatData", &processFloatData);
 emscripten::function("rotat", &rotateFrameEmbindVal);
+emscripten::function("rotatF", &rotateFrameEmbindValFloat);
     // If you needed to return arrays back to JS you could bind std::vector
     // emscripten::register_vector<float>("FloatVector");
 }
