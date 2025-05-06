@@ -1029,7 +1029,7 @@ knd=document.getElementById("rrc");
 knbb=document.getElementById("rrab");
 kncb=document.getElementById("rrbb");
 kndb=document.getElementById("rrcb");
-rate=(kna.innerHTML);
+rate=kna.innerHTML;
 rott=0;
 rottb=0;
 rottc=0;
@@ -1072,9 +1072,9 @@ rrrc(rottc);
   
 setTimeout(function(){
 $rn();
-},16);
-},16+(rate/2));
-},16+rate);
+},rate);
+},rate));
+},rate);
 }
 $rn();
 document.getElementById("di").onclick=function(){
