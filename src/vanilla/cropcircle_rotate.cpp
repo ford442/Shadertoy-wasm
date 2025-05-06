@@ -1,5 +1,6 @@
 #include "../../include/vanilla/cropcircle.hpp"
 #include <vector>
+#include <numbers>
 #include <cmath>         // For cos, sin, M_PI, round
 #include <limits>        // For numeric_limits
 #include <algorithm>     // For std::fill (optional, for clearing output buffer)
@@ -7,7 +8,8 @@
 
 // Define M_PI if not available (often is in <cmath>)
 #ifndef M_PI
-#define M_PI 3.14159265358979323846
+// #define M_PI 3.14159265358979323846
+#define M_PI std::numbers::pi_v
 #endif
 
 EGLConfig eglconfig=NULL;
