@@ -1073,7 +1073,7 @@ rrrc(rottc);
 setTimeout(function(){
 $rn();
 },rate);
-},rate));
+},rate);
 },rate);
 }
 $rn();
