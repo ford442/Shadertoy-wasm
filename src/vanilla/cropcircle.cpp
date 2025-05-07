@@ -775,7 +775,7 @@ rott=(rott+360-knd.innerHTML);
 rott=rott-knd.innerHTML;
 }
 */
-rott=rott-knd.innerHTML;
+rott=rott+knd.innerHTML;
 rott = (rott % 360 + 360) % 360;
 rrra(rott);
 setTimeout(function(){
@@ -786,7 +786,7 @@ rottb=(rottb+360-knc.innerHTML);
 rottb=(rottb-knc.innerHTML);
 }
 */
-rottb=(rottb+knc.innerHTML);
+rottb=(rottb-knc.innerHTML);
 rottb = (rottb % 360 + 360) % 360;
 rrrb(rottb);
 },rate);
