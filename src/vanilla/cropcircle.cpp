@@ -397,23 +397,23 @@ preferLowPowerToHighPerformance:false,
 alpha:true,
 depth:false,
 stencil:false,
-preserveDrawingBuffer:true,
+preserveDrawingBuffer:false,
 premultipliedAlpha:false,
 // imageSmoothingEnabled:false,
 willReadFrequently:false,
 lowLatency:false,
 desynchronized:false,
 powerPreference:'high-performance',
-antialias:true
+antialias:false
 };
   var contxVarsB={
 // colorType:'float32',
 precision:'highp',
 preferLowPowerToHighPerformance:false,
 alpha:true,
-depth:true,
-stencil:true,
-preserveDrawingBuffer:true,
+depth:false,
+stencil:false,
+preserveDrawingBuffer:false,
 premultipliedAlpha:false,
 // imageSmoothingEnabled:true,
 willReadFrequently:true,
@@ -746,7 +746,7 @@ icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: 
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: absolute;z-index:999993;top:0;left:0;transform: rotate("+rtc+"deg)");
+bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
 }
