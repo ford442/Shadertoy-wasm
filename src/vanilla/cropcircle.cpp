@@ -736,17 +736,17 @@ cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 function rrra(rta){
-scanvas.setAttribute("style","transform: rotate("+rta+"deg)");
+scanvas.setAttribute("style","top:0;transform: rotate("+rta+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rta+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
 function rrrb(rtb){
-icanvas.setAttribute("style","transform: rotate("+rtb+"deg)");
+icanvas.setAttribute("style","top:0;transform: rotate("+rtb+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-bcanvas.setAttribute("style","transform: rotate("+rtc+"deg)");
+bcanvas.setAttribute("style","top:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
 }
