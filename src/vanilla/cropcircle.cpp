@@ -802,7 +802,7 @@ rottc=((rottc+knb.innerHTML)-360);
 rottc=(rottc+knb.innerHTML);
 }
 */
-rottc=(rottc+knb.innerHTML);
+rottc=(rottc-knb.innerHTML);
 rottc = (rottc % 360 + 360) % 360;
 rrrc(rottc);
 },rate);
