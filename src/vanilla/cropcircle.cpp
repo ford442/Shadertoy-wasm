@@ -786,7 +786,7 @@ rottb=(rottb+360-knc.innerHTML);
 rottb=(rottb-knc.innerHTML);
 }
 */
-rottb=(rottb-knc.innerHTML);
+rottb=(rottb+knc.innerHTML);
 rottb = (rottb % 360 + 360) % 360;
 rrrb(rottb);
 },rate);
