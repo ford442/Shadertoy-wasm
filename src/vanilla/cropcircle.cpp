@@ -736,7 +736,7 @@ cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 function rrra(rta){
-scanvas.setAttribute("style","position: absolute;z-index:999993;top:0;left:0;transform: rotate("+rta+"deg)");
+scanvas.setAttribute("style","position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rta+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rta+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
@@ -746,7 +746,7 @@ icanvas.setAttribute("style","position: absolute;z-index:999994;top:0;left:0;tra
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-bcanvas.setAttribute("style","position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtc+"deg)");
+bcanvas.setAttribute("style","position: absolute;z-index:999993;top:0;left:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
 }
