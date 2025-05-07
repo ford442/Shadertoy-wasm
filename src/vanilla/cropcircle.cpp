@@ -741,12 +741,12 @@ scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: 
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
 function rrrb(rtb){
-icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtb+"deg)");
+icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rtb+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: absolute;z-index:999993;top:0;left:0;transform: rotate("+rtc+"deg)");
+bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
 }
