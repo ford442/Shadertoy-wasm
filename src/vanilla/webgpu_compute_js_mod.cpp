@@ -1089,13 +1089,13 @@ const sfr=document.querySelector('#slideframe');
 
 if(media_mode=='vid'){
 var adr='./intro.mp4';
-wi=1280;
-he=720;
+// wi=1280;
+// he=720;
 }
 if(media_mode=='img'){
 var adr='./bezel.jpg';
-wi=1920;
-he=1080;
+// wi=1920;
+// he=1080;
 }
 var hii=window.innerHeight;
 document.querySelector('#ihid').innerHTML=hii;
@@ -1134,16 +1134,16 @@ pnnl.addEventListener('keydown',spKey);
 
 function loada(){
 if(lockVid!=1){
-// document.querySelector('#ldv').height=window.innerHeight;
-// document.querySelector('#lvi').height=window.innerHeight;
+document.querySelector('#ldv').height=window.innerHeight;
+document.querySelector('#lvi').height=window.innerHeight;
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
-mV.width=this.videoWidth;
-mV.height=this.videoHeight;
+// mV.width=this.videoWidth;
+// mV.height=this.videoHeight;
 });
 loadV.addEventListener('canplay',function(){
-loadV.width=this.videoWidth;
-loadV.height=this.videoHeight;
+// loadV.width=this.videoWidth;
+// loadV.height=this.videoHeight;
 document.querySelector('#wid').innerHTML=this.width; // videoWidth;
 document.querySelector('#hig').innerHTML=this.height; // videoHeight;
 document.querySelector('#blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
@@ -1160,12 +1160,12 @@ document.querySelector('#itim').innerHTML=$pt;
 }
 if(media_mode=='img'){
 iV.addEventListener('load',function(){
-this.width=this.naturalWidth;
-this.height=this.naturalHeight;
+// this.width=this.naturalWidth;
+// this.height=this.naturalHeight;
 });
 loadiV.addEventListener('load',function(){
-this.width=this.naturalWidth;
-this.height=this.naturalHeight;
+// this.width=this.naturalWidth;
+// this.height=this.naturalHeight;
 document.querySelector('#wid').innerHTML=this.width; // naturalWidth;
 document.querySelector('#hig').innerHTML=this.height; // naturalHeight;
 document.querySelector('#blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
@@ -1230,9 +1230,9 @@ Module.sizeBuffer(he);
 
 document.querySelector('#di').click();
 
-let srsiz=document.querySelector('#srsiz').innerHTML;
-let vsiz=document.querySelector('#vsiz').innerHTML;
-Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[document.querySelector('#ivi').height,vsiz,srsiz]);
+// let srsiz=document.querySelector('#srsiz').innerHTML;
+// let vsiz=document.querySelector('#vsiz').innerHTML;
+// Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[document.querySelector('#ivi').height,vsiz,srsiz]);
 
 // imageStart();
 }
