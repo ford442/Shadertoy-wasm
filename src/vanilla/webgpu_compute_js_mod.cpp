@@ -1147,11 +1147,11 @@ document.querySelector('#itim').innerHTML=$pt;
 if(media_mode=='img'){
 iV.addEventListener('load',function(){
 // this.width=this.naturalWidth;
-// this.height=this.naturalHeight;
+this.height==window.innerHeight;
 });
 loadiV.addEventListener('load',function(){
 // this.width=this.naturalWidth;
-// this.height=this.naturalHeight;
+this.height==window.innerHeight;
 document.querySelector('#wid').innerHTML=this.width; // naturalWidth;
 document.querySelector('#hig').innerHTML=this.height; // naturalHeight;
 document.querySelector('#blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
