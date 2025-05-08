@@ -641,6 +641,8 @@ running = 1;
 }
  
 function videoStart(){
+const media_mode = document.querySelector('#media').value;
+if (media_mode=='vid'){
 const vvi=document.querySelector('#mvi');
 let vw$=vvi.videoWidth;
 let vh$=vvi.videoHeight;
@@ -649,18 +651,31 @@ vvi.height=vh$;
 vvi.width=vw$;
 let w$=parseInt(document.querySelector("#mvi").width);
 let h$=parseInt(document.querySelector("#mvi").height);
+}
+if (media_mode=='img'){
+
+const vvi=document.querySelector('#ivi');
+let vw$=vvi.naturalWidth;
+let vh$=vvi.naturalHeight;
+let SiZ=window.innerHeight;
+vvi.height=vh$;
+vvi.width=vw$;
+let w$=parseInt(document.querySelector("#ivi").width);
+let h$=parseInt(document.querySelector("#ivi").height);
+
+}
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
 if(running==0){
 setTimeout(function(){
-Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
+Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
 console.log('Starting..');
 frameBufferViewF32 = Module.getPixelBufferView();
 running=1;
 },250);
 }else{
 setTimeout(function(){
-Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
+Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
 console.log('Starting..');
 frameBufferViewF32 = Module.getPixelBufferView();
 },250);
