@@ -1227,10 +1227,11 @@ if(media_mode=='img'){
 }
 Module.sizeBuffer(he);
 document.querySelector('#di').click();
-videoStart();
+
 // imageStart();
 }
 setTimeout(function(){
+videoStart();
 loada();
 },$ldt);
 }
