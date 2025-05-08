@@ -639,30 +639,31 @@ Module.ccall("startWebGPUC", null,["Number","Number","Number"],[1024,vsiz,srsiz]
 running = 1;
 }
 }
- 
+
+let vvi,h$,w$;
+
 function videoStart(){
 const media_mode = document.querySelector('#media').value;
 if (media_mode=='vid'){
-const vvi=document.querySelector('#mvi');
+vvi=document.querySelector('#mvi');
 let vw$=vvi.videoWidth;
 let vh$=vvi.videoHeight;
 let SiZ=window.innerHeight;
 vvi.height=vh$;
 vvi.width=vw$;
-let w$=parseInt(document.querySelector("#mvi").width);
-let h$=parseInt(document.querySelector("#mvi").height);
+w$=parseInt(document.querySelector("#mvi").width);
+h$=parseInt(document.querySelector("#mvi").height);
 }
 if (media_mode=='img'){
 
-const vvi=document.querySelector('#ivi');
+vvi=document.querySelector('#ivi');
 let vw$=vvi.naturalWidth;
 let vh$=vvi.naturalHeight;
 let SiZ=window.innerHeight;
 vvi.height=vh$;
 vvi.width=vw$;
-let w$=parseInt(document.querySelector("#ivi").width);
-let h$=parseInt(document.querySelector("#ivi").height);
-
+w$=parseInt(document.querySelector("#ivi").width);
+h$=parseInt(document.querySelector("#ivi").height);
 }
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
@@ -1231,8 +1232,8 @@ document.querySelector('#di').click();
 // imageStart();
 }
 setTimeout(function(){
-videoStart();
 loada();
+videoStart();
 },$ldt);
 }
 
