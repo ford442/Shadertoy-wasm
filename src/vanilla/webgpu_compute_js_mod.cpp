@@ -1227,12 +1227,14 @@ if(media_mode=='img'){
 // document.querySelector('#lvi').width=wi;
 }
 Module.sizeBuffer(he);
+
 document.querySelector('#di').click();
-videoStart();
+
 // imageStart();
 }
 setTimeout(function(){
 loada();
+videoStart();
 },$ldt);
 }
 
