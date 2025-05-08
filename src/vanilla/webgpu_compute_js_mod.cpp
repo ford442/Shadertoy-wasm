@@ -646,27 +646,33 @@ function videoStart(){
 const media_mode = document.querySelector('#media').value;
 if (media_mode=='vid'){
 vvi=document.querySelector('#mvi');
-let vw$=vvi.videoWidth;
-let vh$=vvi.videoHeight;
 SiZ=window.innerHeight;
-vvi.height=vh$;
-vvi.width=vw$;
 w$=parseInt(document.querySelector("#mvi").width);
 h$=parseInt(document.querySelector("#mvi").height);
 }
 if (media_mode=='img'){
-
 vvi=document.querySelector('#ivi');
-let vw$=vvi.naturalWidth;
-let vh$=vvi.naturalHeight;
 SiZ=window.innerHeight;
-vvi.height=vh$;
-vvi.width=vw$;
 w$=parseInt(document.querySelector("#ivi").width);
 h$=parseInt(document.querySelector("#ivi").height);
 }
+
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
+
+let cropSize; // The side length of the square to cut from the source
+let sx = 0;   // Source X for cropping
+let sy = 0;   // Source Y for cropping
+if (w$ > h$) { // Landscape or already square (if w$ == h$)
+            cropSize = h$;
+            sx = (w$ - h$) / 2;
+            w$=h$;
+} else { // Portrait (h$ > w$)
+            cropSize = w$;
+            sy = (h$ - w$) / 2;
+            h$=w$;
+}
+
 if(running==0){
 setTimeout(function(){
 Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
@@ -712,7 +718,7 @@ powerPreference:"high-performance",
 premultipliedAlpha:false,
 preserveDrawingBuffer:false
 });
-gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
+gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$); 
 // var image=flipImageData(gl3.getImageData(0,0,w$,h$));
 var image=gl3.getImageData(0,0,w$,h$);
 var imageData=image.data;
@@ -774,7 +780,7 @@ floatArray[i] = imageData[i] / 255.0;
 // Module.processCopiedDataVal(imageData);
 Module.frmOn();
 },16.666);
-}
+}                 //  have gemini help crop to square
 
 function imageStart(){
 var vvi=document.querySelector('#ivi');
