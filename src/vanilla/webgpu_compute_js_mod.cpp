@@ -1228,12 +1228,12 @@ if(media_mode=='img'){
 }
 Module.sizeBuffer(he);
 
-setTimeout(function(){
 document.querySelector('#di').click();
-},25);
-setTimeout(function(){
-videoStart();
-},50);
+
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
+Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[document.querySelector('#ivi').height,vsiz,srsiz]);
+
 // imageStart();
 }
 setTimeout(function(){
