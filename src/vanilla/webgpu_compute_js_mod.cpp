@@ -1228,13 +1228,16 @@ if(media_mode=='img'){
 }
 Module.sizeBuffer(he);
 
+setTimeout(function(){
 document.querySelector('#di').click();
-
+},25);
+setTimeout(function(){
+videoStart();
+},50);
 // imageStart();
 }
 setTimeout(function(){
 loada();
-videoStart();
 },$ldt);
 }
 
