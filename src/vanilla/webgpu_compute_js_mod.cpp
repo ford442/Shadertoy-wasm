@@ -646,32 +646,51 @@ function videoStart(){
 const media_mode = document.querySelector('#media').value;
 if (media_mode=='vid'){
 vvi=document.querySelector('#mvi');
-SiZ=window.innerHeight;
 w$=parseInt(document.querySelector("#mvi").width);
 h$=parseInt(document.querySelector("#mvi").height);
-}
-if (media_mode=='img'){
-vvi=document.querySelector('#ivi');
 SiZ=window.innerHeight;
-w$=parseInt(document.querySelector("#ivi").width);
-h$=parseInt(document.querySelector("#ivi").height);
-}
-
-let srsiz=document.querySelector('#srsiz').innerHTML;
-let vsiz=document.querySelector('#vsiz').innerHTML;
-
 let cropSize; // The side length of the square to cut from the source
 let sx = 0;   // Source X for cropping
 let sy = 0;   // Source Y for cropping
 if (w$ > h$) { // Landscape or already square (if w$ == h$)
             cropSize = h$;
             sx = (w$ - h$) / 2;
-            w$=h$;
 } else { // Portrait (h$ > w$)
             cropSize = w$;
             sy = (h$ - w$) / 2;
-            h$=w$;
 }
+vvi.height=SiZ;
+vvi.width=(SiZ/h$)*w$;
+vvi.style.height=SiZ+'px';
+vvi.style.width=(SiZ/h$)*w$+'px';
+w$=parseInt(document.querySelector("#mvi").width);
+h$=parseInt(document.querySelector("#mvi").height);
+}
+if (media_mode=='img'){
+vvi=document.querySelector('#ivi');
+w$=parseInt(document.querySelector("#mvi").width);
+h$=parseInt(document.querySelector("#mvi").height);
+SiZ=window.innerHeight;
+let cropSize; // The side length of the square to cut from the source
+let sx = 0;   // Source X for cropping
+let sy = 0;   // Source Y for cropping
+if (w$ > h$) { // Landscape or already square (if w$ == h$)
+            cropSize = h$;
+            sx = (w$ - h$) / 2;
+} else { // Portrait (h$ > w$)
+            cropSize = w$;
+            sy = (h$ - w$) / 2;
+}
+vvi.height=SiZ;
+vvi.width=(SiZ/h$)*w$;
+vvi.style.height=SiZ+'px';
+vvi.style.width=(SiZ/h$)*w$+'px';
+w$=parseInt(document.querySelector("#ivi").width);
+h$=parseInt(document.querySelector("#ivi").height);
+}
+
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
 
 if(running==0){
 setTimeout(function(){
@@ -718,13 +737,13 @@ powerPreference:"high-performance",
 premultipliedAlpha:false,
 preserveDrawingBuffer:false
 });
-gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$); 
+gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz); 
 // var image=flipImageData(gl3.getImageData(0,0,w$,h$));
-var image=gl3.getImageData(0,0,w$,h$);
+var image=gl3.getImageData(0,0,cropSize,cropSize);
 var imageData=image.data;
 // var pixelData=new Float32Array(imageData);
 
-const pixelCount = w$ * h$ * 4; // RGBA
+const pixelCount = cropSize * cropSize * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
@@ -748,10 +767,10 @@ floatArray[i] = imageData[i] / 255.0;
 // Module.processCopiedDataVal(imageData);
 Module.frmOn();
 setInterval(function(){
-gl3.clearRect(0,0,w$,h$);  
-gl3.drawImage(vvi,0,0,w$,h$,0,0,w$,h$);
+gl3.clearRect(0,0,cropSize,cropSize);  
+gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
 // image=flipImageData(gl3.getImageData(0,0,w$,h$));
-image=gl3.getImageData(0,0,w$,h$);
+image=gl3.getImageData(0,0,cropSize,cropSize);
 imageData=image.data;
 
 for (let i = 0; i < pixelCount; ++i) {
