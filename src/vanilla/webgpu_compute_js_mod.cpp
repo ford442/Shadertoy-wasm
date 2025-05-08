@@ -1161,6 +1161,8 @@ function loada(){
 if(lockVid!=1){
 document.querySelector('#ldv').height=window.innerHeight;
 document.querySelector('#lvi').height=window.innerHeight;
+document.querySelector('#ivi').height=window.innerHeight;
+document.querySelector('#mvi').height=window.innerHeight;
 if(media_mode=='vid'){
 mV.addEventListener('canplay',function(){
 // mV.width=this.videoWidth;
