@@ -653,14 +653,14 @@ let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
 if(running==0){
 setTimeout(function(){
-Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
+Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 console.log('Starting..');
 frameBufferViewF32 = Module.getPixelBufferView();
 running=1;
 },250);
 }else{
 setTimeout(function(){
-Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
+Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vsiz,vsiz,srsiz]);
 console.log('Starting..');
 frameBufferViewF32 = Module.getPixelBufferView();
 },250);
