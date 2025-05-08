@@ -1161,12 +1161,12 @@ document.querySelector('#itim').innerHTML=$pt;
 }
 if(media_mode=='img'){
 iV.addEventListener('load',function(){
-// this.width=this.naturalWidth;
-this.height==window.innerHeight;
+this.width=this.naturalWidth;
+this.height==window.naturalHeight;
 });
 loadiV.addEventListener('load',function(){
-// this.width=this.naturalWidth;
-this.height==window.innerHeight;
+this.width=this.naturalWidth;
+this.height==window.naturalHeight;
 document.querySelector('#wid').innerHTML=this.width; // naturalWidth;
 document.querySelector('#hig').innerHTML=this.height; // naturalHeight;
 document.querySelector('#blnnk').innerHTML=Math.max((this.width-this.height)/2.0,0);
