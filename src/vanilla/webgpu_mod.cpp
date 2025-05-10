@@ -1367,7 +1367,7 @@ emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);  // ??
 on.at(0,0)=1;
 }
 
-static void ObtainedWebGpuAdapterStart(WGpuAdapter result, void *userData){
+void ObtainedWebGpuAdapterStart(WGpuAdapter result, void *userData){
 wa.at(0,0)=result;
 // deviceDesc.requiredFeatures=WGPU_FEATURE_DEPTH32FLOAT_STENCIL8;
 deviceDesc.requiredFeatures=WGPU_FEATURE_FLOAT32_FILTERABLE;
