@@ -1008,7 +1008,7 @@ var pth2=document.querySelector('#computePath').innerHTML;
 var pth3=document.querySelector('#fragPath').innerHTML;
 var pth4=document.querySelector('#vertPath').innerHTML;
 getShader(pth2,'compute.wgsl');
-getShader(pth3,'frag2.wgsl');
+// getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 document.querySelector('#status').style.backgroundColor="blue";
 let flDat=event.data.data;
