@@ -706,7 +706,8 @@ const bufferSizeFloats = w$*h$*4;
 // const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
 // console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
 console.log("vid size: ",h$,", ",w$);
-const cnvb=new OffscreenCanvas(h$,w$); 
+const cnvb=new OffscreenCanvas(h$,w$);
+cnvb.id='ccanvas';
 // document.querySelector('#contain2').appendChild(cnvb);
 const cnv=document.querySelector('#scanvas');
 const cnvc=document.querySelector('#bcanvas');
@@ -769,7 +770,6 @@ for (let i = 0; i < pixelCount; ++i) {
 const normalizedValue = imageData[i] / 255.0;
 frameBufferViewF32[i] = normalizedValue;
 }
-
 /*
 // pixelData=new Uint8ClampedArray(imageData);
 pixelData=new Float32Array(imageData);
@@ -1237,15 +1237,17 @@ document.querySelector('#lvi').height=window.innerHeight;
 if(media_mode=='vid'){
 document.querySelector('#ldv').load();
 document.querySelector('#ldv').currentTime=document.querySelector('#itim').innerHTML;
-// document.querySelector('#ldv').height=he;
-// document.querySelector('#ldv').width=wi;
+document.querySelector('#ldv').height=he;
+document.querySelector('#ldv').width=wi;
 }
 if(media_mode=='img'){
-// document.querySelector('#lvi').height=he;
-// document.querySelector('#lvi').width=wi;
+document.querySelector('#lvi').height=he;
+document.querySelector('#lvi').width=wi;
 }
 Module.sizeBuffer(he);
 
+document.querySelector('#ccanvas').height=he;
+document.querySelector('#ccanvas').width=he;
 document.querySelector('#di').click();
 
 // let srsiz=document.querySelector('#srsiz').innerHTML;
