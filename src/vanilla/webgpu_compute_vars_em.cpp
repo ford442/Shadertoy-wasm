@@ -11,10 +11,10 @@ static uTime u_time;
 
 struct VertexF{
 // GLfloat position[4];
-const float position[4];
+float position[4];
 };
 
-static const VertexF Fvertices[]={
+static VertexF Fvertices[]={
 {-1.0,-1.0,1.0,1.0},
 {1.0,-1.0,1.0,1.0},
 {1.0,1.0,1.0,1.0},
@@ -26,17 +26,17 @@ static const VertexF Fvertices[]={
 };
 
 struct VertexFUV{
-const float x, y, z, w; // Position
-const float u, v;       // UV texture coordinates
+float x, y, z, w; // Position
+float u, v;       // UV texture coordinates
 };
 
 struct Vertex{
 // float x, y, z, w; // Position
 // emscripten_align2_float x, y, z, w; // Position
-const emscripten_align1_float x, y, z, w; // Position
+emscripten_align1_float x, y, z, w; // Position
 };
 
-static const Vertex vertices[]={
+static Vertex vertices[]={
 {-1.0f,-1.0f,1.0f,1.0f},
 {1.0f,-1.0f,1.0f,1.0f},
 {1.0f,1.0f,1.0f,1.0f},
@@ -48,7 +48,7 @@ static const Vertex vertices[]={
 };
 
 struct VertexUV{
-const float u, v;       // UV texture coordinates
+float u, v;       // UV texture coordinates
 };
 
 VertexUV UVvertices[]={
