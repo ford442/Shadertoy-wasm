@@ -256,7 +256,7 @@ b3_wasm_loader_lto_32_test3:
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64
-	 em++ -O3 -sEVAL_CTORS=2 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
+	 em++ -O3 -sEVAL_CTORS=1 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
 	 -sDEFAULT_TO_CXX=0 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
