@@ -123,7 +123,7 @@ typedef ResultType result_type;
 inline int rNd4(int);
 // static void WGPU_Run();
 // static void ObtainedWebGpuDeviceStart(WGpuDevice,void *);
-void ObtainedWebGpuAdapterStart(WGpuAdapter,void *);
+static void ObtainedWebGpuAdapterStart(WGpuAdapter,void *);
 void ObtainedWebGpuDeviceStart(WGpuDevice,void *);
 // const char * rd_fl(const char *);
 EM_BOOL getCode(const char *);
