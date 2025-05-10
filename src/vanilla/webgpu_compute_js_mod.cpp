@@ -707,9 +707,9 @@ const bufferSizeFloats = w$*h$*4;
 // console.log(`JS: Created manual view at ${bufferPtr}, size ${bufferSizeFloats}`);
 console.log("vid size: ",h$,", ",w$);
 const cnvb=new OffscreenCanvas(h$,w$);
-cnvb.id='ccanvas';
-cnvb.hidden=true;
-document.querySelector('#contain2').appendChild(cnvb);
+// cnvb.id='ccanvas';
+// cnvb.hidden=true;
+// document.querySelector('#contain2').appendChild(cnvb);
 const cnv=document.querySelector('#scanvas');
 const cnvc=document.querySelector('#bcanvas');
 cnv.height=SiZ;
@@ -1247,8 +1247,6 @@ document.querySelector('#lvi').width=wi;
 }
 Module.sizeBuffer(he);
 
-document.querySelector('#ccanvas').height=he;
-document.querySelector('#ccanvas').width=he;
 document.querySelector('#di').click();
 
 // let srsiz=document.querySelector('#srsiz').innerHTML;
