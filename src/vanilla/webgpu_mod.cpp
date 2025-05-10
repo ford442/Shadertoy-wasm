@@ -574,7 +574,6 @@ return;
 }
 
 void ObtainedWebGpuDeviceStart(WGpuDevice result,void *userData){
-if(on.at(0,0)==0){wd.at(0,0)=result;}
 on_b.at(4,4)=0;
 on_b.at(5,5)=0;
 on.at(3,3)=1;
@@ -583,7 +582,9 @@ fjs_data_pointer.at(0,0)=0;
 wcc.at(0,0)=wgpu_canvas_get_webgpu_context("#scanvas");
 const char * frag_body=(char*)rd_fl(Fnm);
 const char * comp_body=(char*)rd_fl(FnmC);
+if(on.at(0,0)==0){wd.at(0,0)=result;
 char * frag_body3=(char*)rd_fl(FnmF2);
+}
 const char * vert_body=(char*)rd_fl(FnmV);
 // canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
