@@ -965,9 +965,7 @@ ff.addEventListener("load",function(){
 let sarrayBuffer=ff.response;
 if(sarrayBuffer){
 let sfil=new Uint8ClampedArray(sarrayBuffer);
-let blnk=new Uint8ClampedArray();
-
-FS.writeFile('/shader/'+fname,blnk);
+FS.unlink('/shader/'+fname);
 FS.writeFile('/shader/'+fname,sfil);
 document.querySelector('#stat').innerHTML='Downloaded Shader';
 document.querySelector('#stat').style.backgroundColor='blue';
@@ -1008,7 +1006,7 @@ var pth2=document.querySelector('#computePath').innerHTML;
 var pth3=document.querySelector('#fragPath').innerHTML;
 var pth4=document.querySelector('#vertPath').innerHTML;
 getShader(pth2,'compute.wgsl');
-// getShader(pth3,'frag2.wgsl');
+getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 document.querySelector('#status').style.backgroundColor="blue";
 let flDat=event.data.data;
