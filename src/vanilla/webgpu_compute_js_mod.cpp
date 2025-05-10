@@ -640,18 +640,19 @@ running = 1;
 }
 }
 
-let vvi,h$,w$,SiZ;
+
 
 function videoStart(){
+let vvi,h$,w$,SiZ;
 const media_mode = document.querySelector('#media').value;
+let cropSize; // The side length of the square to cut from the source
+let sx = 0;   // Source X for cropping
+let sy = 0;   // Source Y for cropping
 if (media_mode=='vid'){
 vvi=document.querySelector('#mvi');
 w$=parseInt(document.querySelector("#mvi").width);
 h$=parseInt(document.querySelector("#mvi").height);
 SiZ=window.innerHeight;
-let cropSize; // The side length of the square to cut from the source
-let sx = 0;   // Source X for cropping
-let sy = 0;   // Source Y for cropping
 if (w$ > h$) { // Landscape or already square (if w$ == h$)
             cropSize = h$;
             sx = (w$ - h$) / 2;
@@ -671,9 +672,6 @@ vvi=document.querySelector('#ivi');
 w$=parseInt(document.querySelector("#mvi").width);
 h$=parseInt(document.querySelector("#mvi").height);
 SiZ=window.innerHeight;
-let cropSize; // The side length of the square to cut from the source
-let sx = 0;   // Source X for cropping
-let sy = 0;   // Source Y for cropping
 if (w$ > h$) { // Landscape or already square (if w$ == h$)
             cropSize = h$;
             sx = (w$ - h$) / 2;
