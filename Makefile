@@ -250,7 +250,7 @@ b3_wasm_loader_lto_32_test2:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sSUPPORT_LONGJMP=wasm -sDISABLE_EXCEPTION_CATCHING=1
 
 b3_wasm_loader_lto_32_test3:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -m64 -mtune=wasm64 -march=broadwell -flto -flto=thin -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
@@ -266,7 +266,7 @@ b3_wasm_loader_lto_32_test3:
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
 	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web,worker \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-32.js -sSTRICT=1 -sSTRICT_JS=0 \
-	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 -march=broadwell -sMEMORY64=2 \
+	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64=2 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
@@ -652,7 +652,7 @@ b3_compute_mod_test5:
 
 b3_compute_mod_test64:
 	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
-	 -fexcess-precision=fast -m64 -mtune=wasm64 -march=broadwell -sMEMORY64=1 --target=wasm64 -lembind \
+	 -fexcess-precision=fast -m64 -mtune=wasm64 -sMEMORY64=1 --target=wasm64 -lembind \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
@@ -667,7 +667,7 @@ b3_compute_mod_test64:
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
 	 -fexcess-precision=fast -sENVIRONMENT=web \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
-	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -march=broadwell \
+	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
