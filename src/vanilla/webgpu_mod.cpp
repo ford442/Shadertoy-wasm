@@ -17,7 +17,7 @@ using uint32_simd = stdx::native_simd<uint32_t>;
 
 namespace fsm = boost::filesystem;
 
-boost::container::vector<emscripten_align1_float> pixel_buffer;
+static boost::container::vector<emscripten_align1_float> pixel_buffer;
 
 EM_BOOL buffer_resize(emscripten_align1_int sz){
 size_t num_elements = (size_t)sz * sz * 4;
