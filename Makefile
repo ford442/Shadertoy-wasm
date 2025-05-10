@@ -9,7 +9,7 @@ wLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-ldl
  
 oldLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl
 SIMD_FLAGS = -DSIMD=AVX -mavx2 -msimd128
-SIMD_FLAGS_old = -DSIMD=AVX -msimd128 -mavx2
+SIMD_FLAGS_old = -DSIMD=AVX -mavx2 -msimd128
 
 STDS = -std=c++26
 
