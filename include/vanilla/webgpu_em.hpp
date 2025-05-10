@@ -141,6 +141,10 @@ void runWebGPU();
 
 }
 
+constexpr uint32_t compute_x = 32;
+constexpr uint32_t compute_y = 8;
+constexpr uint32_t compute_z = 1;
+
 WGpuBuffer indice_Buffer;
 WGpuBuffer vertex_Buffer;
 WGpuBuffer vertex_Buffer_UV;
