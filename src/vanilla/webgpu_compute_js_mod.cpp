@@ -640,8 +640,6 @@ running = 1;
 }
 }
 
-
-
 function videoStart(){
 let vvi,h$,w$,SiZ;
 const media_mode = document.querySelector('#media').value;
@@ -669,8 +667,8 @@ h$=parseInt(document.querySelector("#mvi").height);
 }
 if (media_mode=='img'){
 vvi=document.querySelector('#ivi');
-w$=parseInt(document.querySelector("#mvi").width);
-h$=parseInt(document.querySelector("#mvi").height);
+w$=parseInt(document.querySelector("#ivi").width);
+h$=parseInt(document.querySelector("#ivi").height);
 SiZ=window.innerHeight;
 if (w$ > h$) { // Landscape or already square (if w$ == h$)
             cropSize = h$;
@@ -686,10 +684,8 @@ vvi.style.width=(SiZ/h$)*w$+'px';
 w$=parseInt(document.querySelector("#ivi").width);
 h$=parseInt(document.querySelector("#ivi").height);
 }
-
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
-
 if(running==0){
 setTimeout(function(){
 Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
@@ -740,14 +736,12 @@ gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
 var image=gl3.getImageData(0,0,cropSize,cropSize);
 var imageData=image.data;
 // var pixelData=new Float32Array(imageData);
-
 const pixelCount = cropSize * cropSize * 4; // RGBA
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
 frameBufferViewF32[i] = normalizedValue;
 }
-
 /*
 // let pixelData=new Uint8ClampedArray(imageData);
 var pixelData=new Float32Array(imageData);
@@ -770,7 +764,6 @@ gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
 // image=flipImageData(gl3.getImageData(0,0,w$,h$));
 image=gl3.getImageData(0,0,cropSize,cropSize);
 imageData=image.data;
-
 for (let i = 0; i < pixelCount; ++i) {
 // Normalize uint8 (0-255) to float (0.0-1.0)
 const normalizedValue = imageData[i] / 255.0;
