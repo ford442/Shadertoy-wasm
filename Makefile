@@ -625,7 +625,7 @@ b3_compute_mod_test5:
 	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
 	 -I/content/RAMDRIVE2/b3/boost_1_86_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
-	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=1 \
+	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mextended-const -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
 	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
@@ -644,7 +644,7 @@ b3_compute_mod_test5:
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
 	 -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
-	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=0 \
+	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
 	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
 	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
