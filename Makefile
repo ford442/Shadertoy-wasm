@@ -652,7 +652,7 @@ b3_compute_mod_test5:
 
 b3_compute_mod_test64:
 	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
-	 -fexcess-precision=fast -m64 -mtune=wasm64 -sMEMORY64=1 -fexperimental-library --target=wasm64 -lembind \
+	 -fexcess-precision=fast -m64 -mtune=wasm64 -sMEMORY64=2 -fexperimental-library --target=wasm64 -lembind \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
