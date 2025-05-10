@@ -1,4 +1,4 @@
-struct{
+struct uTime{
 boost::chrono::duration<boost::compute::double_,boost::chrono::seconds::period>time_spana;
 boost::chrono::duration<boost::compute::double_,boost::chrono::seconds::period>time_spanb;
 // boost::chrono::duration<boost::compute::double_,boost::chrono::milliseconds::period>time_span_mili_a;
@@ -6,14 +6,15 @@ boost::chrono::duration<boost::compute::double_,boost::chrono::seconds::period>t
 boost::chrono::high_resolution_clock::time_point t1;
 boost::chrono::high_resolution_clock::time_point t2;
 boost::chrono::high_resolution_clock::time_point t3;
-}u_time;
+};
+static uTime u_time;
 
 struct VertexF{
 // GLfloat position[4];
-float position[4];
+const float position[4];
 };
 
-VertexF Fvertices[]={
+static const VertexF Fvertices[]={
 {-1.0,-1.0,1.0,1.0},
 {1.0,-1.0,1.0,1.0},
 {1.0,1.0,1.0,1.0},
@@ -25,17 +26,17 @@ VertexF Fvertices[]={
 };
 
 struct VertexFUV{
-float x, y, z, w; // Position
-float u, v;       // UV texture coordinates
+const float x, y, z, w; // Position
+const float u, v;       // UV texture coordinates
 };
 
 struct Vertex{
 // float x, y, z, w; // Position
 // emscripten_align2_float x, y, z, w; // Position
-emscripten_align1_float x, y, z, w; // Position
+const emscripten_align1_float x, y, z, w; // Position
 };
 
-Vertex vertices[]={
+static const Vertex vertices[]={
 {-1.0f,-1.0f,1.0f,1.0f},
 {1.0f,-1.0f,1.0f,1.0f},
 {1.0f,1.0f,1.0f,1.0f},
@@ -47,7 +48,7 @@ Vertex vertices[]={
 };
 
 struct VertexUV{
-float u, v;       // UV texture coordinates
+const float u, v;       // UV texture coordinates
 };
 
 VertexUV UVvertices[]={
@@ -565,9 +566,7 @@ mouse_tensor mms=mouse_tensor{2,2};
 mouse_tensor mms2=mouse_tensor{2,2};
 vec4_tensor v4f32_uniform=vec4_tensor{2,2};
 
-
 EMSCRIPTEN_RESULT retCl,retMu,retMd,retMv,retSa,retSb,retSc;
-
 
 WGpuComputePassDescriptor computePassDescriptor={};
 WGpuCommandBufferDescriptor commandBufferDescriptor={};
