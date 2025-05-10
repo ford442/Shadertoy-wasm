@@ -48,6 +48,13 @@ b3_cropcircle:
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --extern-pre-js gpujsx.js cropcircle.o
 
+b3_cropcircle_64:
+	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O2 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -sMEMORY64=1
+	 emcc $(STDS) -o $(BIN_NAME).js -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
+	 -sFORCE_FILESYSTEM=1 --bind -lembind -sMEMORY64=1 \
+	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
+	 --extern-pre-js gpujsx.js cropcircle.o
+
 b3_cropcircle_rot:
 	 em++ $(STDS) -c src/vanilla/cropcircle_rotate.cpp -O2 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS)
 	 emcc $(STDS) -o $(BIN_NAME)r.js -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
