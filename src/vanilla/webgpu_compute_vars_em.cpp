@@ -14,7 +14,7 @@ struct VertexF{
 float position[4];
 };
 
-static VertexF Fvertices[]={
+VertexF Fvertices[]={
 {-1.0,-1.0,1.0,1.0},
 {1.0,-1.0,1.0,1.0},
 {1.0,1.0,1.0,1.0},
@@ -36,7 +36,7 @@ struct Vertex{
 emscripten_align1_float x, y, z, w; // Position
 };
 
-static Vertex vertices[]={
+Vertex vertices[]={
 {-1.0f,-1.0f,1.0f,1.0f},
 {1.0f,-1.0f,1.0f,1.0f},
 {1.0f,1.0f,1.0f,1.0f},
