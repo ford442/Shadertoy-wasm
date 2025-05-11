@@ -60,10 +60,22 @@ const scr=document.createElement('script');
 scr.text=jsCode;
 document.body.appendChild(scr);
 setTimeout(function(){
-var Module=lib1ink();
-Module.onRuntimeInitialized=function(){
+var ModuleA=lib1ink();
+ModuleA.onRuntimeInitialized=function(){
 console.log('call mod main');
-Module.callMain();
+ModuleA.callMain();
+
+
+const mountPointInA = "/video2"; // This path will be created in Module A's FS
+const rootPathInB = "/"; // Which part of Module B's FS to expose. '/' is its root.
+ModuleA.FS.mkdirTree(mountPointInA);
+ModuleA.FS.mount(ModuleA.FS.PROXYFS, {
+root: rootPathInB,   // The directory from Module B's FS to mount
+fs: FS               // Module B's actual FS object
+}, mountPointInA);
+console.log('[Module B JS]: Successfully mounted Module B\'s FS root at \'' + mountPointInA + '\' in Module A\'s FS.');
+
+                          
 };
 },2000);
 }
