@@ -2,8 +2,8 @@ EM_JS(void,js_main,(),{
 
 FS.mkdir('/shader');
 FS.mkdir('/video');
-// FS.writeFile('/video/frame.gl','');
-// FS.writeFile('/video/frameBFR.gl','');
+FS.writeFile('/video/frame.gl',NULL);
+FS.writeFile('/video/frameBFR.gl',NULL);
 let running=0;
 
 let frameBufferViewF32 = []; // The view into C++ memory
@@ -171,11 +171,9 @@ const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-// setTimeout(() => {
-// FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
-// FS.rename('/video/frame.gl', '/video/frameBFR.gl');
-// FS.rename('/video/frameB.gl', '/video/frame.gl');
-// }, 5);
+FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
+FS.rename('/video/frame.gl', '/video/frameBFR.gl');
+FS.rename('/video/frameB.gl', '/video/frame.gl');
 Module.cnvOn();
 }
 if (running == 0) {
