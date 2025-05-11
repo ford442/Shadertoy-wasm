@@ -161,7 +161,7 @@ Module.ccall('frmsOn');
 });
 // gl3.imageSmoothingEnabled=false;
 // const fileStream=FS.open('/video/frameBFR.gl','w+');
-const fileStream=FS.open('/video/frame.gl','w+');
+const fileStream=FS.open('/video/frame.gl','w');
 function drawFrame() {
 if (pause === 'ready') {
 gl3.clearRect(0, 0, keepSize, keepSize);
