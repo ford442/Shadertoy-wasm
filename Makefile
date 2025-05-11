@@ -686,11 +686,11 @@ b3_compute_mod_test5_thread:
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
+	 -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
 	 -I/content/RAMDRIVE2/b3/boost_1_86_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
 	 em++ $(mLDFLAGS) -O3 -pthread -openmp-simd --bind -lembind -flto -flto=thin -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=0 \
-	 -ffast-math -mextended-const -mbulk-memory \
+	 -ffast-math -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
 	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
