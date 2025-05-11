@@ -160,7 +160,8 @@ Module.ccall('frmsOn');
 }, 1900);
 });
 // gl3.imageSmoothingEnabled=false;
-const fileStream=FS.open('/video/frameBFR.gl','w+');
+// const fileStream=FS.open('/video/frameBFR.gl','w+');
+const fileStream=FS.open('/video/frame.gl','w+');
 function drawFrame() {
 if (pause === 'ready') {
 gl3.clearRect(0, 0, keepSize, keepSize);
@@ -170,11 +171,11 @@ const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-setTimeout(() => {
-FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
-FS.rename('/video/frame.gl', '/video/frameBFR.gl');
-FS.rename('/video/frameB.gl', '/video/frame.gl');
-}, 5);
+// setTimeout(() => {
+// FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
+// FS.rename('/video/frame.gl', '/video/frameBFR.gl');
+// FS.rename('/video/frameB.gl', '/video/frame.gl');
+// }, 5);
 Module.cnvOn();
 }
 if (running == 0) {
