@@ -44,6 +44,7 @@ GL_FLAGS = -sFULL_ES3=1 -sFULL_ES2=0 -lGL -lEGL -sLEGACY_GL_EMULATION=0 -sUSE_GL
 
 wGL_FLAGS = -sUSE_GLFW=0 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 
 xGL_FLAGS = -sUSE_GLFW=0 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES3=1 -sFULL_ES2=0 -lGL -lEGL
+tGL_FLAGS = -sUSE_GLFW=0 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES3=1 -sFULL_ES2=0 -lGL -lEGL
 
 LINK_FLAGS = $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 \
 	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
@@ -692,7 +693,7 @@ b3_compute_mod_test5_thread:
 	 em++ $(mLDFLAGS) -O3 -pthread -openmp-simd --bind -lembind -flto -flto=thin -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
-	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
+	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -sOFFSCREEN_FRAMEBUFFER=1 -stdlib=libc++ \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
 	 -fno-strict-aliasing \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
