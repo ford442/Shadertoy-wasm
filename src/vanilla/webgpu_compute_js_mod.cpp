@@ -944,7 +944,9 @@ function regularStart(){
 let SiZ=window.innerHeight;
 let cnvb=document.querySelector('#scanvas');
 const vvic=document.querySelector('#mvi');
-document.querySelector('#path').innerHTML=document.querySelector('#sh1').value;
+let shdName=document.querySelector('#sh1').value;
+document.querySelector('#path').innerHTML=shdName;
+getShader(shdName,'frag.wgsl');
 cnvb.height=SiZ;
 cnvb.width=SiZ;
 if(running==0){
