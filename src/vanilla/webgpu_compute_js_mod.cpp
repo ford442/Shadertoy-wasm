@@ -168,9 +168,9 @@ const image = gl3.getImageData(0, 0, keepSize, keepSize);
 const imageData = image.data;
 const pixelData = new Float32Array(imageData);
 FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-FS.rename('frameBFR.gl', 'frameB.gl');
-FS.rename('frame.gl', 'frameBFR.gl');
-FS.rename('frameB.gl', 'frame.gl');
+FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
+FS.rename('/video/frame.gl', '/video/frameBFR.gl');
+FS.rename('/video/frameB.gl', '/video/frame.gl');
 Module.cnvOn();
 }
 if (running == 0) {
@@ -753,9 +753,6 @@ var pixelData=new Float32Array(imageData);
 // var pixelData=new Float32Array(imageData,0,la);
 let fileStream=FS.open('/video/frameBFR.gl','w');
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-FS.rename('frameBFR.gl', 'frameB.gl');
-FS.rename('frame.gl', 'frameBFR.gl');
-FS.rename('frameB.gl', 'frame.gl');
 */
 /*
 // Module.processCopiedDataVal(pixelData);
@@ -785,10 +782,6 @@ pixelData=new Float32Array(imageData);
 // gpuQueue.writeTexture({ texture }, pixelData, { bytesPerRow }, { width: w$, height: h$ } );
 // pixelData=new Float32Array(imageData,0,la);  // causes sub-array data array-reforming (slower)
 FS.write(fileStream,pixelData,0,pixelData.length,0);
-FS.rename('frameBFR.gl', 'frameB.gl');
-FS.rename('frame.gl', 'frameBFR.gl');
-FS.rename('frameB.gl', 'frame.gl');
-
 */
 // pixelData=new Float32Array(imageData);
 // Module.processCopiedDataVal(pixelData);
