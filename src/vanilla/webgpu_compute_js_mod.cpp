@@ -2,8 +2,9 @@ EM_JS(void,js_main,(),{
 
 FS.mkdir('/shader');
 FS.mkdir('/video');
-FS.writeFile('/video/frame.gl',NULL);
-FS.writeFile('/video/frameBFR.gl',NULL);
+let blank=new Float32Array();
+FS.writeFile('/video/frame.gl',blank);
+FS.writeFile('/video/frameBFR.gl',blank);
 let running=0;
 
 let frameBufferViewF32 = []; // The view into C++ memory
