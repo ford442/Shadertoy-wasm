@@ -797,6 +797,7 @@ Module.frmOn();
 }                 //  have gemini help crop to square
 
 
+
 // It's good practice to store the interval ID in a higher scope
 // so it can be cleared properly if videoStart is called again.
 let animationIntervalId = null;
@@ -948,7 +949,7 @@ function videoStart() {
         gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
         let image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
         let imageData = image.data;
-        const pixelCount = vsiz * vsiz * 4; // 4. Corrected: Use vsiz for pixel count
+        const pixelCount = vsiz * vsiz; //  * 4; // 4. Corrected: Use vsiz for pixel count
 
         // Check if frameBufferViewF32 is valid and has enough space
         if (!frameBufferViewF32 || frameBufferViewF32.length < pixelCount) {
