@@ -658,17 +658,15 @@ vvi=document.querySelector('#mvi');
 w$=parseInt(document.querySelector("#mvi").width);
 h$=parseInt(document.querySelector("#mvi").height);
 SiZ=window.innerHeight;
-if (w$ > h$) { // Landscape or already square (if w$ == h$)
+if (w$ > h$) {
             cropSize = h$;
             sx = (w$ - h$) / 2;
-} else { // Portrait (h$ > w$)
+} else {
             cropSize = w$;
             sy = (h$ - w$) / 2;
 }
 vvi.height=SiZ;
 vvi.width=Math.min(w$,(SiZ/h$)*w$);
-vvi.style.height=SiZ+'px';
-vvi.style.width=Math.min(w$,(SiZ/h$)*w$)+'px';
 w$=parseInt(document.querySelector("#mvi").width);
 h$=parseInt(document.querySelector("#mvi").height);
 }
@@ -677,17 +675,15 @@ vvi=document.querySelector('#ivi');
 w$=parseInt(document.querySelector("#ivi").width);
 h$=parseInt(document.querySelector("#ivi").height);
 SiZ=window.innerHeight;
-if (w$ > h$) { // Landscape or already square (if w$ == h$)
+if (w$ > h$) {
             cropSize = h$;
             sx = (w$ - h$) / 2;
-} else { // Portrait (h$ > w$)
+} else {
             cropSize = w$;
             sy = (h$ - w$) / 2;
 }
 vvi.height=SiZ;
 vvi.width=Math.min(w$,(SiZ/h$)*w$);
-vvi.style.height=SiZ+'px';
-vvi.style.width=Math.min(w$,(SiZ/h$)*w$)+'px';
 w$=parseInt(document.querySelector("#ivi").width);
 h$=parseInt(document.querySelector("#ivi").height);
 }
