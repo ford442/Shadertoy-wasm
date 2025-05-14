@@ -800,9 +800,6 @@ Module.frmOn();
 // It's good practice to store the interval ID in a higher scope
 // so it can be cleared properly if videoStart is called again.
 let animationIntervalId = null;
-let running = 0; // Assuming 'running' is defined in a scope accessible here
-let frameBufferViewF32; // Assuming 'frameBufferViewF32' is defined in a scope accessible here
-// let Module; // Assuming 'Module' is your WebAssembly module instance
 
 function videoStart() {
     // 1. Interval Management: Clear any existing animation interval
