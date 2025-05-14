@@ -109,16 +109,16 @@ w$=vsiz;
 h$=vsiz;
 }
 if(vvic.tagName=='IMG'){
-w$=vvic.width; // naturalWidth;
-h$=vvic.height; // naturalHeight;
-// vvic.width=vvic.naturalWidth;
-// vvic.height=vvic.naturalHeight;
+w$=vvic.naturalWidth;
+h$=vvic.naturalHeight;
+vvic.width=vvic.naturalWidth;
+vvic.height=vvic.naturalHeight;
 }
 if(vvic.tagName=='VIDEO'){
-w$=vvic.width; // videoWidth;
-h$=vvic.height; // videoHeight;
-// vvic.width=vvic.videoWidth;
-// vvic.height=vvic.videoHeight;
+w$=vvic.videoWidth;
+h$=vvic.videoHeight;
+vvic.width=vvic.videoWidth;
+vvic.height=vvic.videoHeight;
 }
 const keepSizea = Math.max(h$, w$);
 const keepSize = Math.min(keepSizea, vsiz);
