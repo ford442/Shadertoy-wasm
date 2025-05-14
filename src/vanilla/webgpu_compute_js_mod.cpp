@@ -665,10 +665,10 @@ if (w$ > h$) {
             cropSize = w$;
             sy = (h$ - w$) / 2;
 }
-vvi.height=SiZ;
-vvi.width=Math.min(w$,(SiZ/h$)*w$);
-w$=parseInt(document.querySelector("#mvi").width);
-h$=parseInt(document.querySelector("#mvi").height);
+// vvi.height=SiZ;
+// vvi.width=Math.min(w$,(SiZ/h$)*w$);
+// w$=parseInt(document.querySelector("#mvi").width);
+// h$=parseInt(document.querySelector("#mvi").height);
 }
 if (media_mode=='img'){
 vvi=document.querySelector('#ivi');
@@ -682,10 +682,10 @@ if (w$ > h$) {
             cropSize = w$;
             sy = (h$ - w$) / 2;
 }
-vvi.height=SiZ;
-vvi.width=Math.min(w$,(SiZ/h$)*w$);
-w$=parseInt(document.querySelector("#ivi").width);
-h$=parseInt(document.querySelector("#ivi").height);
+// vvi.height=SiZ;
+// vvi.width=Math.min(w$,(SiZ/h$)*w$);
+// w$=parseInt(document.querySelector("#ivi").width);
+// h$=parseInt(document.querySelector("#ivi").height);
 }
 let srsiz=document.querySelector('#srsiz').innerHTML;
 let vsiz=document.querySelector('#vsiz').innerHTML;
