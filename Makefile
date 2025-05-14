@@ -8,18 +8,18 @@ neLDFLAGS = -Wl,-O3,--lto-O3
 wLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-ldl
  
 oldLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl
-SIMD_FLAGS = -DSIMD=AVX -mavx2 -msimd128
-SIMD_FLAGS_old = -DSIMD=AVX -mavx2 -msimd128
+SIMD_FLAGS = -DSIMD=AVX -msimd128 -mavx2
+SIMD_FLAGS_old = -DSIMD=AVX -msimd128 -mavx2
 
 STDS = -std=c++26
 
 oldSTDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c++20 -std=gnu++20 \
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
 
-LINK_SIMD_FLAGS = --enable-simd -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -mavx -mavx2 -msimd128
+LINK_SIMD_FLAGS = --enable-simd -msimd128 -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -mavx -mavx2
 
-LINK_SIMD_FLAGSb = --enable-simd -mcx16 -mavxifma -mbmi -mbmi2 -mlzcnt -mavxneconvert -msse -msse2 -msse3 -mssse3 \
-	 -msse4 -msse4.1 -msse4.2 -mavx -mavx2 -mpclmul -msha -mfma -mbmi2 -mpopcnt -maes -enable-fma -mavxvnni -msimd128 
+LINK_SIMD_FLAGSb = --enable-simd -msimd128 -mcx16 -mavxifma -mbmi -mbmi2 -mlzcnt -mavxneconvert -msse -msse2 -msse3 -mssse3 \
+	 -msse4 -msse4.1 -msse4.2 -mavx -mavx2 -mpclmul -msha -mfma -mbmi2 -mpopcnt -maes -enable-fma -mavxvnni
 
 COMMON_FLAGS = -openmp-simd -pthread -pipe -mextended-const -mbulk-memory -matomics \
 	 -sWASM_WORKERS=1 -sSHARED_MEMORY=1 -fPIC -fPIE -finline-functions -funroll-loops \
