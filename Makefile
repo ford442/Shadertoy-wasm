@@ -683,7 +683,7 @@ b3_compute_mod_test5:
 
 
 b3_compute_mod_test5_thread:
-	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -lembind -pthread -openmp-simd -o webgpu_mod.o -ffast-math -ffp-contract=fast \
+	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp-simd -o webgpu_mod.o -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
@@ -711,7 +711,7 @@ b3_compute_mod_test5_thread:
 	 -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
 	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
-	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
+	 webgpu_thread.o --output_eol linux -rtlib=compiler-rt --closure 0 \
 	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_compute_mod_test64:
