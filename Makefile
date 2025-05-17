@@ -683,7 +683,7 @@ b3_compute_mod_test5:
 
 
 b3_compute_mod_test5_thread:
-	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp-simd -o webgpu_mod.o -ffast-math -ffp-contract=fast \
+	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp-simd -o webgpu_thread.o -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
