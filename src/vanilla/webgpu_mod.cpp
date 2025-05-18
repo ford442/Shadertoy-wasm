@@ -6,7 +6,7 @@
 
 namespace stdx = std::experimental;
 
-namespace fs = boost::filesystem;
+namespace bfs = boost::filesystem;
 
 using float_simd = stdx::simd<float>;
 using uint8_simd = stdx::native_simd<uint8_t>; // Use native uint8_t SIMD size
@@ -120,11 +120,11 @@ return result;
 return nullptr;
 }
 
-std::string rd_fl_boost(const fs::path& p) {
-if (!fs::exists(p) || !fs::is_regular_file(p)) {
+std::string rd_fl_boost(const bfs::path& p) {
+if (!bfs::exists(p) || !bfs::is_regular_file(p)) {
 return ""; // Or throw
 }
-fs::ifstream file(p, std::ios::binary | std::ios::ate);
+bfs::ifstream file(p, std::ios::binary | std::ios::ate);
 if (!file.is_open()) {
 return ""; // Or throw
 }
