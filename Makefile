@@ -650,14 +650,14 @@ b3_compute_mod_test2:
 
 
 b3_compute_mod_test5:
-	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -lembind -ffast-math -ffp-contract=fast -fwasm-exceptions -sSUPPORT_LONGJMP='wasm' \
+	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -lembind -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
 	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
-	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=1 -fwasm-exceptions -sSUPPORT_LONGJMP='wasm' \
+	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=1 \
 	 -ffast-math -mextended-const -mbulk-memory -sSTRICT=1 \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
 	 -sUSE_GLFW=0 -sOFFSCREEN_FRAMEBUFFER=1 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
