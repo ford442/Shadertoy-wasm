@@ -43,31 +43,31 @@ WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigato
 
 b3_cropcircle:
 	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O2 -m32 -mtune=wasm32 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -o cropcircle.o
-	 emcc $(STDS) -o $(BIN_NAME).js -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
+	 emcc $(STDS) -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 --bind -lembind -mtune=wasm32 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
-	 --extern-pre-js gpujsx.js cropcircle.o
+	 --extern-pre-js gpujsx.js cropcircle.o -o $(BIN_NAME).js 
 
 b3_cropcircle_64:
 	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O2 -m64 -mtune=wasm64 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -sMEMORY64=1 -o cropcircle.o
-	 emcc $(STDS) -o $(BIN_NAME).js -O2 $(COMMON_FLAGS) $(LINK_FLAGS_64) $(GL_FLAGS) $(BOOST_FLAGS) \
+	 emcc $(STDS) -O2 $(COMMON_FLAGS) $(LINK_FLAGS_64) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 --bind -lembind -sMEMORY64=1 -mtune=wasm64 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
-	 --extern-pre-js gpujsx.js cropcircle.o
+	 --extern-pre-js gpujsx.js cropcircle.o -o $(BIN_NAME).js
 
 b3_cropcircle_rot:
 	 em++ $(STDS) -c src/vanilla/cropcircle_rotate.cpp -O2 -m32 -mtune=wasm32 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -o cropcircle_rotate.o
-	 emcc $(STDS) -o $(BIN_NAME)r.js -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
+	 emcc $(STDS) -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 --bind -lembind -mtune=wasm32 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_emem",'_malloc', '_free']' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF32"]' \
-	 --extern-pre-js gpujsx.js cropcircle_rotate.o
+	 --extern-pre-js gpujsx.js cropcircle_rotate.o -o $(BIN_NAME)r.js
 
 b3_cropcircle_rot_avg:
 	 em++ $(STDS) -c src/vanilla/cropcircle_rotate_avg.cpp -O2 -m32 -mtune=wasm32 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -o cropcircle_rotate_avg.o
-	 emcc $(STDS) -o $(BIN_NAME)ra.js -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
+	 emcc $(STDS) -O2 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 --bind -lembind -mtune=wasm32 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_emem",'_malloc', '_free']' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF32"]' \
-	 --extern-pre-js gpujsx.js cropcircle_rotate_avg.o
+	 --extern-pre-js gpujsx.js cropcircle_rotate_avg.o -o $(BIN_NAME)ra.js
 
 b3_cropcircle_3canvas:
 	 em++ $(STDS) -c src/vanilla/cropcircle_3canvas.cpp -O2 -m32 -mtune=wasm32 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS)
