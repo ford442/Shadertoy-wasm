@@ -120,47 +120,73 @@ return result;
 return nullptr;
 }
 
-char* rd_fl_boost_release(const bfs::path& p, std::streamsize& out_size) {
-    out_size = 0;
+
+struct FileData {
+    char* data;
+    std::streamsize size;
+    // Default constructor for error cases or empty data
+    FileData() : data(nullptr), size(0) {}
+    // Constructor for successful read
+    FileData(char* d, std::streamsize s) : data(d), size(s) {}
+    // It's good practice to make such structs non-copyable
+    // if they manage raw pointers, or implement proper copy/move semantics.
+    // For simplicity here, we'll rely on the user to manage the 'data' pointer.
+    FileData(const FileData&) = delete;
+    FileData& operator=(const FileData&) = delete;
+    // Allow moving
+    FileData(FileData&& other) noexcept : data(other.data), size(other.size) {
+        other.data = nullptr;
+        other.size = 0;
+    }
+    FileData& operator=(FileData&& other) noexcept {
+        if (this != &other) {
+            delete[] data; // Delete existing data if any
+            data = other.data;
+            size = other.size;
+            other.data = nullptr;
+            other.size = 0;
+        }
+        return *this;
+    }
+    // Destructor to ensure memory is freed if the struct instance owns it
+    // However, typical usage of returning this struct would be to extract
+    // the raw pointer and manage it externally. If the struct itself
+    // should manage the lifetime, a std::unique_ptr<char[]> is better.
+    // For a raw char* return, the caller is responsible.
+    // Adding a destructor here might be misleading if the intent is for the caller to delete.
+    // ~FileData() { delete[] data; } // Only if FileData is meant to own the pointer
+};
+
+FileData rd_fl_boost_struct(const bfs::path& p) {
     if (!bfs::exists(p) || !bfs::is_regular_file(p)) {
-        return nullptr;
+        return FileData(); // Return empty struct
     }
     bfs::ifstream file(p, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
-        return nullptr;
+        return FileData();
     }
     std::streamsize size = file.tellg();
-    if (size == static_cast<std::streamsize>(-1) || size == 0) {
+     if (size == static_cast<std::streamsize>(-1) || size == 0) {
         file.close();
         if (size == 0) {
-            char* empty_buffer = new (std::nothrow) char[0];
-            if (empty_buffer) out_size = 0;
-            return empty_buffer;
+             char* empty_buffer = new (std::nothrow) char[0];
+             return FileData(empty_buffer, 0); // Caller must delete[] empty_buffer
         }
-        return nullptr;
+        return FileData();
     }
     file.seekg(0, std::ios::beg);
-    // Use std::vector for temporary storage and RAII
-    std::vector<char> vec_buffer(static_cast<size_t>(size));
-    if (file.read(vec_buffer.data(), size)) {
+    char* buffer = new (std::nothrow) char[static_cast<size_t>(size)];
+    if (!buffer) {
         file.close();
-        // "Release" the buffer from the vector.
-        // This requires allocating a new buffer and copying.
-        // std::vector doesn't have a direct release mechanism like unique_ptr
-        // that gives up ownership of its internal buffer without deallocation.
-        // So, we must manually allocate and copy if the goal is to return a
-        // raw pointer from a dynamically allocated C-style array.
-        char* raw_buffer = new (std::nothrow) char[static_cast<size_t>(size)];
-        if (!raw_buffer) {
-            // Allocation failed
-            return nullptr;
-        }
-        std::copy(vec_buffer.begin(), vec_buffer.end(), raw_buffer);
-        out_size = size;
-        return raw_buffer; // Caller owns this now
+        return FileData();
+    }
+    if (file.read(buffer, size)) {
+        file.close();
+        return FileData(buffer, size);
     } else {
+        delete[] buffer;
         file.close();
-        return nullptr;
+        return FileData();
     }
 }
 
@@ -623,10 +649,10 @@ on.at(3,3)=1;
 js_data_pointer.at(0,0)=0;
 fjs_data_pointer.at(0,0)=0;
 wcc.at(0,0)=wgpu_canvas_get_webgpu_context("#scanvas");
-const char * frag_body=(char*)rd_fl_boost_release(Fnm);
-const char * comp_body=(char*)rd_fl_boost_release(FnmC);
-const char * frag_body3=(char*)rd_fl_boost_release(FnmF2);
-const char * vert_body=(char*)rd_fl_boost_release(FnmV);
+const char * frag_body=(char*)rd_fl_boost_struct(Fnm);
+const char * comp_body=(char*)rd_fl_boost_struct(FnmC);
+const char * frag_body3=(char*)rd_fl_boost_struct(FnmF2);
+const char * vert_body=(char*)rd_fl_boost_struct(FnmV);
 // canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
