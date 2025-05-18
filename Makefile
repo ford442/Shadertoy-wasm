@@ -47,7 +47,7 @@ xGL_FLAGS = -sUSE_GLFW=0 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSIO
 tGL_FLAGS = -sUSE_GLFW=0 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES3=1 -sFULL_ES2=0 -lGL -lEGL
 
 LINK_FLAGS = $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sASSERTIONS=1 -jsDWEBGPU_DEBUG=1 -sTEXTDECODER=2 \
 	 --use-preload-plugins --closure 0 --closureFriendly \
@@ -56,7 +56,7 @@ LINK_FLAGS = $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 \
 	 -rtlib=compiler-rt-mt -sAUTO_ARCHIVE_INDEXES=0 -wasm-enable-eh
 
 LINK_FLAGSb = $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sASSERTIONS=1 -jsDWEBGPU_DEBUG=1 -sTEXTDECODER=2 \
 	 --use-preload-plugins --closure 0 --closureFriendly \
@@ -272,7 +272,7 @@ b3_wasm_loader_lto_32_test3:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -ffunction-sections -fdata-sections \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sAUTO_NATIVE_LIBRARIES=0 -sDISABLE_EXCEPTION_THROWING=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
@@ -302,7 +302,7 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -ffunction-sections -fdata-sections \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sAUTO_NATIVE_LIBRARIES=0 -sDISABLE_EXCEPTION_THROWING=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
@@ -671,7 +671,7 @@ b3_compute_mod_test5:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -lmath.js -lhtml5.js -lint53.js \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 -fwasm-exceptions -sSUPPORT_LONGJMP='wasm' \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
@@ -703,7 +703,7 @@ b3_compute_mod_test5_thread:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=2048mb -lmath.js -lhtml5.js -lint53.js \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 -fwasm-exceptions -sSUPPORT_LONGJMP='wasm' \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
@@ -1084,7 +1084,7 @@ b3_compute_eglx:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm32 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1984mb -lmath.js -lhtml5.js -lint53.js \
-	 -sSUPPORT_LONGJMP=emscripten -sDISABLE_EXCEPTION_THROWING=0 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
+	 -sSUPPORT_LONGJMP=emscripten -sDISABLE_EXCEPTION_THROWING=0 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -wasm-enable-eh \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' \
@@ -1100,7 +1100,7 @@ b3_compute_egl_tex:
 	 em++ -O1 -mextended-const -dead_strip -mbulk-memory -matomics -openmp-simd -pipe \
 	 -pthread -ffast-math -ffp-contract=off --js-library lib/lib_webgpu.js \
 	 -fPIC -fPIE -DCOMPUTE -o $(WGL_BIN_NAME)-egl-tex.js \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=1 \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -march=native -mtune=wasm32 \
@@ -1119,7 +1119,7 @@ b3_compute_egl_tex2:
 	 em++ -O2 -mextended-const -dead_strip -mbulk-memory -matomics -std=c++20 -pipe \
 	 -pthread -ffast-math -ffp-contract=off --js-library lib/lib_webgpu.js \
 	 -fPIC -fPIE -DCOMPUTE -o $(WGL_BIN_NAME)-328.js \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=1 \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -march=broadwell -mtune=wasm32 \
@@ -1163,7 +1163,7 @@ b3_compute_egl_tex4:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm32 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1984mb -lmath.js -lhtml5.js -lint53.js \
-	 -sSUPPORT_LONGJMP=emscripten -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
+	 -sSUPPORT_LONGJMP=emscripten -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sDISABLE_EXCEPTION_THROWING=0 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' \
@@ -1188,7 +1188,7 @@ b3_compute_eglx64:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1984mb -lmath.js -lhtml5.js -lint53.js \
-	 -sSUPPORT_LONGJMP=emscripten -sDISABLE_EXCEPTION_THROWING=0 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
+	 -sSUPPORT_LONGJMP=emscripten -sDISABLE_EXCEPTION_THROWING=0 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -wasm-enable-eh \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' \
@@ -1213,7 +1213,7 @@ b3_compute_wasi:
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm32 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1984mb -lmath.js -lhtml5.js -lint53.js \
-	 -sSUPPORT_LONGJMP=emscripten -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
+	 -sSUPPORT_LONGJMP=emscripten -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sDISABLE_EXCEPTION_THROWING=0 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' \
@@ -1229,7 +1229,7 @@ webgpu_detection:
 	 em++ -O2 -mextended-const -dead_strip -mbulk-memory -matomics -std=c++20 -pipe \
 	 -ffast-math -ffp-contract=off \
 	 -fPIC -fPIE -DCOMPUTE -o $(WGL_BIN_NAME)-detect.js -sTOTAL_STACK=524288 \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=0 \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -march=broadwell -mtune=wasm32 \
@@ -1251,7 +1251,7 @@ webgpu_tex4:
 	 em++ -o $(WGL_BIN_NAME)-tex4.js -O2 -mextended-const -dead_strip -mbulk-memory -matomics -std=c++20 -pipe \
 	 -pthread -ffast-math -ffp-contract=off --js-library lib/lib_webgpu.js \
 	 -fPIC -fPIE -DCOMPUTE -DLIB_WEBGPU_CPP20 -DWEBGPU_VARS4 \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=1 \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -march=broadwell -mtune=wasm32 \
@@ -1271,7 +1271,7 @@ b3_compute_audio:
 	 -ffast-math -ffp-contract=off --js-library lib/lib_webgpu.js \
 	 -sUSE_SDL=2 -sUSE_SDL_IMAGE=0 -sUSE_SDL_TTF=0 -sUSE_SDL_NET=0 -sENVIRONMENT=web \
 	 -fPIC -fPIE -DCOMPUTE -o $(WGL_BIN_NAME)-audio.js \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=1 \
 	 -march=native -mtune=wasm32 \
@@ -1332,7 +1332,7 @@ b3_compute_egl_tex_b:
 	 em++ -O1 -mextended-const -dead_strip -mbulk-memory -matomics -openmp-simd -pipe \
 	 -pthread -ffast-math -ffp-contract=off --js-library lib/lib_webgpu.js \
 	 -rtlib=compiler-rt -fPIC -fPIE -DCOMPUTE -o $(WGL_BIN_NAME)-egl-tex-b.js \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc -DEMMALLOC_USE_64BIT_OPS=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=1 \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -march=native -mtune=wasm32 \
@@ -1349,7 +1349,7 @@ b3_compute_vid:
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/aubio/src -c $(BOOST_FLAGS) $(SIMD_FLAGS)
 	 em++ -O1 -mextended-const -dead_strip -mbulk-memory -matomics -openmp-simd -pipe -pthread -ffast-math -ffp-contract=off --js-library lib/lib_webgpu.js \
 	 -fPIC -fPIE -DCOMPUTE -o $(WGL_BIN_NAME)-vid.js \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=1 \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -march=native -mtune=wasm32 \
@@ -1366,7 +1366,7 @@ b3_compute_vid2:
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/aubio/src -c $(BOOST_FLAGS) $(SIMD_FLAGS)
 	 em++ -O1 -mextended-const -dead_strip -mbulk-memory -matomics -openmp-simd -pipe -pthread -ffast-math -ffp-contract=off --js-library lib/lib_webgpu.js \
 	 -fPIC -fPIE -DCOMPUTE -o $(WGL_BIN_NAME)-vid2.js \
-	 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
+	 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sABORTING_MALLOC=0 -sMALLOC=emmalloc \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
 	 $(BOOST_FLAGS) $(LINK_SIMD_FLAGS) $(wGL_FLAGS) -sASSERTIONS=1 \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -march=native -mtune=wasm32 \
