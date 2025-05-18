@@ -6,6 +6,8 @@
 
 namespace stdx = std::experimental;
 
+namespace fs = boost::filesystem;
+
 using float_simd = stdx::simd<float>;
 using uint8_simd = stdx::native_simd<uint8_t>; // Use native uint8_t SIMD size
 using uint16_simd = stdx::native_simd<uint16_t>;
@@ -116,6 +118,23 @@ fclose(file);
 return result;
 }
 return nullptr;
+}
+
+std::string rd_fl_boost(const fs::path& p) {
+if (!fs::exists(p) || !fs::is_regular_file(p)) {
+return ""; // Or throw
+}
+fs::ifstream file(p, std::ios::binary | std::ios::ate);
+if (!file.is_open()) {
+return ""; // Or throw
+}
+std::streamsize size = file.tellg();
+file.seekg(0, std::ios::beg);
+std::string buffer(size, '\0');
+if (file.read(&buffer[0], size)) {
+return buffer;
+}
+return ""; // Or throw
 }
 
 EM_BOOL getCode(const char * Fnm){
@@ -577,10 +596,10 @@ on.at(3,3)=1;
 js_data_pointer.at(0,0)=0;
 fjs_data_pointer.at(0,0)=0;
 wcc.at(0,0)=wgpu_canvas_get_webgpu_context("#scanvas");
-const char * frag_body=(char*)rd_fl(Fnm);
-const char * comp_body=(char*)rd_fl(FnmC);
-const char * frag_body3=(char*)rd_fl(FnmF2);
-const char * vert_body=(char*)rd_fl(FnmV);
+const char * frag_body=(char*)rd_fl_boost(Fnm);
+const char * comp_body=(char*)rd_fl_boost(FnmC);
+const char * frag_body3=(char*)rd_fl_boost(FnmF2);
+const char * vert_body=(char*)rd_fl_boost(FnmV);
 // canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
