@@ -469,17 +469,17 @@ var pointa=la*2.0;
 var pointb=la*3.0;
 var pointc=la*4.0;
 
-const floatArray = new Float32Array(imgData.data.length);
+let floatArray = new Float32Array(imgData.data.length);
 for(let i = 0; i < imgData.data.length; i++) {
 floatArray[i] = imgData.data[i] / 255.0;
 }
 console.log(`Processing ${floatArray.length} floats`);
-const floatResult = Module.processFloatData(floatArray);
+let floatResult = Module.processFloatData(floatArray);
 if (floatResult && floatResult.average !== undefined) {
 console.log("Image Analysis Result (Floats):", floatResult);
 console.log(`Average: ${floatResult.average}, Min: ${floatResult.min}, Max: ${floatResult.max}`);
 } else {
-console.error("processFloatData returned invalid result.");
+console.log("processFloatData returned invalid result.");
 }
   
 // var $H=Module.HEAPF32.buffer;
