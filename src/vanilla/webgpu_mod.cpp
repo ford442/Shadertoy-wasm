@@ -120,21 +120,48 @@ return result;
 return nullptr;
 }
 
-std::string rd_fl_boost(const bfs::path& p) {
-if (!bfs::exists(p) || !bfs::is_regular_file(p)) {
-return ""; // Or throw
-}
-bfs::ifstream file(p, std::ios::binary | std::ios::ate);
-if (!file.is_open()) {
-return ""; // Or throw
-}
-std::streamsize size = file.tellg();
-file.seekg(0, std::ios::beg);
-std::string buffer(size, '\0');
-if (file.read(&buffer[0], size)) {
-return buffer;
-}
-return ""; // Or throw
+char* rd_fl_boost_release(const bfs::path& p, std::streamsize& out_size) {
+    out_size = 0;
+    if (!bfs::exists(p) || !bfs::is_regular_file(p)) {
+        return nullptr;
+    }
+    bfs::ifstream file(p, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        return nullptr;
+    }
+    std::streamsize size = file.tellg();
+    if (size == static_cast<std::streamsize>(-1) || size == 0) {
+        file.close();
+        if (size == 0) {
+            char* empty_buffer = new (std::nothrow) char[0];
+            if (empty_buffer) out_size = 0;
+            return empty_buffer;
+        }
+        return nullptr;
+    }
+    file.seekg(0, std::ios::beg);
+    // Use std::vector for temporary storage and RAII
+    std::vector<char> vec_buffer(static_cast<size_t>(size));
+    if (file.read(vec_buffer.data(), size)) {
+        file.close();
+        // "Release" the buffer from the vector.
+        // This requires allocating a new buffer and copying.
+        // std::vector doesn't have a direct release mechanism like unique_ptr
+        // that gives up ownership of its internal buffer without deallocation.
+        // So, we must manually allocate and copy if the goal is to return a
+        // raw pointer from a dynamically allocated C-style array.
+        char* raw_buffer = new (std::nothrow) char[static_cast<size_t>(size)];
+        if (!raw_buffer) {
+            // Allocation failed
+            return nullptr;
+        }
+        std::copy(vec_buffer.begin(), vec_buffer.end(), raw_buffer);
+        out_size = size;
+        return raw_buffer; // Caller owns this now
+    } else {
+        file.close();
+        return nullptr;
+    }
 }
 
 EM_BOOL getCode(const char * Fnm){
@@ -596,10 +623,10 @@ on.at(3,3)=1;
 js_data_pointer.at(0,0)=0;
 fjs_data_pointer.at(0,0)=0;
 wcc.at(0,0)=wgpu_canvas_get_webgpu_context("#scanvas");
-const char * frag_body=(char*)rd_fl_boost(Fnm);
-const char * comp_body=(char*)rd_fl_boost(FnmC);
-const char * frag_body3=(char*)rd_fl_boost(FnmF2);
-const char * vert_body=(char*)rd_fl_boost(FnmV);
+const char * frag_body=(char*)rd_fl_boost_release(Fnm);
+const char * comp_body=(char*)rd_fl_boost_release(FnmC);
+const char * frag_body3=(char*)rd_fl_boost_release(FnmF2);
+const char * vert_body=(char*)rd_fl_boost_release(FnmV);
 // canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
