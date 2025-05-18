@@ -649,10 +649,19 @@ on.at(3,3)=1;
 js_data_pointer.at(0,0)=0;
 fjs_data_pointer.at(0,0)=0;
 wcc.at(0,0)=wgpu_canvas_get_webgpu_context("#scanvas");
-const char * frag_body=(char*)rd_fl_boost_struct(Fnm);
-const char * comp_body=(char*)rd_fl_boost_struct(FnmC);
-const char * frag_body3=(char*)rd_fl_boost_struct(FnmF2);
-const char * vert_body=(char*)rd_fl_boost_struct(FnmV);
+    
+FileData fd1 = rd_fl_boost_struct(Fnm);
+const char * frag_body=fd1.data;
+    
+FileData fd2 = rd_fl_boost_struct(FnmC);
+const char * comp_body=fd2.data;
+    
+FileData fd3 = rd_fl_boost_struct(FnmF2);
+const char * frag_body3=fd3.data;
+    
+FileData fd4 = rd_fl_boost_struct(FnmV);
+const char * vert_body=fd4.data;
+    
 // canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
