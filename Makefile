@@ -658,7 +658,7 @@ b3_compute_mod_test5:
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
 	 -I/content/RAMDRIVE2/b3/boost_1_86_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
 	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
-	 -ffast-math -mextended-const -mbulk-memory \
+	 -ffast-math -mextended-const -mbulk-memory -lboost_filesystem -lboost_system \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
 	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREEN_FRAMEBUFFER=1 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
