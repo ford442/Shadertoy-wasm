@@ -55,6 +55,9 @@ using namespace std;
 
 #include <cstdint>
 // #include <pthread.h>
+#include <boost/container/vector.hpp>
+
+#include <boost/array.hpp>
 
 #include <boost/integer.hpp>
 #include <boost/atomic.hpp>
@@ -64,10 +67,13 @@ using namespace std;
 #include <boost/tuple/tuple.hpp>
 #include <boost/chrono.hpp>
 
-#include <boost/container/vector.hpp>
+#include <boost/filesystem/fstream.hpp>
  
 #include <boost/compute/core.hpp>   //  requires CL.h
 
+#include <experimental/simd>
+
+#include <iterator> // For std::distance
 #include <array>
 #include <chrono>
 #include <cmath>
