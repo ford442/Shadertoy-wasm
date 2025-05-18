@@ -1,14 +1,10 @@
 
 #include "../../include/vanilla/webgpu_em.hpp"
 #include "../../src/vanilla/webgpu_compute_vars_em.cpp"
-#include <boost/filesystem/fstream.hpp>
 
 // #include "/usr/include/eigen3/Eigen/Eigen"
 
-#include <experimental/simd>
 namespace stdx = std::experimental;
-
-#include <iterator> // For std::distance
 
 using float_simd = stdx::simd<float>;
 using uint8_simd = stdx::native_simd<uint8_t>; // Use native uint8_t SIMD size
