@@ -49,8 +49,8 @@ b3_cropcircle:
 	 --extern-pre-js gpujsx.js cropcircle.o -o $(BIN_NAME).js 
 
 b3_cropcircle_64:
-	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O2 -m64 -mtune=wasm64 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -sMEMORY64=1 -o cropcircle.o
-	 emcc $(STDS) -O2 $(COMMON_FLAGS) $(LINK_FLAGS_64) $(GL_FLAGS) $(BOOST_FLAGS) \
+	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O3 -m64 -mtune=wasm64 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -sMEMORY64=1 -o cropcircle.o
+	 emcc $(STDS) -O3 $(COMMON_FLAGS) $(LINK_FLAGS_64) $(GL_FLAGS) $(BOOST_FLAGS) \
 	 -sFORCE_FILESYSTEM=1 --bind -lembind -sMEMORY64=1 -mtune=wasm64 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --extern-pre-js gpujsx.js cropcircle.o -o $(BIN_NAME).js
