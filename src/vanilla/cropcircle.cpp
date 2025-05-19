@@ -527,55 +527,75 @@ rgbd[i]=(grey+(rgb-229));
 rgbd[i+1]=(grey+(rgb-229));
 rgbd[i+2]=(grey+(rgb-229));
 rgbd[i+3]=255;// -((rgb-209)*diff);
+ rgbd2[i+3]=0;
+ rgbd3[i+3]=0;
 }
 else if(rgb>209){    // orange
 rgbd[i]=255;
 rgbd[i+1]=128-diff;
 rgbd[i+2]=0;
 rgbd[i+3]=255;// -((rgb-209)*diff);
+ rgbd2[i+3]=0;
+ rgbd3[i+3]=0;
 }
 else if(rgb>193){   // red
 rgbd[i]=255-diff;
 rgbd[i+1]=0;
 rgbd[i+2]=0;
 rgbd[i+3]=255;// -((rgb-193)*diff);
+ rgbd2[i+3]=0;
+ rgbd3[i+3]=0;
                    //  border
 }else if(rgb>190){  
 rgbd[i]=255;
 rgbd[i+1]=0;
 rgbd[i+2]=0;
 rgbd[i+3]=255;
+ rgbd2[i+3]=0;
+ rgbd3[i+3]=0;
 }else if(rgb>177){   // violet
 rgbd2[i]=128-diff;
 rgbd2[i+1]=0;
 rgbd2[i+2]=255;
 rgbd2[i+3]=255;// -((rgb-177)*diff);
+ rgbd[i+3]=0;
+ rgbd3[i+3]=0;
 }else if(rgb>161){  //  blue
 rgbd2[i]=0;
 rgbd2[i+1]=0;
 rgbd2[i+2]=255-diff;
 rgbd2[i+3]=255;// -((rgb-161)*diff);
+ rgbd[i+3]=0;
+ rgbd3[i+3]=0;
                      //  border
 }else if(rgb>158){
 rgbd2[i]=0;
 rgbd2[i+1]=0;
 rgbd2[i+2]=255;
 rgbd2[i+3]=255;
+ rgbd[i+3]=0;
+ rgbd3[i+3]=0;
 }else if(rgb>145){  // green
 rgbd3[i]=0;
 rgbd3[i+1]=255-diff;
 rgbd3[i+2]=0;
 rgbd3[i+3]=255;// -((rgb-145)*diff);
+ rgbd2[i+3]=0;
+ rgbd[i+3]=0;
 }else if(rgb>128){  // yellow
 rgbd3[i]=255;
 rgbd3[i+1]=255-diff;
 rgbd3[i+2]=0;
 rgbd3[i+3]=255;// -((rgb-128)*diff);
+ rgbd2[i+3]=0;
+ rgbd[i+3]=0;
 }else if(rgb>125){ //  border
 rgbd3[i]=255;
 rgbd3[i+1]=255;
 rgbd3[i+2]=0;
 rgbd3[i+3]=255;
+ rgbd2[i+3]=0;
+ rgbd[i+3]=0;
 }
 }else{           // black / blank
 rgbd[i]=255-(grey+(rgb-128));
@@ -588,9 +608,9 @@ rgbd3[i]=255-(grey+(rgb-128));
 rgbd3[i+1]=255-(grey+(rgb-128));
 rgbd3[i+2]=255-(grey+(rgb-128));
 // rgbd[i+3]=((rgb-128)*diff);
-rgbd[i+3]=255;
-rgbd2[i+3]=255;
-rgbd3[i+3]=255;
+rgbd[i+3]=0;
+rgbd2[i+3]=0;
+rgbd3[i+3]=0;
 }
 }
 
