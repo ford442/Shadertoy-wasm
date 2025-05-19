@@ -35,7 +35,7 @@ LINK_FLAGS = -DQUAD $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 -sEMULA
 	 -sTEXTDECODER=0 --use-preload-plugins --closure 0 --closureFriendly \
 	 -sWASMFS=1 -sTOTAL_STACK=65536 -sENVIRONMENT='web,worker' -sSTRICT_JS=1 \
 	 -sGLOBAL_BASE=352321536 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
-	 -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=3221225472 --output_eol linux -mllvm -wasm-enable-eh \
+	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=3221225472 --output_eol linux -mllvm -wasm-enable-eh \
 	 -rtlib=compiler-rt-mt -sAUTO_ARCHIVE_INDEXES=0 -sWASM_LEGACY_EXCEPTIONS=0
 
 WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
