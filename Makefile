@@ -7,7 +7,7 @@ SIMD_FLAGS = -DSIMD=2 -mavx2 -msimd128
 STDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c++20 -std=gnu++20 \
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
 
-COMMON_FLAGS = -D__EMSCRIPTEN__ -sSUPPORT_LONGJMP=wasm -pipe -pthread -openmp-simd \
+COMMON_FLAGS = -D__EMSCRIPTEN__ -sSUPPORT_LONGJMP=emscripten -pipe -pthread -openmp-simd \
 	 -sWASM_WORKERS=1 -sSHARED_MEMORY=1 -stdlib=libc++ -mbulk-memory -matomics \
 	 -fPIC -fpie -finline-functions -funroll-loops \
 	 -fmerge-all-constants -ffast-math -ffp-contract=off -fno-strict-aliasing \
