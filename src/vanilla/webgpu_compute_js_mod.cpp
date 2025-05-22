@@ -55,7 +55,7 @@ cnvb.width=vsiz;
 cnvc.width=vsiz;
 cnvc.style.width=vsiz+'px';
 const gl3=cnvb.getContext('2d',{
-colorType:'float64',
+// colorType:'float64',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
@@ -138,7 +138,7 @@ OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
 const gl3=OffscCnv.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:true,
@@ -234,7 +234,7 @@ OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
 const gl3=OffscCnv.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:true,
@@ -326,7 +326,7 @@ OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
 const gl3=OffscCnv.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
@@ -412,7 +412,7 @@ cnv.width=SiZ;
 cnvc.width=vsiz;
 cnvc.style.width=vsiz+'px';
 const gl3=cnvb.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
@@ -469,7 +469,7 @@ OffscCnv.width=vsiz;
 bcnv.width=vsiz;
 bcnv.style.width=vsiz+'px';
 const gl3=OffscCnv.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
@@ -564,7 +564,7 @@ cnv.width=SiZ;
 cnvc.width=vsiz;
 cnvc.style.width=vsiz+'px';
 const gl3=cnvb.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
@@ -724,7 +724,7 @@ cnvb.width=vsiz;
 cnvc.width=vsiz;
 cnvc.style.width=vsiz+'px';
 const gl3=cnvb.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:false,
 stencil:false,
@@ -1030,7 +1030,7 @@ cnv.width=w$-offsetX;
 let la=nearestPowerOf2(((w$*h$*4)/4)*4);
 // const gl3=cnvb.getContext('2d',{colorType:'float32',alpha:true}); // 
 const gl3=cnv.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:false,
 stencil:false,
@@ -1090,7 +1090,7 @@ let offS=Math.floor((w$-h$)/2);
 let la=nearestPowerOf2(((w$*h$*4)/4)*4);
 // const gl3=cnvb.getContext('2d',{colorType:'float32',alpha:true}); // 
 const gl3=cnvb.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:false,
 stencil:false,
@@ -1103,7 +1103,7 @@ premultipliedAlpha:true,
 preserveDrawingBuffer:false
 }); // 
  const gl4=cnv.getContext('2d',{
-colorType:'float32',
+// colorType:'float32',
 alpha:true,
 willReadFrequently:false,
 stencil:false,
