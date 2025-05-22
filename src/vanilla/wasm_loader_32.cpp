@@ -89,7 +89,11 @@ xhr.send();
 
 document.querySelector('#startBtnPM').addEventListener('click',function(){
 var modu=document.querySelector('#PMmodulePath').innerHTML;
-
+const xhr=new XMLHttpRequest();
+xhr.open('GET', modu, true); // Replace with your filename
+xhr.responseType='arraybuffer'; // Get raw binary data
+console.log('got pm run');
+  
 xhr.onload=function() {
 console.log('got loader load');
 if (xhr.status === 200) {
