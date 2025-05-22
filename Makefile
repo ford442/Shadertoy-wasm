@@ -1,5 +1,5 @@
 WGL_BIN_NAME = w0-010
-BETA_BIN_NAME = w0-034
+BETA_BIN_NAME = w0-035
 
 LDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-ldl
 mLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lc
