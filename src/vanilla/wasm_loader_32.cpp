@@ -31,11 +31,13 @@ left: 0,
 behavior: "smooth",
 });
 },750);
+
 var modu=document.querySelector('#modulePath').innerHTML;
 const xhr=new XMLHttpRequest();
 xhr.open('GET', modu, true); // Replace with your filename
 xhr.responseType='arraybuffer'; // Get raw binary data
 console.log('got loader run');
+  
 function decodeUTF32(uint8Array, isLittleEndian=true) {
 const dataView=new DataView(uint8Array.buffer);
 let result="";
@@ -50,6 +52,7 @@ result += String.fromCodePoint(codePoint);
 }
 return result;
 }
+  
 xhr.onload=function() {
 console.log('got loader load');
 if (xhr.status === 200) {
@@ -80,7 +83,37 @@ console.log('[Module B JS]: Successfully mounted Module B\'s FS root at \'' + mo
 },2000);
 }
 };
+  
 xhr.send();
+
+
+document.querySelector('#startBtnPM').addEventListener('click',function(){
+var modu=document.querySelector('#PMmodulePath').innerHTML;
+
+xhr.onload=function() {
+console.log('got loader load');
+if (xhr.status === 200) {
+const utf32Data=xhr.response;
+const jsCode=decodeUTF32(new Uint8Array(utf32Data), true);
+const scr=document.createElement('script');
+// scr.type='module';
+scr.text=jsCode;
+document.body.appendChild(scr);
+setTimeout(function(){
+var ModuleB=createModule();
+ModuleB.onRuntimeInitialized=function(){
+console.log('call pm init');
+ModuleB.init();
+};
+},2000);
+}
+};
+  
+xhr.send();
+
+});
+  
+  
 const vsiz=document.querySelector('#vsiz');
 let menuSz=parseInt(window.innerWidth*.75,10);
 let infoSz=parseInt(window.innerHeight*.25,10);
