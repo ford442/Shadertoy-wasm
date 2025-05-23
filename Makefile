@@ -281,10 +281,10 @@ b3_wasm_loader_lto_32_test3:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_wasm_loader_lto_32_test3_thread:
-	em++ src/vanilla/wasm_loader_32.cpp $(STDS) -msimd128 -pthread -openmp-simd -O3 -flto=thin -m32 -mtune=wasm32 -sUSE_PTHREADS=1 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
+	em++ src/vanilla/wasm_loader_32.cpp $(STDS) -msimd128 -mavx2 -pthread -openmp-simd -O3 -flto=thin -m32 -mtune=wasm32 -sUSE_PTHREADS=1 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	    -fno-exceptions -ffast-math -fno-strict-aliasing -c -DNDEBUG=1 -DBOOST_HAS_THREADS=1 \
 	    -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 -o wasm_loader_32.o
-	em++ wasm_loader_32.o -O3 -msimd128  -sUSE_PTHREADS=1 -sPROXY_TO_PTHREAD=1 -sPTHREAD_POOL_SIZE=4 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
+	em++ wasm_loader_32.o -O3 -msimd128 -mavx2 -sUSE_PTHREADS=1 -sPROXY_TO_PTHREAD=1 -sPTHREAD_POOL_SIZE=4 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	    -m32 -mtune=wasm32 -pthread -openmp-simd -sENVIRONMENT=web,worker -sMODULARIZE=1 -sEXPORT_NAME='libload' \
 	    --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
 	    -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
