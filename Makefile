@@ -2,7 +2,7 @@ BIN_NAME = a0-004
 
 LDFLAGS = -Wl,-O3,--lto-O3,-lc,-lc++,-lc++abi,-lm,-lpthread,-lrt,-ldl
 
-SIMD_FLAGS = -DSIMD=AVX -msimd128 -mavx2
+SIMD_FLAGS = -DSIMD=AVX -msimd128 -mrelaxed-simd -mavx2
 
 STDS = -std=gnu++2b
 oldSTDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c++20 -std=gnu++20
