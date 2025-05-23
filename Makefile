@@ -719,7 +719,7 @@ b3_compute_mod_test5_thread:
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ -sNO_DISABLE_EXCEPTION_CATCHING=1 \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 $(SIMD_FLAGS_old) -sSHARED_MEMORY=1 -sWASM_WORKERS=1
+	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(SIMD_FLAGS_old) -sSHARED_MEMORY=1 -sWASM_WORKERS=1
 	 em++ $(mLDFLAGS) -O3 -pthread -openmp-simd --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library -sOFFSCREENCANVASES_TO_PTHREAD="#scanvas" -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
@@ -729,7 +729,7 @@ b3_compute_mod_test5_thread:
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
 	 -fexcess-precision=fast -sENVIRONMENT=web,worker \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
-	 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 \
+	 $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=0 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
