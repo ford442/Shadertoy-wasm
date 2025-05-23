@@ -318,7 +318,7 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1
-	 em++ -O3 -sEVAL_CTORS=0 -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl-m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp-simd -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
+	 em++ -O3 -sEVAL_CTORS=0 -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp-simd -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	 -sWASM_BIGINT=1 -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
