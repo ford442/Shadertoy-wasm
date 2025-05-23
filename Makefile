@@ -51,6 +51,16 @@ LINK_FLAGS = $(LDFLAGS) -sDEFAULT_TO_CXX=1 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=2147483648 --output_eol linux -mllvm -mtune=wasm32 -march=wasm32-avx \
 	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
 
+LINK_FLAGSm = $(LDFLAGS) -sDEFAULT_TO_CXX=1 \
+	 -sTEXTDECODER=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
+	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 -sABORT_ON_WASM_EXCEPTIONS=0 \
+	 -sASSERTIONS=0 --typed-function-references --enable-reference-types \
+	 --use-preload-plugins --closure 0 --closureFriendly \
+	 -sWASM=1 -sWASM_BIGINT=1 -sTOTAL_STACK=65536 -sENVIRONMENT='web' -sSTRICT_JS=0 \
+	 -sGLOBAL_BASE=352321536 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
+	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=2147483648 --output_eol linux -mllvm -mtune=wasm32 -march=wasm32-avx \
+	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
+
 test_LINK_FLAGS = \
 	 -sTEXTDECODER=2 \
 	 --use-preload-plugins --closure 0 --closureFriendly -logg -lvorbis \
