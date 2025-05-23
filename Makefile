@@ -281,13 +281,13 @@ b3_wasm_loader_lto_32_test3:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_wasm_loader_lto_32_test3_thread:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp-simd -o wasm_loader_32.o -m64 -mtune=wasm64 -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp-simd -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -O1 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
+	 -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1
-	 em++ -O1 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp-simd -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
+	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp-simd -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	 -sWASM_BIGINT=1 -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
@@ -297,14 +297,14 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
 	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web,worker \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-32.js -sSTRICT=1 -sSTRICT_JS=0 \
-	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=1 -sMEMORY64 -s PROXY_TO_PTHREAD=1 -s USE_PTHREADS=1 -s PTHREAD_POOL_SIZE=4 \
+	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -ffunction-sections -fdata-sections \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sAUTO_NATIVE_LIBRARIES=0 -sDISABLE_EXCEPTION_THROWING=1 \
-	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
+	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 -sPTHREAD_POOL_SIZE=4 \
 	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
 	 wasm_loader_32.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 --closureFriendly \
