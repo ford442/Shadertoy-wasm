@@ -9,6 +9,8 @@
 
 // #include <xmmintrin.h>
 #include <immintrin.h> 
+
+#include <*mmintrin.h>
 // #include <nmmintrin.h>  //  sse 4.2
 // #include <unistd.h>
 
