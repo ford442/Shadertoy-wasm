@@ -323,7 +323,7 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
 	 -freciprocal-math -fno-signed-zeros \
-	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
+	 --use-preload-plugins --closureFriendly \
 	 -fno-strict-aliasing \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
 	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web,worker \
@@ -339,7 +339,7 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
 	 wasm_loader_32.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 --closureFriendly \
-	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
+	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=1
 
 
 b3_compute_mod_test4:
