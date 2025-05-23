@@ -5,13 +5,13 @@ TIMESTAMP := $(shell date +%m%y)
 LDFLAGS += -Wl,-O3,--lto-O3,-lc,-lc++,-lc++abi,-lm,-lpthread,-lrt,-ldl,-S
 LDFLAGSb += -Wl,-O3,--lto-O3,-lc,-lc++,-lc++abi,-lm,-lrt,-ldl,-S
 
-SIMD_FLAGS := -DSIMD=2  -mavx2 -msimd128
-SIMD_FLAGS_64 := -DSIMD=2 -mavx2 -msimd128 
+SIMD_FLAGS := -DSIMD=2  -mavx2 -msimd128 -mrelaxed-simd 
+SIMD_FLAGS_64 := -DSIMD=2 -mavx2 -msimd128 -mrelaxed-simd 
 
 STDS := -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c++20 -std=gnu++20 \
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
 
-LINK_SIMD_FLAGS := -DSIMD=2 -mavx2 -msimd128 
+LINK_SIMD_FLAGS := -DSIMD=2 -mavx2 -mrelaxed-simd -msimd128 
 
 COMMON_FLAGS += -sSUPPORT_LONGJMP=emscripten -pthread -pipe -mextended-const -mbulk-memory -matomics \
 	 -sWASM_WORKERS=1 -sSHARED_MEMORY=1 \
@@ -45,9 +45,9 @@ GL_FLAGS += -sFULL_ES3=1 -sFULL_ES2=0 -sLEGACY_GL_EMULATION=0 -lGL -lEGL -sUSE_G
 LINK_FLAGS += -DQUAD -DDOUBLE $(LDFLAGS) -sWASM_BIGINT=0 -sDEFAULT_TO_CXX=1 -sOFFSCREENCANVAS_SUPPORT=1 \
 	 -sTEXTDECODER=1 -sALLOW_TABLE_GROWTH=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 -sABORT_ON_WASM_EXCEPTIONS=0 \
-	 -sASSERTIONS=0 -march=broadwell \
+	 -sASSERTIONS=0 \
 	 --use-preload-plugins --closure 0 --closureFriendly --typed-function-references --enable-reference-types \
-	 -march=native -sWASM=1 -sTOTAL_STACK=65536 -sENVIRONMENT='web,worker' -sSTRICT_JS=0 \
+	 -sWASM=1 -sTOTAL_STACK=65536 -sENVIRONMENT='web,worker' -sSTRICT_JS=0 \
 	 -sGLOBAL_BASE=352321536 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1984mb --output_eol linux -mllvm -mtune=wasm32 -wasm-enable-eh \
 	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
