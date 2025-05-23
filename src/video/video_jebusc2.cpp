@@ -153,16 +153,16 @@ var f = true;
 clearInterval(intervalLoop);
 intervalLoop = requestAnimationFrame(function loop() {
 if (f) {
-if (video.currentTime >= strt * 1000.0) {
+if (video.currentTime >= strt) {
 video.currentTime -= 0.016;
 } else {
-video.currentTime = strt * 1000.0;
+video.currentTime = strt;
 f = false;
 }
-} else if (video.currentTime <= stp * 1000.0) {
+} else if (video.currentTime <= stp) {
 video.currentTime += 0.016;
 } else {
-video.currentTime = stp * 1000.0;
+video.currentTime = stp;
 f = true;
 }
 setTimeout(() => requestAnimationFrame(loop), rate);
@@ -206,8 +206,8 @@ back();
 } else if (e.code === 'KeyZ') {
 video=document.querySelector("#mv");
 video.pause();
-let ends = video.currentTime / 1000.0;
-let begins = (video.currentTime - 2.5) / 1000.0;
+let ends = video.currentTime;
+let begins = (video.currentTime - 3.0);
 let fps = 1000.0 / video.frameRate;
 backForth(ends, begins, fps);
 } else if (e.code === 'KeyX') {
