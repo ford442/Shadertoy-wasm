@@ -280,16 +280,7 @@ b3_wasm_loader_lto_32_test3:
 	 wasm_loader_32.o --output_eol linux -rtlib=compiler-rt --closure 0 --closureFriendly \
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
-b3_wasm_loader_lto_32_test3_thread:
-	em++ src/vanilla/wasm_loader_32.cpp $(STDS) -msimd128 -mavx2 -pthread -O3 -sSHARED_MEMORY=1 -sWASM_WORKERS=0 \
-	    -o wasm_loader_32.o
-	em++ wasm_loader_32.o -O3 -msimd128 -mavx2 -sSHARED_MEMORY=1 -sWASM_WORKERS=0 \
-	    -pthread -sENVIRONMENT=web,worker -sMODULARIZE=1 -sEXPORT_NAME='libload' \
-	    --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
-	    -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
-	    -o $(BETA_BIN_NAME)-load-32.js
-
-b3_wasm_loader_lto_32_test3_thread__:
+b3_wasm_loader_lto_3232_test3_thread:
 	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp-simd -o wasm_loader_32.o -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
@@ -320,7 +311,7 @@ b3_wasm_loader_lto_32_test3_thread__:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 
-b3_wasm_loader_lto_64_test3_thread:
+b3_wasm_loader_lto_32_test3_thread:
 	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp-simd -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
