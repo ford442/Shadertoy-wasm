@@ -251,13 +251,13 @@ b3_wasm_loader_lto_32_test2:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sSUPPORT_LONGJMP=wasm -sDISABLE_EXCEPTION_CATCHING=1
 
 b3_wasm_loader_lto_32_test3:
-	 em++ src/vanilla/wasm_loader_32.cpp -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-lrt,-ldl $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSTRICT=1
-	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl \
+	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-lrt,-ldl \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
@@ -312,13 +312,13 @@ b3_wasm_loader_lto_3232_test3_thread:
 
 
 b3_wasm_loader_lto_32_test3_thread:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp-simd -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -pthread -openmp-simd -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1
-	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp-simd -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
+	 em++ -O3 -sEVAL_CTORS=0 -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl-m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp-simd -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	 -sWASM_BIGINT=1 -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
