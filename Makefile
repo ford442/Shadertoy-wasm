@@ -252,13 +252,13 @@ b3_wasm_loader_lto_32_test2:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sSUPPORT_LONGJMP=wasm -sDISABLE_EXCEPTION_CATCHING=1
 
 b3_wasm_loader_lto_32_test3:
-	 em++ src/vanilla/wasm_loader_32.cpp -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-lrt,-ldl $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS_old) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
+	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSTRICT=1
-	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-lrt,-ldl \
+	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
@@ -268,7 +268,7 @@ b3_wasm_loader_lto_32_test3:
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
 	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-32.js -sSTRICT=1 -sSTRICT_JS=0 \
-	 $(LINK_SIMD_FLAGS_old) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64 \
+	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
