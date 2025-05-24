@@ -17,6 +17,7 @@ oldSTDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
 
 LINK_SIMD_FLAGS = --enable-simd -msimd128 -mrelaxed-simd -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -mavx -mavx2
+LINK_SIMD_FLAGS_old = --enable-simd -msimd128 -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -mavx -mavx2
 
 LINK_SIMD_FLAGSb = --enable-simd -msimd128 -mcx16 -mavxifma -mbmi -mbmi2 -mlzcnt -mavxneconvert -msse -msse2 -msse3 -mssse3 \
 	 -msse4 -msse4.1 -msse4.2 -mavx -mavx2 -mpclmul -msha -mfma -mbmi2 -mpopcnt -maes -enable-fma -mavxvnni
@@ -267,7 +268,7 @@ b3_wasm_loader_lto_32_test3:
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
 	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-32.js -sSTRICT=1 -sSTRICT_JS=0 \
-	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64 \
+	 $(LINK_SIMD_FLAGS_old) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
