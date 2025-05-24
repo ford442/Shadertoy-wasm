@@ -1457,7 +1457,7 @@ document.querySelector('#lvi').width=wi;
 Module.sizeBuffer(he);
 
 document.querySelector('#di').click();
-videoStart();
+// videoStart();
 // let srsiz=document.querySelector('#srsiz').innerHTML;
 // let vsiz=document.querySelector('#vsiz').innerHTML;
 // Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[document.querySelector('#ivi').height,vsiz,srsiz]);
