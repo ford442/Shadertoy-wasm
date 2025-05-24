@@ -8,14 +8,14 @@
 #define VLEAVE _mm256_zeroupper
 
 // #include <xmmintrin.h>
-       // #include <immintrin.h> 
+#include <immintrin.h> 
 
 // #include <mmintrin.h>  x86
 // #include <nmmintrin.h>  //  sse 4.2
 // #include <unistd.h>
 
 
-/*
+
 #define __m64i  __m64
 
 //MMX
@@ -63,4 +63,4 @@ __m64 _mm_sign_pi16_(__m64 a, __m64 b);
 #define _mm_cmpeq_pi16 _mm_cmpeq_pi16_
 #define _mm_sign_pi16 _mm_sign_pi16_
 
-*/
+
