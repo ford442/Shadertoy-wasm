@@ -10,7 +10,6 @@ wLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lc++abi,-lm,-ldl
 oldLDFLAGS = -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl
 SIMD_FLAGS = -DSIMD=AVX -msimd128 -mrelaxed-simd -mavx2
 SIMD_FLAGS_old = -DSIMD=AVX -msimd128 -mavx2
-SIMD_FLAGS_g = -DSIMD=AVX -msimd128 -mrelaxed-simd
 
 STDS = -std=c++26
 
@@ -18,7 +17,6 @@ oldSTDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
 
 LINK_SIMD_FLAGS = --enable-simd -msimd128 -mrelaxed-simd -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -mavx -mavx2
-LINK_SIMD_FLAGS_g = --enable-simd -msimd128 -mrelaxed-simd
 
 LINK_SIMD_FLAGSb = --enable-simd -msimd128 -mcx16 -mavxifma -mbmi -mbmi2 -mlzcnt -mavxneconvert -msse -msse2 -msse3 -mssse3 \
 	 -msse4 -msse4.1 -msse4.2 -mavx -mavx2 -mpclmul -msha -mfma -mbmi2 -mpopcnt -maes -enable-fma -mavxvnni
@@ -95,7 +93,7 @@ b3_compute_mod_test5:
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-strict-aliasing \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -mextended-const \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
-	 $(xGL_FLAGS) -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_g) 
+	 $(xGL_FLAGS) -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS) 
 	 em++ $(mLDFLAGS) -O3 --bind -pipe -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
 	 -sEXIT_RUNTIME=1 -stdlib=libc++ \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
@@ -107,7 +105,7 @@ b3_compute_mod_test5:
 	 -sUSE_GLFW=0 -sOFFSCREEN_FRAMEBUFFER=1 -sOFFSCREENCANVAS_SUPPORT=1 \
 	 -sWASMFS=1 -sWASM_LEGACY_EXCEPTIONS=0 -sENVIRONMENT=web -sSTRICT_JS=0 -sSTRICT=1 -sASSERTIONS=0 -mtune=wasm32 \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js \
-	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS_g) $(xGL_FLAGS) \
+	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) \
 	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
