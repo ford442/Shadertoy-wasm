@@ -85,6 +85,104 @@ vanilla_test_emjs:
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=3221225472 \
 	 -sEXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' -sEXPORTED_FUNCTIONS=["_main","_emjs","_cfunc"]
 
+
+
+b3_compute_mod_test5:
+	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -m32 -mtune=wasm32 -O3 -pipe -lembind -fexperimental-library -sSTRICT=1 -flto -flto=thin \
+	 -ffast-math -ffp-contract=fast -fexcess-precision=fast -fno-math-errno \
+	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-strict-aliasing \
+	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -mextended-const \
+	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
+	 $(xGL_FLAGS) -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old) 
+	 em++ $(mLDFLAGS) -O3 --bind -pipe -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
+	 -sEXIT_RUNTIME=1 -stdlib=libc++ \
+	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
+	 -fno-strict-aliasing -fexcess-precision=fast -ffunction-sections -fdata-sections \
+	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=1 \
+	 -matomics -DQUAD -DDOUBLE -fexperimental-library -ffast-math -mextended-const -mbulk-memory \
+	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
+	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
+	 -sUSE_GLFW=0 -sOFFSCREEN_FRAMEBUFFER=1 -sOFFSCREENCANVAS_SUPPORT=1 \
+	 -sWASMFS=1 -sWASM_LEGACY_EXCEPTIONS=0 -sENVIRONMENT=web -sSTRICT_JS=0 -sSTRICT=1 -sASSERTIONS=0 -mtune=wasm32 \
+	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js \
+	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
+	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 \
+	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
+	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -lmath.js -lhtml5.js -lint53.js \
+	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
+	 -sMALLOC='emmalloc' -sASYNCIFY=1 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' \
+	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
+	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js \
+	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
+	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
+	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' 
+
+b3_compute_mod_test5_thread:
+	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp-simd -o webgpu_thread.o -ffast-math -ffp-contract=fast \
+	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
+	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
+	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
+	 -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
+	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ -sNO_DISABLE_EXCEPTION_CATCHING=1 \
+	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(SIMD_FLAGS_old) -sSHARED_MEMORY=1 -sWASM_WORKERS=1
+	 em++ $(mLDFLAGS) -O3 -pthread -openmp-simd --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
+	 -ffast-math -mbulk-memory \
+	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library -sOFFSCREENCANVASES_TO_PTHREAD="#scanvas" -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
+	 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -sOFFSCREEN_FRAMEBUFFER=0 -sPROXY_TO_PTHREAD=0 -stdlib=libc++ \
+	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
+	 -fno-strict-aliasing \
+	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
+	 -fexcess-precision=fast -sENVIRONMENT=web,worker \
+	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
+	 $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 \
+	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=0 \
+	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
+	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
+	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=2048mb -lmath.js -lhtml5.js -lint53.js \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
+	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 \
+	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
+	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
+	 -sASYNCIFY=0 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
+	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
+	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
+	 webgpu_thread.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 \
+	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sNO_DISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
+
+b3_compute_mod_test64:
+	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
+	 -fexcess-precision=fast -m64 -mtune=wasm64 -sMEMORY64 -fexperimental-library --target=wasm64 -lembind \
+	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
+	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
+	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
+	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
+	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
+	 em++ $(mLDFLAGS) -O3 -m64 --bind -lembind -fexperimental-library -sMEMORY64 -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=2 \
+	 -sEXIT_RUNTIME=0 -ffast-math -mextended-const -mbulk-memory \
+	 -matomics -pipe -DQUAD -DDOUBLE \
+	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
+	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
+	 -fno-strict-aliasing \
+	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
+	 -fexcess-precision=fast -sENVIRONMENT=web \
+	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
+	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 \
+	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
+	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
+	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
+	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=2048mb -lmath.js -lhtml5.js -lint53.js \
+	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=2 -sEMBIND_STD_STRING_IS_UTF8=0 \
+	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 -sDISABLE_EXCEPTION_THROWING=0 \
+	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
+	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
+	 -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
+	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js \
+	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
+	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
+	 -sMODULARIZE -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
+
+
 b3_wasm_loader:
 	 em++ src/vanilla/wasm_loader.cpp $(STDS) -m64 -pipe -ffp-contract=fast -fexcess-precision=fast \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
@@ -679,102 +777,6 @@ b3_compute_mod_test2:
 	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
 	 -sMODULARIZE -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1
 
-
-b3_compute_mod_test5:
-	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -lembind -ffast-math -ffp-contract=fast \
-	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
-	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
-	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
-	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old) -sSTRICT=1
-	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
-	 -ffast-math -mextended-const -mbulk-memory -sEXIT_RUNTIME=1 \
-	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
-	 -sUSE_GLFW=0 -sOFFSCREEN_FRAMEBUFFER=1 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
-	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
-	 -fno-strict-aliasing \
-	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
-	 -fexcess-precision=fast -sENVIRONMENT=web \
-	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
-	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 -march=wasm32-avx \
-	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=1 \
-	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
-	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
-	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -lmath.js -lhtml5.js -lint53.js \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
-	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 \
-	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
-	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
-	 -sASYNCIFY=1 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='emmalloc' \
-	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
-	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
-	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
-	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sWASM_LEGACY_EXCEPTIONS=0
-
-b3_compute_mod_test5_thread:
-	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp-simd -o webgpu_thread.o -ffast-math -ffp-contract=fast \
-	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
-	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
-	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
-	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ -sNO_DISABLE_EXCEPTION_CATCHING=1 \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(SIMD_FLAGS_old) -sSHARED_MEMORY=1 -sWASM_WORKERS=1
-	 em++ $(mLDFLAGS) -O3 -pthread -openmp-simd --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
-	 -ffast-math -mbulk-memory \
-	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library -sOFFSCREENCANVASES_TO_PTHREAD="#scanvas" -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
-	 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -sOFFSCREEN_FRAMEBUFFER=0 -sPROXY_TO_PTHREAD=0 -stdlib=libc++ \
-	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
-	 -fno-strict-aliasing \
-	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
-	 -fexcess-precision=fast -sENVIRONMENT=web,worker \
-	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
-	 $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 \
-	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=0 \
-	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
-	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
-	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=2048mb -lmath.js -lhtml5.js -lint53.js \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
-	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 \
-	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
-	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
-	 -sASYNCIFY=0 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
-	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
-	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
-	 webgpu_thread.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 \
-	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sNO_DISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
-
-b3_compute_mod_test64:
-	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
-	 -fexcess-precision=fast -m64 -mtune=wasm64 -sMEMORY64 -fexperimental-library --target=wasm64 -lembind \
-	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
-	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
-	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
-	 em++ $(mLDFLAGS) -O3 -m64 --bind -lembind -fexperimental-library -sMEMORY64 -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=2 \
-	 -sEXIT_RUNTIME=0 -ffast-math -mextended-const -mbulk-memory \
-	 -matomics -pipe -DQUAD -DDOUBLE \
-	 -sDEFAULT_TO_CXX=0 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
-	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
-	 -fno-strict-aliasing \
-	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
-	 -fexcess-precision=fast -sENVIRONMENT=web \
-	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
-	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 \
-	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
-	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
-	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
-	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=2048mb -lmath.js -lhtml5.js -lint53.js \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=2 -sEMBIND_STD_STRING_IS_UTF8=0 \
-	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 -sDISABLE_EXCEPTION_THROWING=0 \
-	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 \
-	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
-	 -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
-	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js \
-	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
-	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
-	 -sMODULARIZE -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_compute_mod_test6:
 	 em++ src/vanilla/webgpu_mod_b3.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
