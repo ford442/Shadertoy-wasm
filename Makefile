@@ -687,7 +687,7 @@ b3_compute_mod_test5:
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old) -sSTRICT=1
+	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS) -sSTRICT=1
 	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mextended-const -mbulk-memory -sEXIT_RUNTIME=0 \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
@@ -697,7 +697,7 @@ b3_compute_mod_test5:
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
 	 -fexcess-precision=fast -sENVIRONMENT=web \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
-	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 -march=wasm32-avx \
+	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
 	 -fwhole-program-vtables -polly -polly-position=before-vectorizer \
