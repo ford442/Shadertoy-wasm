@@ -316,7 +316,7 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -fexcess-precision=fast -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -sNO_DISABLE_EXCEPTION_CATCHING=1 \
-	 -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range -sPTHREAD_POOL_SIZE=42 -sDEFAULT_PTHREAD_STACK_SIZE=2mb \
+	 -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range -sPTHREAD_POOL_SIZE=16 \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1
 	 em++ -O3 -sEVAL_CTORS=0 -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp-simd -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	 -sWASM_BIGINT=1 -dead_strip -mbulk-memory -matomics -sEXIT_RUNTIME=1 \
