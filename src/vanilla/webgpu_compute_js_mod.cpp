@@ -967,6 +967,41 @@ function videoStart() {
             // Clear the OffscreenCanvas for the new frame
             gl3.clearRect(0, 0, vsiz, vsiz);
 
+ if (media_mode == 'vid') {
+        vvi = document.querySelector('#mvi');
+        // Ensure video metadata is loaded to get correct dimensions
+        // This might require waiting for 'loadedmetadata' event if dimensions are 0 initially
+        w$ = parseInt(vvi.videoWidth || vvi.width);
+        h$ = parseInt(vvi.videoHeight || vvi.height);
+        SiZ = window.innerHeight;
+
+        if (w$ > h$) {
+            cropSize = h$;
+            sx = (w$ - h$) / 2;
+        } else {
+            cropSize = w$;
+            sy = (h$ - w$) / 2;
+        }
+    } else if (media_mode == 'img') {
+        vvi = document.querySelector('#ivi');
+        // Ensure image is loaded to get correct dimensions
+        // This might require waiting for 'load' event if dimensions are 0 initially
+        w$ = parseInt(vvi.naturalWidth || vvi.width);
+        h$ = parseInt(vvi.naturalHeight || vvi.height);
+        SiZ = window.innerHeight;
+
+        if (w$ > h$) {
+            cropSize = h$;
+            sx = (w$ - h$) / 2;
+        } else {
+            cropSize = w$;
+            sy = (h$ - w$) / 2;
+        }
+    } else {
+        console.error("Unknown media mode:", media_mode);
+        return; // Exit if media_mode is not recognized
+    }
+
             // Draw the current state of the video/image (cropped and scaled) onto the OffscreenCanvas
             // sx, sy, cropSize are from the source media (vvi)
             // 0, 0, vsiz, vsiz are for the destination (cnvb)
