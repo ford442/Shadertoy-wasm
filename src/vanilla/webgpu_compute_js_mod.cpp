@@ -949,7 +949,7 @@ function videoStart() {
         gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
         let image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
         let imageData = image.data;
-        const pixelCount = vsiz * vsiz; //  * 4; // 4. Corrected: Use vsiz for pixel count
+        const pixelCount = vsiz * vsiz * 4; // 4. Corrected: Use vsiz for pixel count
 
         // Check if frameBufferViewF32 is valid and has enough space
         if (!frameBufferViewF32 || frameBufferViewF32.length < pixelCount) {
@@ -966,41 +966,6 @@ function videoStart() {
         animationIntervalId = setInterval(function() {
             // Clear the OffscreenCanvas for the new frame
             gl3.clearRect(0, 0, vsiz, vsiz);
-
- if (media_mode == 'vid') {
-        vvi = document.querySelector('#mvi');
-        // Ensure video metadata is loaded to get correct dimensions
-        // This might require waiting for 'loadedmetadata' event if dimensions are 0 initially
-        w$ = parseInt(vvi.videoWidth || vvi.width);
-        h$ = parseInt(vvi.videoHeight || vvi.height);
-        SiZ = window.innerHeight;
-
-        if (w$ > h$) {
-            cropSize = h$;
-            sx = (w$ - h$) / 2;
-        } else {
-            cropSize = w$;
-            sy = (h$ - w$) / 2;
-        }
-    } else if (media_mode == 'img') {
-        vvi = document.querySelector('#ivi');
-        // Ensure image is loaded to get correct dimensions
-        // This might require waiting for 'load' event if dimensions are 0 initially
-        w$ = parseInt(vvi.naturalWidth || vvi.width);
-        h$ = parseInt(vvi.naturalHeight || vvi.height);
-        SiZ = window.innerHeight;
-
-        if (w$ > h$) {
-            cropSize = h$;
-            sx = (w$ - h$) / 2;
-        } else {
-            cropSize = w$;
-            sy = (h$ - w$) / 2;
-        }
-    } else {
-        console.error("Unknown media mode:", media_mode);
-        return; // Exit if media_mode is not recognized
-    }
 
             // Draw the current state of the video/image (cropped and scaled) onto the OffscreenCanvas
             // sx, sy, cropSize are from the source media (vvi)
@@ -1020,14 +985,14 @@ function videoStart() {
 
             // Notify the WebAssembly module that a new frame is ready
             Module.frmOn();
-
+/*
             // Optional: If you want to display the content of the OffscreenCanvas on 'bcanvas'
             const cnvcCtx = cnvc.getContext('2d');
             if (cnvcCtx) {
                 cnvcCtx.clearRect(0,0,vsiz,vsiz);
                 cnvcCtx.drawImage(cnvb, 0, 0, vsiz, vsiz);
             }
-
+*/
         }, 16.666); // Aim for roughly 60 FPS
     }
 }
