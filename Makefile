@@ -2,7 +2,7 @@ BIN_NAME = o0-003
 
 LDFLAGS = -Wl,-O3,--lto-O3,-lc,-lc++,-lc++abi,-lm,-lrt,-ldl,-S
 
-SIMD_FLAGS = -DSIMD=2 -mavx2 -msimd128
+SIMD_FLAGS = -DSIMD=2 -mavx2 -msimd128 -mrelaxed-simd
 
 STDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c++20 -std=gnu++20 \
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
@@ -10,7 +10,7 @@ STDS = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c+
 COMMON_FLAGS = -D__EMSCRIPTEN__ -sSUPPORT_LONGJMP=emscripten -pipe -pthread -openmp-simd \
 	 -sWASM_WORKERS=1 -sSHARED_MEMORY=1 -stdlib=libc++ -mbulk-memory -matomics \
 	 -fPIC -fpie -finline-functions -funroll-loops \
-	 -fmerge-all-constants -ffast-math -ffp-contract=off -fno-strict-aliasing \
+	 -fmerge-all-constants -ffast-math -ffp-contract=fast -fno-strict-aliasing \
 	 -ftree-vectorize -fstrict-vtable-pointers -funsafe-math-optimizations -fno-math-errno \
 	 -ffunction-sections -fdata-sections -fno-optimize-sibling-calls -fasynchronous-unwind-tables \
 	 -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize \
@@ -29,7 +29,7 @@ GL_FLAGS = -sGL_ENABLE_GET_PROC_ADDRESS -sFULL_ES3=1 -sFULL_ES2=0 -sUSE_GLFW=0 \
 	 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sGL_TRACK_ERRORS=0
 
 LINK_FLAGS = -DQUAD $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sSUPPORT_BIG_ENDIAN=0 \
-	 -sWASM_BIGINT=1 -sOFFSCREENCANVAS_SUPPORT=1 -pthread -openmp-simd -sMALLOC='mimalloc' \
+	 -sWASM_BIGINT=1 -sOFFSCREENCANVAS_SUPPORT=1 -pthread -openmp -sMALLOC='mimalloc' \
 	 -sTRUSTED_TYPES=1 -sIGNORE_MISSING_MAIN=0 -sABORT_ON_WASM_EXCEPTIONS=0 \
 	 -sDEMANGLE_SUPPORT=0 -sASSERTIONS=0 --typed-function-references --enable-reference-types -fno-strict-aliasing \
 	 -sTEXTDECODER=0 --use-preload-plugins --closure 0 --closureFriendly \
