@@ -1,6 +1,8 @@
 #include <emscripten.h>
 #include "../../include/shader/intrins.hpp"
-  
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+
 extern "C"{  
   
 EM_BOOL pl();
