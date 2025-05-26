@@ -88,7 +88,22 @@ xhr.send();
 
 
 document.querySelector('#startBtnPM').addEventListener('click',function(){
-  
+
+function decodeUTF32(uint8Array, isLittleEndian=true) {
+const dataView=new DataView(uint8Array.buffer);
+let result="";
+for (let i=0; i < uint8Array.length; i += 4) {
+let codePoint;
+if (isLittleEndian) {
+codePoint=dataView.getUint32(i, true);
+} else {
+codePoint=dataView.getUint32(i, false);
+}
+result += String.fromCodePoint(codePoint);
+}
+return result;
+}
+
 var modu=document.querySelector('#PMmodulePath').innerHTML;
 const xhr=new XMLHttpRequest();
 xhr.open('GET', modu, true); // Replace with your filename
