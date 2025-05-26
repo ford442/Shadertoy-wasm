@@ -130,6 +130,18 @@ b3_audio_mod:
 	-sEXPORTED_FUNCTIONS='["_main","_pl","_r4nd"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	-sMODULARIZE=1 -sEXPORT_NAME='libAudio' --extern-post-js js/rSlider.js --extern-post-js js/slideOut.js main.o audio_sdl.o 
 
+
+b3_audio_pm:
+	em++ $(STDS) -c src/audio/main.cpp $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -O2
+	em++ $(STDS) -c src/audio/audio_pm.cpp $(COMMON_FLAGS) -O2 \
+	-Wno-incompatible-function-pointer-types $(SIMD_FLAGS) $(BOOST_FLAGS) \
+	-sUSE_SDL=2 -sUSE_SDL_IMAGE=0 -sUSE_SDL_TTF=0 -sUSE_SDL_NET=0
+	em++ $(STDS) -o $(BIN_NAME)-pm.js $(COMMON_FLAGS) $(LINK_FLAGSm) $(SIMD_FLAGS) $(BOOST_FLAGS) \
+	-sMALLOC=mimalloc -sUSE_SDL=2 -sUSE_SDL_IMAGE=0 -sUSE_SDL_TTF=0 -sUSE_SDL_NET=0 -O2 -sAUDIO_WORKLET=1 \
+	-sFORCE_FILESYSTEM=1 -sWASM_LEGACY_EXCEPTIONS=0 -Wno-incompatible-function-pointer-types \
+	-sEXPORTED_FUNCTIONS='["_main","_pl","_r4nd"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
+	-sMODULARIZE=1 -sEXPORT_NAME='libAudio' --extern-post-js js/rSlider.js --extern-post-js js/slideOut.js main.o audio_pm.o 
+
 b3_audio_sdl3:
 	em++ $(STDS) -c src/audio/main.cpp $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -O2
 	em++ $(STDS) -c src/audio/audio_sdl3.cpp $(COMMON_FLAGS) -O2 \
