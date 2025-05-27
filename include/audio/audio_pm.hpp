@@ -124,10 +124,6 @@ SDL_UnlockAudioDevice(wave.dev);
 
 
   
-unsigned int num_float_samples_total = current_chunk_len_bytes / sizeof(float);
-emscripten::val js_array=emscripten::val(emscripten::typed_memory_view(num_float_samples_total,reinterpret_cast<const float*>(current_chunk_data_ptr)));
-js_pcm_data_handler(js_array, samples_per_channel_in_chunk, channels, std::string("float32"));
-
 
   
 SDL_memcpy(stm,wave.wptr,sound_lft.at(0,0));
