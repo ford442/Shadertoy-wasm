@@ -310,7 +310,7 @@ loader_pm:
 	 -sASYNCIFY=1 -sEXPORTED_FUNCTIONS='["_main","_pl"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
 	 wasm_loader_pm.o --output_eol linux -rtlib=compiler-rt --closure 0 --closureFriendly \
-	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sWASM_LEGACY_EXCEPTIONS=0
+	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sWASM_LEGACY_EXCEPTIONS=0 -sAUDIO_WORKLET=1
 
 b3_wasm_loader_lto_3232_test3_thread:
 	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp -o wasm_loader_32.o -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
