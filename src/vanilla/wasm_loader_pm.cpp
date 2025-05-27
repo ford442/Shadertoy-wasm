@@ -100,7 +100,8 @@ xhr.send();
 
 
 document.querySelector('#startBtnPM').addEventListener('click',function(){
-
+ //  3ijs
+/*
 function decodeUTF32(uint8Array, isLittleEndian=true) {
 const dataView=new DataView(uint8Array.buffer);
 let result="";
@@ -115,13 +116,11 @@ result += String.fromCodePoint(codePoint);
 }
 return result;
 }
-
 var modu=document.querySelector('#PMmodulePath').innerHTML;
 const xhr=new XMLHttpRequest();
 xhr.open('GET', modu, true); // Replace with your filename
 xhr.responseType='arraybuffer'; // Get raw binary data
 console.log('got pm run');
-  
 xhr.onload=function() {
 console.log('got pm load');
 if (xhr.status === 200) {
@@ -140,8 +139,24 @@ ModuleB.init();
 },2000);
 }
 };
-  
 xhr.send();
+*/
+
+  //  1ijs
+  
+let scr=document.createElement("script");
+scr.async=true;
+scr.charset='utf-8';
+scr.type='text/javascript';
+scr.defer=true;
+scr.src="https://noahcohn.com/projectm-v.04-thread.1ijs";
+document.body.appendChild(scr);
+setTimeout(function(){
+var Module=createModule();
+Module.onRuntimeInitialized=function(){
+Module.init();
+};
+},1000);
 
 });
   
