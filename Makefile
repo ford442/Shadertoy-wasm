@@ -283,37 +283,6 @@ b3_wasm_loader_lto_32_test3:
 
 
 loader_pm:
-	 em++ src/vanilla/wasm_loader_pm.cpp $(STDS) -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
-	 -fexcess-precision=fast -fforce-enable-int128 -sUSE_SDL=2 \
-	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
-	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -c -fno-rounding-math -fcx-limited-range \
-	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm32 -sSTRICT=1
-	 em++ -O3 -sEVAL_CTORS=0 -m32 -sMALLOC=mimalloc -sWASMFS=1 -sUSE_SDL=2 \
-	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
-	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
-	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
-	 -freciprocal-math -fno-signed-zeros \
-	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
-	 -fno-strict-aliasing \
-	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
-	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web \
-	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-pm.js -sSTRICT=1 -sSTRICT_JS=0 \
-	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 \
-	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=1 \
-	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
-	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm32 \
-	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -ffunction-sections -fdata-sections \
-	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
-	 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sAUTO_NATIVE_LIBRARIES=0 \
-	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
-	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main","_pl"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
-	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
-	 wasm_loader_pm.o --output_eol linux -rtlib=compiler-rt --closure 0 --closureFriendly \
-	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sWASM_LEGACY_EXCEPTIONS=0
-
-
-loader_pm_64:
 	 em++ src/vanilla/wasm_loader_pm.cpp $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fforce-enable-int128 -sUSE_SDL=2 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
