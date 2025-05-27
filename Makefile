@@ -291,8 +291,8 @@ loader_pm:
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSTRICT=1
 	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -sUSE_SDL=2 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
-	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
-	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
+	 -pipe -DQUAD -DDOUBLE \
+	 -stdlib=libc++abi -fno-rounding-math -fassociative-math \
 	 -freciprocal-math -fno-signed-zeros \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
 	 -fno-strict-aliasing \
