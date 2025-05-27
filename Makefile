@@ -284,12 +284,12 @@ b3_wasm_loader_lto_32_test3:
 
 loader_pm:
 	 em++ src/vanilla/wasm_loader_pm.cpp $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
-	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 -sUSE_SDL2=1 \
+	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 -sUSE_SDL=2 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSTRICT=1
-	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -sUSE_SDL2=1 \
+	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 -sUSE_SDL=2 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
