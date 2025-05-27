@@ -297,7 +297,7 @@ loader_pm:
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
 	 -fno-strict-aliasing \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
-	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web \
+	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web,worker \
 	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-pm.js -sSTRICT=1 -sSTRICT_JS=0 \
 	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
