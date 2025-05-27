@@ -20,11 +20,54 @@ return EM_TRUE;
 int main(){
 
 EM_ASM({
+  
+FS.mkdir('/snd');
+var $sngs=[];
+
+function sngs(xml){
+const nparser=new DOMParser();
+const htmlDocs=nparser.parseFromString(xml.responseText,'text/html');
+const preList=htmlDocs.getElementsByTagName('pre')[0].getElementsByTagName('a');
+$sngs[0]=preList.length;
+for(var i=1;i<preList.length;i++){
+var txxt=preList[i].href;
+let pathName = window.location.pathname;
+let currentOrigin = window.location.origin;
+let lastSlashIndex = pathName.lastIndexOf('/');
+let basePath = pathName.substring(0, lastSlashIndex + 1);
+txxt=txxt.replace(currentOrigin,'');
+$sngs[i]=basePath+'songs/'+txxt;
+// $sngs[i]=currentOrigin+txxt;
+}};
+
+function scanSongs(){
+const nxhttp=new XMLHttpRequest();
+nxhttp.onreadystatechange=function(){
+if(this.readyState==4&&this.status==200){
+sngs(this);
+}};
+nxhttp.open('GET','songs/',true);
+nxhttp.send();
+}
+
+function pll(){
+Module.ccall('pl');
+}
+
+const fll=new BroadcastChannel('file');
+fll.addEventListener('message',ea=>{
+const fill=new Uint8Array(ea.data.data);
+FS.writeFile('/snd/sample.wav',fill);
+setTimeout(function(){pll();},500);
+const shutDown=new BroadcastChannel('shutDown');
+shutDown.postMessage({data:222});
+});
 
 setTimeout(function(){
 document.querySelector('#splash2').style.zIndex=3000;
 document.querySelector('#splash2').style.display='none';
 },4200);
+
 setTimeout(function(){
 document.querySelector('#splash1').style.zIndex=3000;
 document.querySelector('#splash1').style.display='none';
