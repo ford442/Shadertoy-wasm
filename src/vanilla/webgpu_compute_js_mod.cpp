@@ -145,7 +145,7 @@ async function drawFrameAsync() {
     // ---- 3. Copy from renderTargetTexture to readbackBuffer ----
     commandEncoder.copyTextureToBuffer(
         { texture: renderTargetTexture, mipLevel: 0 },
-        { buffer: readbackBuffer, bytesPerRow: currentKeepSize * 4, rowsPerImage: currentKeepSize },
+        { buffer: readbackBuffer, bytesPerRow: paddedBytesPerRow, rowsPerImage: currentKeepSize },
         { width: currentKeepSize, height: currentKeepSize, depthOrArrayLayers: 1 }
     );
 
@@ -186,6 +186,7 @@ async function drawFrameAsync() {
     }
 
     Module.cnvOn(); // Signal C++ side
+        setTimeout(drawFrameAsync, 16.6); 
 }
 
 
@@ -263,11 +264,17 @@ async function canvasStartSize2() {
         format: 'rgba8unorm', // Common format, good for image data
         usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
     });
-    const readbackBufferSize = currentKeepSize * currentKeepSize * 4; // 4 bytes per pixel (RGBA)
-    readbackBuffer = device.createBuffer({
+
+const bytesPerPixel = 4; // For rgba8unorm format
+const unpaddedBytesPerRow = currentKeepSize * bytesPerPixel;
+const paddedBytesPerRow = Math.ceil(unpaddedBytesPerRow / 256) * 256;
+
+ const readbackBufferSize = paddedBytesPerRow * currentKeepSize; 
+readbackBuffer = device.createBuffer({
         size: readbackBufferSize,
         usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     });
+
     // Uniform Buffers for transformation
     transformUniformBuffer = device.createBuffer({
         size: 4 * 4, // vec4<f32> for (drawX, drawY, w_img, h_img)
@@ -396,10 +403,12 @@ async function canvasStartSize2() {
             // Adjust this call if your C++ side expects different parameters or no call at this stage
             Module.ccall("startWebGPUC", null, ["Number", "Number", "Number"], [currentKeepSize, parseFloat(vsiz_val), parseFloat(srsiz_val)]);
             window.running = 1;
-            setInterval(drawFrameAsync, 16.6); // ~60 FPS
+          //  setInterval(drawFrameAsync, 16.6); // ~60 FPS
+            drawFrameAsync();
         }, 250);
     } else {
-        setInterval(drawFrameAsync, 16.6);
+            drawFrameAsync();
+        // setInterval(drawFrameAsync, 16.6);
     }
 }
 
