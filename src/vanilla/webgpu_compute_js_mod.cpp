@@ -196,18 +196,18 @@ async function canvasStartSize2() {
     const vsiz_val = document.querySelector('#vsiz').innerHTML;
     const SiZ_val = window.innerHeight;
     let w_orig, h_orig; // w$, h$ from your original code
-    if (vvic_elem.tagName === 'CANVAS') {
+    if (vvic_elem.tagName == 'CANVAS') {
         // If vvic_elem is a canvas, ensure its dimensions are set before reading
         // vvic_elem.width = vsiz_val; // Example, adjust as per your logic
         // vvic_elem.height = vsiz_val; // Example
         w_orig = vvic_elem.width;
         h_orig = vvic_elem.height;
-    } else if (vvic_elem.tagName === 'IMG') {
+    } else if (vvic_elem.tagName == 'IMG') {
         w_orig = vvic_elem.naturalWidth;
         h_orig = vvic_elem.naturalHeight;
         // Original code set vvic_elem.width/height here, which can distort.
         // WebGPU copyExternalImageToTexture will use natural dimensions.
-    } else if (vvic_elem.tagName === 'VIDEO') {
+    } else if (vvic_elem.tagName == 'VIDEO') {
         w_orig = vvic_elem.videoWidth;
         h_orig = vvic_elem.videoHeight;
     } else {
