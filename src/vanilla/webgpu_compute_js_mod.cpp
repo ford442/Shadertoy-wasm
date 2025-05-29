@@ -145,7 +145,7 @@ async function drawFrameAsync() {
     // ---- 3. Copy from renderTargetTexture to readbackBuffer ----
     commandEncoder.copyTextureToBuffer(
         { texture: renderTargetTexture, mipLevel: 0 },
-        { buffer: readbackBuffer, bytesPerRow: paddedBytesPerRow, rowsPerImage: currentKeepSize },
+        { buffer: readbackBuffer, bytesPerRow: Math.ceil((currentKeepSize * 4) / 256) * 256, rowsPerImage: currentKeepSize },
         { width: currentKeepSize, height: currentKeepSize, depthOrArrayLayers: 1 }
     );
 
