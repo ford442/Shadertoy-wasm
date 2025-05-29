@@ -56,7 +56,7 @@ async function drawFrameAsync() {
     } else if (vvic_elem.tagName === 'VIDEO') {
         current_vvic_w = vvic_elem.videoWidth;
         current_vvic_h = vvic_elem.videoHeight;
-        if (vvic_elem.readyState >= vvic_elem.HAVE_ wystarczajaco_DANYCH) vvic_content_ready = true; // HAVE_ENOUGH_DATA
+        if (vvic_elem.readyState >= 3) {vvic_content_ready = true;} // HAVE_ENOUGH_DATA
     }
 
     const commandEncoder = device.createCommandEncoder();
