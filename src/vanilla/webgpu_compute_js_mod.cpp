@@ -523,10 +523,10 @@ h$=vvic.videoHeight;
 vvic.width=vvic.videoWidth;
 vvic.height=vvic.videoHeight;
 }
-const keepSizea = Math.max(h$, w$);
-const keepSize = Math.min(keepSizea, vsiz);
-const drawX = (keepSize - w$) / 2;
-const drawY = (keepSize - h$) / 2;
+const keepSizea = parseInt(Math.max(h$, w$));
+const keepSize = parseInt(Math.min(keepSizea, vsiz));
+const drawX = parseInt((keepSize - w$) / 2);
+const drawY = parseInt((keepSize - h$) / 2);
 console.log("canvas size: ",keepSize,", ",keepSize);
 const OffscCnv=new OffscreenCanvas(keepSize,keepSize); 
 // document.querySelector('#contain2').appendChild(OffscCnv);
@@ -540,12 +540,12 @@ scnv.width=SiZ;
 OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
-const gl3=OffscCnv.getContext('2d',{
+const gl3=OffscCnv.getContext('webgl2',{
 // colorType:'float32',
 alpha:true,
 willReadFrequently:true,
-stencil:true,
-depth:true,
+stencil:false,
+depth:false,
 colorSpace:"display-p3",
 desynchronized:false,
 antialias:true,
@@ -579,16 +579,19 @@ FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
 FS.rename('/video/frame.gl', '/video/frameBFR.gl');
 FS.rename('/video/frameB.gl', '/video/frame.gl');
 Module.cnvOn();
+setTimeout(drawFrame, 16);
 }
 if (running == 0) {
 setTimeout(() => {
 console.log('sending: ',keepSize,vsiz,srsiz);
 Module.ccall("startWebGPUC", null,["Number","Number","Number"],[keepSize,vsiz,srsiz]);
 running = 1;
-setInterval(drawFrame, 16.6); 
+// setInterval(drawFrame, 16.6); 
+drawFrame(); 
 }, 250);
 } else {
-setInterval(drawFrame, 16.6);
+// setInterval(drawFrame, 16.6);
+drawFrame(); 
 }
 }
 
@@ -1919,8 +1922,8 @@ getShader(pth2,'compute.wgsl');
 getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 setTimeout(function(){
-canvasStartSize2();
-},3000);
+canvasStartSize();
+},2000);
 });
 
 document.querySelector('#startBtnB').addEventListener('click',function(){
