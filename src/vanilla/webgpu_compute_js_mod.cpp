@@ -523,7 +523,7 @@ h$=vvic.videoHeight;
 vvic.width=vvic.videoWidth;
 vvic.height=vvic.videoHeight;
 }
-const keepSizea = parseInt(Math.max(h$, w$));
+const keepSizea = Math.max(h$, w$);
 const keepSize = parseInt(Math.min(keepSizea, vsiz));
 const drawX = parseInt((keepSize - w$) / 2);
 const drawY = parseInt((keepSize - h$) / 2);
@@ -567,7 +567,7 @@ Module.ccall('frmsOn');
 // const fileStream=FS.open('/video/frameBFR.gl','w+');
 const fileStream=FS.open('/video/frame.gl','w');
 function drawFrame() {
-if (pause === 'ready') {
+if (pause == 'ready') {
 gl3.clearRect(0, 0, keepSize, keepSize);
 gl3.drawImage(vvic, 0, 0, w$, h$, drawX, drawY, w$, h$); 
 }
