@@ -540,7 +540,7 @@ scnv.width=SiZ;
 OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
-const gl3=OffscCnv.getContext('webgl2',{
+const gl3=OffscCnv.getContext('2d',{
 // colorType:'float32',
 alpha:true,
 willReadFrequently:true,
