@@ -763,19 +763,19 @@ cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 function rrra(rta){
-var opc=(knb-rta)/1.0;
+var opc=parseFloat(knb-rta);
 scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:"+opc+";position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rta+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rta+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
 function rrrb(rtb){
-var opc=(knc-rtb)/1.0;
+var opc=parseFloat(knc-rtb);
 icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:"+opc+";position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtb+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-var opc=(knd-rtc)/1.0;
+var opc=parseFloat(knd-rtc);
 bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:"+opc+";position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
