@@ -795,7 +795,7 @@ rott=rott-knd;
 rott = (rott % 360 + 360) % 360;
 rrra(rott);
 setTimeout(function(){
-rottb=rottb-knc;
+rottb=rottb+knc;
 rottb = (rottb % 360 + 360) % 360;
 rrrb(rottb);
 },rate);
