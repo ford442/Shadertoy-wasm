@@ -731,6 +731,10 @@ ctxC.putImageData(rgbdat3,0,0);
 // bcanvas.setAttribute("style","transform: rotate(230deg)");
 
 function Ra(){
+knb=parseInt(document.getElementById("rra").innerHTML);
+knc=parseInt(document.getElementById("rrb").innerHTML);
+knd=parseInt(document.getElementById("rrc").innerHTML);
+  
 // bgPicA.hidden=false;
 if(bgPicB.hidden==true){
 bgPicB.hidden=false;
@@ -759,23 +763,23 @@ cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 function rrra(rta){
-scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.777;position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rta+"deg)");
+var opc=(knb-rta)/1.0;
+scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:"+opc+";position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rta+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rta+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
 function rrrb(rtb){
-icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.777;position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtb+"deg)");
+var opc=(knc-rtb)/1.0;
+icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:"+opc+";position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtb+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.777;position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtc+"deg)");
+var opc=(knd-rtc)/1.0;
+bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:"+opc+";position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
 }
-knb=parseInt(document.getElementById("rra").innerHTML);
-knc=parseInt(document.getElementById("rrb").innerHTML);
-knd=parseInt(document.getElementById("rrc").innerHTML);
 rate=parseInt(document.getElementById("mainr").innerHTML);
 rott=0;
 rottb=0;
