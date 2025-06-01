@@ -771,13 +771,13 @@ scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.
 }
 function rrrb(rtb){
 // var opc =parseFloat(360 - (rtb % knc + knc) % knc)/360;
-icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.888;position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtb+"deg)");
+icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.888;position: absolute;z-index:999996;top:0;left:0;transform: rotate("+rtb+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
 // var opc =parseFloat(360 - (rtc % knd + knd) % knd)/360;
-bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.888;position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtc+"deg)");
+bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.888;position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
 }
