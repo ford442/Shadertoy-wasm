@@ -608,9 +608,9 @@ rgbd3[i]=(grey+(rgb-128));
 rgbd3[i+1]=(grey+(rgb-128));
 rgbd3[i+2]=(grey+(rgb-128));
 
-rgbd[i+3]=((rgb-125));
-rgbd2[i+3]=((rgb-125);
-rgbd3[i+3]=((rgb-125);
+rgbd[i+3]=(rgb-125);
+rgbd2[i+3]=(rgb-125);
+rgbd3[i+3]=(rgb-125);
 // rgbd[i+3]=0;
 // rgbd2[i+3]=0;
 // rgbd3[i+3]=0;
