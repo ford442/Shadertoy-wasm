@@ -598,15 +598,15 @@ rgbd3[i+3]=255;
  rgbd[i+3]=0;
 }
 }else{           // black / blank
-rgbd[i]=255-(grey+(rgb-128));
-rgbd[i+1]=255-(grey+(rgb-128));
-rgbd[i+2]=255-(grey+(rgb-128));
-rgbd2[i]=255-(grey+(rgb-128));
-rgbd2[i+1]=255-(grey+(rgb-128));
-rgbd2[i+2]=255-(grey+(rgb-128));
-rgbd3[i]=255-(grey+(rgb-128));
-rgbd3[i+1]=255-(grey+(rgb-128));
-rgbd3[i+2]=255-(grey+(rgb-128));
+rgbd[i]=(grey+(rgb-128));
+rgbd[i+1]=(grey+(rgb-128));
+rgbd[i+2]=(grey+(rgb-128));
+rgbd2[i]=(grey+(rgb-128));
+rgbd2[i+1]=(grey+(rgb-128));
+rgbd2[i+2]=(grey+(rgb-128));
+rgbd3[i]=(grey+(rgb-128));
+rgbd3[i+1]=(grey+(rgb-128));
+rgbd3[i+2]=(grey+(rgb-128));
 rgbd[i+3]=((rgb-128)*diff);
 rgbd2[i+3]=((rgb-128)*diff);
 rgbd3[i+3]=((rgb-128)*diff);
@@ -714,9 +714,9 @@ if (rgb > darkThreshold) {
         rgbd[i+3] = 0; rgbd2[i+3] = 0;
     }
 } else { // Dark/Transparent Zone
-    rgbd[i+3] = 0;
-    rgbd2[i+3] = 0;
-    rgbd3[i+3] = 0;
+ //   rgbd[i+3] = 0;
+ //   rgbd2[i+3] = 0;
+ //   rgbd3[i+3] = 0;
 }
 
 // agavF.set(rgbdat.data);
@@ -758,12 +758,12 @@ cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 function rrra(rta){
-scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.333;position: absolute;z-index:999996;top:0;left:0;transform: rotate("+rta+"deg)");
+scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.333;position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rta+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rta+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
 function rrrb(rtb){
-icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.666;position: absolute;z-index:999995;top:0;left:0;transform: rotate("+rtb+"deg)");
+icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.666;position: absolute;z-index:999996;top:0;left:0;transform: rotate("+rtb+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
