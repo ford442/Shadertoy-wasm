@@ -362,7 +362,7 @@ scanvas.width=winSize;
 scanvas.height=winSize;
 scanvas.zoom=1;
 scanvas.scale=1.0;
-scanvas.style.opacity=0.666;
+scanvas.style.opacity=0.333;
 scanvas.style.pointerEvents='none';
 scanvas.style.display='block';
 scanvas.style.position='absolute';
@@ -756,17 +756,17 @@ cnP.setAttribute("style","transform: scaleY(-1.0)");
 // cnPB.setAttribute("style","transform: scaleY(1);");
 }
 function rrra(rta){
-scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.666;position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rta+"deg)");
+scanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.333;position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rta+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rta+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rta+"deg);");
 }
 function rrrb(rtb){
-icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.666;position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rtb+"deg)");
+icanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.333;position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rtb+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtb+"deg)");
 // cnPB.setAttribute("style","transform:rotate("+rtb+"deg);");
 }
 function rrrc(rtc) {
-bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.666;position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rtc+"deg)");
+bcanvas.setAttribute("style","backgroundColor:'rgba(255,255,255,0.0)';opacity:0.333;position: absolute;z-index:999994;top:0;left:0;transform: rotate("+rtc+"deg)");
 // cnP.setAttribute("style","transform: rotate("+rtc+"deg)");
 // cnPB.setAttribute("style","transform: rotate("+rtc+"deg);");
 }
