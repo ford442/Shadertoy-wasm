@@ -22,7 +22,7 @@ COMMON_FLAGS += -sSUPPORT_LONGJMP=emscripten -pthread -pipe -mextended-const -mb
 	 -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  -fno-vectorize
 
-COMMON_FLAGS_safe += -openmp-simd -pthread -pipe -mextended-const -matomics -sSUPPORT_LONGJMP=emscripten \
+COMMON_FLAGS_safe += -openmp -pthread -pipe -mextended-const -matomics -sSUPPORT_LONGJMP=emscripten \
 	 -fPIC -fPIE -finline-functions -funroll-loops -msign-ext -funsafe-math-optimizations \
 	 -m32 -fmerge-all-constants -ffast-math -ffp-contract=off -fno-math-errno \
 	 -ftree-vectorize -fstrict-vtable-pointers \
