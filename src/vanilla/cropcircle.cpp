@@ -598,18 +598,19 @@ rgbd3[i+3]=255;
  rgbd[i+3]=0;
 }
 }else{           // black / blank
-rgbd[i]=(grey+(rgb-128));
-rgbd[i+1]=(grey+(rgb-128));
-rgbd[i+2]=(grey+(rgb-128));
-rgbd2[i]=(grey+(rgb-128));
-rgbd2[i+1]=(grey+(rgb-128));
-rgbd2[i+2]=(grey+(rgb-128));
-rgbd3[i]=(grey+(rgb-128));
-rgbd3[i+1]=(grey+(rgb-128));
-rgbd3[i+2]=(grey+(rgb-128));
-rgbd[i+3]=255-((rgb-128)*diff);
-rgbd2[i+3]=255-((rgb-128)*diff);
-rgbd3[i+3]=255-((rgb-128)*diff);
+rgbd[i]=255-(grey+(rgb-128));
+rgbd[i+1]=255-(grey+(rgb-128));
+rgbd[i+2]=255-(grey+(rgb-128));
+rgbd2[i]=255-(grey+(rgb-128));
+rgbd2[i+1]=255-(grey+(rgb-128));
+rgbd2[i+2]=255-(grey+(rgb-128));
+rgbd3[i]=255-(grey+(rgb-128));
+rgbd3[i+1]=255-(grey+(rgb-128));
+rgbd3[i+2]=255-(grey+(rgb-128));
+  
+rgbd[i+3]=((rgb-128)*diff);
+rgbd2[i+3]=((rgb-128)*diff);
+rgbd3[i+3]=((rgb-128)*diff);
 // rgbd[i+3]=0;
 // rgbd2[i+3]=0;
 // rgbd3[i+3]=0;
