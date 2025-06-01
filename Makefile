@@ -1,4 +1,4 @@
-BIN_NAME = o0-003
+BIN_NAME = o0-004
 
 LDFLAGS = -Wl,-O3,--lto-O3,-lc,-lc++,-lc++abi,-lm,-lrt,-ldl,-S
 
