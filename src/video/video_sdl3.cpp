@@ -752,9 +752,55 @@ void qu(int rc) {
     // exit(rc); // Consider if you need to exit or just SDL_Quit
 }
 
-void plt() {
-    setup_audio_playback();
+
+static void bfr(void* userdata, SDL_AudioStream *stream, int pcm_buffer_size, int user_request_bytes) {
+    // userdata: from SDL_OpenAudioDeviceStream (currently NULL in your plan)
+    // stream: the SDL_AudioStream requesting data
+    // pcm_buffer_size: diagnostic: the total size of one of the stream's internal buffers.
+    // user_request_bytes: how many bytes the stream is requesting from you right now.
+    if (user_request_bytes <= 0) {
+        return; // Nothing to do
+    }
+    // Temporary buffer to hold data prepared from your WAV source
+    std::vector<Uint8> temp_audio_chunk(user_request_bytes);
+    int bytes_prepared_for_stream = 0;
+    Uint8* current_temp_chunk_ptr = temp_audio_chunk.data();
+    while (bytes_prepared_for_stream < user_request_bytes) {
+        if (!wave.snd || wave.slen == 0) {
+            // No sound data. Fill the remainder of what SDL wants with silence.
+            Uint8 silence_val = SDL_GetSilenceValueForFormat(wave.spec.format); // SDL3 function
+            SDL_memset(current_temp_chunk_ptr, silence_val, user_request_bytes - bytes_prepared_for_stream);
+            bytes_prepared_for_stream = user_request_bytes; // Mark as fully prepared (with silence)
+            break;
+        }
+        int remaining_in_temp_buffer = user_request_bytes - bytes_prepared_for_stream;
+        int remaining_in_wav_source = wave.slen - wave.pos;
+        if (remaining_in_wav_source == 0) { // End of wave.snd, loop.
+            wave.pos = 0;
+            remaining_in_wav_source = wave.slen;
+            if (wave.slen == 0) { // Should be caught by initial check, but defensive
+                break; // No more data to provide
+            }
+        }
+        int bytes_to_copy_this_iteration = std::min(remaining_in_temp_buffer, remaining_in_wav_source);
+        if (bytes_to_copy_this_iteration <= 0) {
+            break;
+        }
+        Uint8* source_wav_data_ptr = wave.snd + wave.pos;
+        // Copy data into our temporary chunk for SDL_PutAudioStreamData
+        SDL_memcpy(current_temp_chunk_ptr, source_wav_data_ptr, bytes_to_copy_this_iteration);
+        wave.pos += bytes_to_copy_this_iteration;
+        current_temp_chunk_ptr += bytes_to_copy_this_iteration;
+        bytes_prepared_for_stream += bytes_to_copy_this_iteration;
+    }
+    if (bytes_prepared_for_stream > 0) {
+        if (SDL_PutAudioStreamData(stream, temp_audio_chunk.data(), bytes_prepared_for_stream) < 0) {
+            fprintf(stderr, "Error putting audio data to stream: %s\n", SDL_GetError());
+            // Optionally, handle error (e.g., clear stream, log)
+        }
+    }
 }
+
 
 void setup_audio_playback() {
     char flnm[24];
@@ -820,52 +866,8 @@ void setup_audio_playback() {
     printf("SDL3 Audio setup complete, playing %s\n", flnm);
 }
 
-static void bfr(void* userdata, SDL_AudioStream *stream, int pcm_buffer_size, int user_request_bytes) {
-    // userdata: from SDL_OpenAudioDeviceStream (currently NULL in your plan)
-    // stream: the SDL_AudioStream requesting data
-    // pcm_buffer_size: diagnostic: the total size of one of the stream's internal buffers.
-    // user_request_bytes: how many bytes the stream is requesting from you right now.
-    if (user_request_bytes <= 0) {
-        return; // Nothing to do
-    }
-    // Temporary buffer to hold data prepared from your WAV source
-    std::vector<Uint8> temp_audio_chunk(user_request_bytes);
-    int bytes_prepared_for_stream = 0;
-    Uint8* current_temp_chunk_ptr = temp_audio_chunk.data();
-    while (bytes_prepared_for_stream < user_request_bytes) {
-        if (!wave.snd || wave.slen == 0) {
-            // No sound data. Fill the remainder of what SDL wants with silence.
-            Uint8 silence_val = SDL_GetSilenceValueForFormat(wave.spec.format); // SDL3 function
-            SDL_memset(current_temp_chunk_ptr, silence_val, user_request_bytes - bytes_prepared_for_stream);
-            bytes_prepared_for_stream = user_request_bytes; // Mark as fully prepared (with silence)
-            break;
-        }
-        int remaining_in_temp_buffer = user_request_bytes - bytes_prepared_for_stream;
-        int remaining_in_wav_source = wave.slen - wave.pos;
-        if (remaining_in_wav_source == 0) { // End of wave.snd, loop.
-            wave.pos = 0;
-            remaining_in_wav_source = wave.slen;
-            if (wave.slen == 0) { // Should be caught by initial check, but defensive
-                break; // No more data to provide
-            }
-        }
-        int bytes_to_copy_this_iteration = std::min(remaining_in_temp_buffer, remaining_in_wav_source);
-        if (bytes_to_copy_this_iteration <= 0) {
-            break;
-        }
-        Uint8* source_wav_data_ptr = wave.snd + wave.pos;
-        // Copy data into our temporary chunk for SDL_PutAudioStreamData
-        SDL_memcpy(current_temp_chunk_ptr, source_wav_data_ptr, bytes_to_copy_this_iteration);
-        wave.pos += bytes_to_copy_this_iteration;
-        current_temp_chunk_ptr += bytes_to_copy_this_iteration;
-        bytes_prepared_for_stream += bytes_to_copy_this_iteration;
-    }
-    if (bytes_prepared_for_stream > 0) {
-        if (SDL_PutAudioStreamData(stream, temp_audio_chunk.data(), bytes_prepared_for_stream) < 0) {
-            fprintf(stderr, "Error putting audio data to stream: %s\n", SDL_GetError());
-            // Optionally, handle error (e.g., clear stream, log)
-        }
-    }
+void plt() {
+    setup_audio_playback();
 }
 
 GLfloat x;
