@@ -192,7 +192,7 @@ scr.async=true;
 scr.charset='utf-8';
 scr.type='text/javascript';
 scr.defer=true;
-scr.src="https://noahcohn.com/projectm-v.05-thread.1ijs";
+scr.src=scrsrc; // "https://noahcohn.com/projectm-v.05-thread.1ijs";
 document.body.appendChild(scr);
 setTimeout(function(){
 var Module=createModule();
