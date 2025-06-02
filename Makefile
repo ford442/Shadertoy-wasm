@@ -165,6 +165,18 @@ video_resurection_webgpuc3:
 	 --js-library lib/lib_demo.js --js-library lib/library_miniprintf.js --js-library lib/lib_webgpu.js --closure-args=--externs=lib/webgpu-closure-externs.js \
 	 --post-js js/pagec_webgpuc.js --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/gpujsx.js --closure 0
 
+video_sdl3:
+	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static
+	 em++ lib/lib_webgpu.cpp $(STDS) -static
+	 em++ src/video/video_sdl3.cpp -O0 -I/content/RAMDRIVE2/b3/include/vanilla/ -c -pipe -flto -flto=thin $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
+	 em++ video_sdl3.o -O0 $(LDFLAGSb) $(STDS) --bind -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
+	 -I/content/RAMDRIVE2/b3/include/vanilla/ -sFORCE_FILESYSTEM=1 -sUSE_SDL=3 -sMALLOC=mimalloc -sWASMFS=1 -pipe -flto -flto=thin -dead_strip \
+	 -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
+	 -sEXPORTED_FUNCTIONS='["_main","_str","_pl","_b3"]' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF64"]' \
+	 --pre-js js/fluid.js --pre-js js/flui.js --pre-js js/setUp.js --pre-js js/startUp.js -lmath.js -lhtml5.js -lint53.js \
+	 --js-library lib/lib_demo.js --js-library lib/library_miniprintf.js --js-library lib/lib_webgpu.js --closure-args=--externs=lib/webgpu-closure-externs.js \
+	 --post-js js/pagec_webgpuc.js --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/gpujsx.js --closure 0
+
 
 video_resurection_webgpuc64:
 	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static
