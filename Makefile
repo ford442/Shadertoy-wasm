@@ -169,7 +169,7 @@ video_sdl3:
 	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static
 	 em++ lib/lib_webgpu.cpp $(STDS) -static
 	 em++ src/video/video_sdl3.cpp -O0 -I/content/RAMDRIVE2/b3/include/vanilla/ -c -pipe $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
-	 em++ video_sdl3.o -O0 $(LDFLAGSb) $(STDS) --bind -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
+	 em++ video_sdl3.o -O0 $(LDFLAGSb) $(STDS) -sMAIN_MODULE=1 --bind -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -sFORCE_FILESYSTEM=1 -sUSE_SDL=3 -sMALLOC=mimalloc -sWASMFS=1 -pipe -dead_strip \
 	 -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
 	 -sEXPORTED_FUNCTIONS='["_main","_str","_pl","_b3"]' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF64"]' \
