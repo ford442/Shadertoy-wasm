@@ -16,7 +16,6 @@
 #include <chrono>
 #include <unistd.h>
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_Audio.h>
 
 #define GL_GLEXT_PROTOTYPES 1
 #define GL_FRAGMENT_PRECISION_HIGH 1
