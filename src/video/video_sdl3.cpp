@@ -15,7 +15,8 @@
 #include <ctime>
 #include <chrono>
 #include <unistd.h>
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_Audio.h>
 
 #define GL_GLEXT_PROTOTYPES 1
 #define GL_FRAGMENT_PRECISION_HIGH 1
@@ -722,64 +723,150 @@ T=true;
 EM_BOOL mouse_call(int eventType,const EmscriptenMouseEvent *e,void *userData);
 static const char *read_file_c(const char *filename);
   
-SDL_AudioDeviceID dev;
+SDL_AudioDeviceID audio_device_id = 0; // New: SDL3 uses 0 for invalid/unopened
+SDL_AudioStream *audio_stream = NULL;  // New: For SDL3 audio stream
 struct{Uint8* snd;int pos;Uint32 slen;SDL_AudioSpec spec;}wave;
 
-void cls_aud(){
-if(dev!=0){
-SDL_PauseAudioDevice(dev,SDL_TRUE);
-SDL_CloseAudioDevice(dev);
-dev=0;
-return;
-}}
-
-void qu(int rc){
-SDL_Quit();
-return;
+void cls_aud() {
+    if (audio_stream) {
+        SDL_DestroyAudioStream(audio_stream);
+        audio_stream = NULL;
+    }
+    if (audio_device_id != 0) { // Check if device was actually opened
+        SDL_PauseAudioDevice(audio_device_id); // Good practice to pause
+        SDL_CloseAudioDevice(audio_device_id);
+        audio_device_id = 0;
+    }
+     // It's good practice to also free WAV data if it's loaded and audio is closing.
+    if (wave.snd) {
+        SDL_free(wave.snd);
+        wave.snd = NULL;
+        wave.slen = 0;
+    }
+    wave.pos = 0; // Reset position
+    // printf("Audio closed.\n"); // Optional: for debugging
 }
 
-void opn_aud(){
-dev=SDL_OpenAudioDevice(NULL,SDL_FALSE,&wave.spec,NULL,0);
-if(!dev){
-SDL_FreeWAV(wave.snd);
-}
-SDL_PauseAudioDevice(dev,SDL_FALSE);
-return;
+// qu() remains the same
+void qu(int rc) {
+    SDL_Quit();
+    // exit(rc); // Consider if you need to exit or just SDL_Quit
 }
 
-void SDLCALL bfr(void *unused,Uint8* stm,int len){
-Uint8* wptr;
-int lft;
-wptr=wave.snd+wave.pos;
-lft=wave.slen-wave.pos;
-while (lft<=len){
-SDL_memcpy(stm,wptr,lft);
-stm+=lft;
-len-=lft;
-wptr=wave.snd;
-lft=wave.slen;
-wave.pos=0;
-}
-SDL_memcpy(stm,wptr,len);
-wave.pos+=len;
-return;
+void plt() {
+    setup_audio_playback();
 }
 
-void plt(){
-char flnm[24];
-SDL_FreeWAV(wave.snd);
-SDL_SetMainReady();
-if (SDL_Init(SDL_INIT_AUDIO)<0){
-qu(1);
+void setup_audio_playback() {
+    char flnm[24];
+    // 1. Clean up previous audio state (if any) - similar to cls_aud()
+    if (audio_stream) {
+        SDL_DestroyAudioStream(audio_stream);
+        audio_stream = NULL;
+    }
+    if (audio_device_id != 0) {
+        SDL_CloseAudioDevice(audio_device_id);
+        audio_device_id = 0;
+    }
+    if (wave.snd) {
+        SDL_free(wave.snd); // Use SDL_free for data from SDL_LoadWAV
+        wave.snd = NULL;
+        wave.slen = 0;
+    }
+    wave.pos = 0;
+    // 2. Initialize SDL Audio Subsystem
+    if (SDL_InitSubSystem(SDL_INIT_AUDIO) < 0) { // Or SDL_Init(SDL_INIT_AUDIO)
+        fprintf(stderr, "SDL_InitSubSystem(SDL_INIT_AUDIO) failed: %s\n", SDL_GetError());
+        qu(1); // Your quit function
+        return;
+    }
+    // 3. Load WAV file
+    SDL_strlcpy(flnm, "/snd/sample.wav", sizeof(flnm));
+    SDL_AudioSpec loaded_wav_spec; // SDL_LoadWAV will fill this
+    if (SDL_LoadWAV(flnm, &loaded_wav_spec, &wave.snd, &wave.slen) == NULL) {
+        fprintf(stderr, "Failed to load WAV '%s': %s\n", flnm, SDL_GetError());
+        qu(1);
+        return;
+    }
+    // Copy relevant parts from loaded_wav_spec to our wave.spec (which is SDL3's simpler SDL_AudioSpec)
+    wave.spec.format = loaded_wav_spec.format;
+    wave.spec.channels = loaded_wav_spec.channels;
+    wave.spec.freq = loaded_wav_spec.freq;
+    // 4. Open Audio Device (using the simplified SDL3 function)
+    // Use SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK for the default output device.
+    // The device must support wave.spec, or opening will fail.
+    audio_device_id = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &wave.spec);
+    if (audio_device_id == 0) { // 0 is an invalid device ID in SDL3
+        fprintf(stderr, "Failed to open audio device: %s\n", SDL_GetError());
+        SDL_free(wave.snd); wave.snd = NULL; // Clean up loaded WAV
+        qu(1);
+        return;
+    }
+    // 5. Open Audio Stream on the device
+    // The stream will expect data in wave.spec format from the callback.
+    audio_stream = SDL_OpenAudioDeviceStream(audio_device_id,
+                                             &wave.spec,
+                                             bfr,         // Your updated callback function
+                                             NULL);       // Userdata for callback (none in this case)
+    if (!audio_stream) {
+        fprintf(stderr, "Failed to open audio device stream: %s\n", SDL_GetError());
+        SDL_CloseAudioDevice(audio_device_id); audio_device_id = 0;
+        SDL_free(wave.snd); wave.snd = NULL; // Clean up loaded WAV
+        qu(1);
+        return;
+    }
+        // 6. Start playback (unpause the device)
+    // SDL_PauseAudioDevice(audio_device_id, 0); // Old SDL2 way to unpause
+    SDL_ResumeAudioDevice(audio_device_id); // SDL3 way to start/resume
+    printf("SDL3 Audio setup complete, playing %s\n", flnm);
 }
-SDL_strlcpy(flnm,"/snd/sample.wav",sizeof(flnm));
-if(SDL_LoadWAV(flnm,&wave.spec,&wave.snd,&wave.slen)==NULL){
-qu(1);
-}
-wave.pos=0;
-wave.spec.callback=bfr;
-opn_aud();
-return;
+
+static void bfr(void* userdata, SDL_AudioStream *stream, int pcm_buffer_size, int user_request_bytes) {
+    // userdata: from SDL_OpenAudioDeviceStream (currently NULL in your plan)
+    // stream: the SDL_AudioStream requesting data
+    // pcm_buffer_size: diagnostic: the total size of one of the stream's internal buffers.
+    // user_request_bytes: how many bytes the stream is requesting from you right now.
+    if (user_request_bytes <= 0) {
+        return; // Nothing to do
+    }
+    // Temporary buffer to hold data prepared from your WAV source
+    std::vector<Uint8> temp_audio_chunk(user_request_bytes);
+    int bytes_prepared_for_stream = 0;
+    Uint8* current_temp_chunk_ptr = temp_audio_chunk.data();
+    while (bytes_prepared_for_stream < user_request_bytes) {
+        if (!wave.snd || wave.slen == 0) {
+            // No sound data. Fill the remainder of what SDL wants with silence.
+            Uint8 silence_val = SDL_GetSilenceValueForFormat(wave.spec.format); // SDL3 function
+            SDL_memset(current_temp_chunk_ptr, silence_val, user_request_bytes - bytes_prepared_for_stream);
+            bytes_prepared_for_stream = user_request_bytes; // Mark as fully prepared (with silence)
+            break;
+        }
+        int remaining_in_temp_buffer = user_request_bytes - bytes_prepared_for_stream;
+        int remaining_in_wav_source = wave.slen - wave.pos;
+        if (remaining_in_wav_source == 0) { // End of wave.snd, loop.
+            wave.pos = 0;
+            remaining_in_wav_source = wave.slen;
+            if (wave.slen == 0) { // Should be caught by initial check, but defensive
+                break; // No more data to provide
+            }
+        }
+        int bytes_to_copy_this_iteration = std::min(remaining_in_temp_buffer, remaining_in_wav_source);
+        if (bytes_to_copy_this_iteration <= 0) {
+            break;
+        }
+        Uint8* source_wav_data_ptr = wave.snd + wave.pos;
+        // Copy data into our temporary chunk for SDL_PutAudioStreamData
+        SDL_memcpy(current_temp_chunk_ptr, source_wav_data_ptr, bytes_to_copy_this_iteration);
+        wave.pos += bytes_to_copy_this_iteration;
+        current_temp_chunk_ptr += bytes_to_copy_this_iteration;
+        bytes_prepared_for_stream += bytes_to_copy_this_iteration;
+    }
+    if (bytes_prepared_for_stream > 0) {
+        if (SDL_PutAudioStreamData(stream, temp_audio_chunk.data(), bytes_prepared_for_stream) < 0) {
+            fprintf(stderr, "Error putting audio data to stream: %s\n", SDL_GetError());
+            // Optionally, handle error (e.g., clear stream, log)
+        }
+    }
 }
 
 GLfloat x;
