@@ -166,8 +166,8 @@ video_resurection_webgpuc3:
 	 --post-js js/pagec_webgpuc.js --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/gpujsx.js --closure 0
 
 video_sdl3:
-	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static
-	 em++ lib/lib_webgpu.cpp $(STDS) -static
+	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static -fPIC
+	 em++ lib/lib_webgpu.cpp $(STDS) -static -fPIC
 	 em++ src/video/video_sdl3.cpp -O0 -I/content/RAMDRIVE2/b3/include/vanilla/ -c -pipe -fPIC $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
 	 em++ video_sdl3.o -O0 $(LDFLAGSb) $(STDS) -sMAIN_MODULE=1 --bind -lembind -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -stdlib=libc++ -sFORCE_FILESYSTEM=1 -sUSE_SDL=3 -sMALLOC=mimalloc -sWASMFS=1 -pipe -dead_strip \
