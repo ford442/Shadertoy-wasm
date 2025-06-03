@@ -442,12 +442,14 @@ function set(){
 ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
 console.log('got html size:',ww,' ',h);
+/*
 scanvas.height=h;
 scanvas.width=ww;
 icanvas.height=h;
 icanvas.width=ww;
 bcanvas.height=h;
 bcanvas.width=ww;
+*/
 let cnP=document.getElementById("cp");
 // let cnPB=document.getElementById("cpB");
 // let cnPC=document.getElementById("cpC");
