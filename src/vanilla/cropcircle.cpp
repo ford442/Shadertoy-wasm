@@ -355,9 +355,9 @@ scanvas.imageSmoothingEnabled=false;
 icanvas.imageSmoothingEnabled=false;
 bcanvas.imageSmoothingEnabled=false;
 scanvas.id='imag1';
-// scanvas.imageRendering='pixelated';
-// icanvas.imageRendering='pixelated';
-// bcanvas.imageRendering='pixelated';
+scanvas.imageRendering='pixelated';
+icanvas.imageRendering='pixelated';
+bcanvas.imageRendering='pixelated';
 scanvas.width=winSize;
 scanvas.height=winSize;
 scanvas.zoom=1;
@@ -442,7 +442,12 @@ function set(){
 ww=document.getElementById("iwid").innerHTML;
 h=document.getElementById("ihig").innerHTML;
 console.log('got html size:',ww,' ',h);
-
+scanvas.height=h;
+scanvas.width=ww;
+icanvas.height=h;
+icanvas.width=ww;
+bcanvas.height=h;
+bcanvas.width=ww;
 let cnP=document.getElementById("cp");
 // let cnPB=document.getElementById("cpB");
 // let cnPC=document.getElementById("cpC");
