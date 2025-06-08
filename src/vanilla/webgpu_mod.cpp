@@ -42,6 +42,10 @@ on_b.at(4,4)=1;
 }
 }
 
+EM_JS(void, js_capture_frame, (), {
+window.capture_frame_to_buffer();
+});
+
 /*
 bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
 // emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
@@ -387,12 +391,17 @@ passDesc2.timestampWrites=renderTimestampWrites;
 wrpd.at(1,1)=passDesc2;
       
 if(on_b.at(5,5)==1){
+/*  //   js way
 fsm::ifstream fram(Fnm2,std::ios::binary);
 boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
 fram.close();
       
  // AVX 2
 convert_u8_to_float_avx2(data, pixel_buffer);
+*/
+  //    EM_JS way
+js_capture_frame();
+
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 
 /*      // regular
