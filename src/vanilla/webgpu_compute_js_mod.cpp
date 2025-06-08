@@ -44,8 +44,11 @@ let currentKeepSize, currentDrawX, currentDrawY, currentW$, currentH$;
 let frameBufferViewF32 = []; // The view into C++ memory
 
    window.capture_frame_to_buffer = function() {
-        if (!video_capture_ready) return;
-
+      
+        if (!video_capture_ready) {
+           console.log('video capture not ready.');
+           return;
+        }
         // 1. Draw image to offscreen canvas
         vc_gl3_context.clearRect(0, 0, vc_keepSize, vc_keepSize);
         vc_gl3_context.drawImage(vc_vvic_element, 0, 0, vc_w_orig, vc_h_orig, vc_drawX, vc_drawY, vc_w_orig, vc_h_orig);
