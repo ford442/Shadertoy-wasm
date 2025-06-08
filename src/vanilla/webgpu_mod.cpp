@@ -145,6 +145,7 @@ return EM_TRUE;
 }
 
 EMSCRIPTEN_BINDINGS(my_video_module) {
+emscripten::function("frmsOn", &framesOn);
 emscripten::function("frmOn", &texOn);
 emscripten::function("cnvOn", &cnvOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
