@@ -30,6 +30,7 @@ add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/b3_load_32.js
   DEPENDS wasm_loader_32_obj
   COMMAND em++
+    $<TARGET_OBJECTS:wasm_loader_32_obj> 
     -O3
     -sEVAL_CTORS=0
     -m64
