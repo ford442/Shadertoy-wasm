@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 project(b3_wasm_loader_lto_32_test3)
 
 # Set C++ standard to match your Makefile
-set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the Emscripten toolchain if not already set
@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Custom flags from your Makefile
 set(SIMD_FLAGS "-DSIMD=AVX -msimd128 -mrelaxed-simd -mavx2")
-set(STDS "-std=c++26")
+set(STDS "-std=c++23")
 set(COMPILE_FLAGS "-m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -mextended-const -O3 -fno-strict-aliasing ${SIMD_FLAGS} -sMEMORY64 -fno-rounding-math -fcx-limited-range -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSTRICT=1")
 set(LINK_SIMD_FLAGS "--enable-simd -msimd128 -mrelaxed-simd -msse -msse2 -msse3 -mssse3 -msse4 -msse4.1 -msse4.2 -mavx -mavx2")
 
