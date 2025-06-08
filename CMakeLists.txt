@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(b3_wasm_loader_lto_32_test3)
 
+set(CMAKE_C_COMPILER "emcc" CACHE STRING "" FORCE)
+set(CMAKE_CXX_COMPILER "em++" CACHE STRING "" FORCE)
+
 # Set C++ standard to match your Makefile
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
