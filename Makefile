@@ -76,7 +76,7 @@ NAMESTAMP := v3001test-DTE.js
 NAMESTAMP := $(subst DTE,$(TIMESTAMP),$(NAMESTAMP))
 
 cmake-build:
-	mkdir -p build && cd build && make clean && emcmake cmake .. && emmake make -j8
+	mkdir -p build && cd build && emcmake cmake .. && emmake make -j8
 
 vanilla_test_gpujs:
 	 em++ src/vanilla/main_gpujs.cpp -o $(NAMESTAMP) \
