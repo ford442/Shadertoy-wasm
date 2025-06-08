@@ -75,6 +75,9 @@ NAMESTAMP := v3001test-DTE.js
 
 NAMESTAMP := $(subst DTE,$(TIMESTAMP),$(NAMESTAMP))
 
+cmake-build:
+	mkdir -p build && cd build && cmake .. && make
+
 vanilla_test_gpujs:
 	 em++ src/vanilla/main_gpujs.cpp -o $(NAMESTAMP) \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=3221225472 \
