@@ -25,6 +25,8 @@ set_target_properties(wasm_loader_32_obj PROPERTIES
     COMPILE_FLAGS "${COMPILE_FLAGS}"
 )
 
+add_executable(src/vanilla/wasm_loader_32.cpp)
+
 # Actual output: a custom command to mimic the em++ link line with all flags
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/b3_load_32.js
