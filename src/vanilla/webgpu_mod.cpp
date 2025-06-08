@@ -144,17 +144,6 @@ on_b.at(5,5)=1;
 return EM_TRUE;
 }
 
-EMSCRIPTEN_BINDINGS(my_video_module) {
-emscripten::function("frmsOn", &framesOn);
-emscripten::function("frmOn", &texOn);
-emscripten::function("cnvOn", &cnvOn);
-emscripten::function("getPixelBufferView", &getPixelBufferView);
-emscripten::function("processCopiedDataVal", &process_copied_data_val);
-emscripten::function("get_buffer_ptr", &get_buffer_ptr);
-emscripten::function("sizeBuffer", &buffer_resize);
-// emscripten::register_vector<float>("VectorFloat"); // Needed for vecFromJSArray
-}
-
 EM_BOOL framesOff(){
 on.at(3,3)=0;
 on_b.at(4,4)=0;
@@ -1497,6 +1486,18 @@ WGPU_StartC(vsz,sz,sr);
 return;
 }
 
+}
+
+
+EMSCRIPTEN_BINDINGS(my_video_module) {
+emscripten::function("frmsOn", &framesOn);
+emscripten::function("frmOn", &texOn);
+emscripten::function("cnvOn", &cnvOn);
+emscripten::function("getPixelBufferView", &getPixelBufferView);
+emscripten::function("processCopiedDataVal", &process_copied_data_val);
+emscripten::function("get_buffer_ptr", &get_buffer_ptr);
+emscripten::function("sizeBuffer", &buffer_resize);
+// emscripten::register_vector<float>("VectorFloat"); // Needed for vecFromJSArray
 }
 
 int main(){
