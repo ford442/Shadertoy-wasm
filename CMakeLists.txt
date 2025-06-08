@@ -26,7 +26,7 @@ set_target_properties(wasm_loader_32_obj PROPERTIES
 add_custom_command(
     OUTPUT ${CMAKE_BINARY_DIR}/b3_load_32.js
     DEPENDS wasm_loader_32_obj
-    COMMAND em++ $<OBJECT_FILE:wasm_loader_32_obj> ${LINK_FLAGS} -o ${CMAKE_BINARY_DIR}/b3_load_32.js
+    COMMAND em++ $<TARGET_OBJECTS:wasm_loader_32_obj> ${LINK_FLAGS} -o ${CMAKE_BINARY_DIR}/b3_load_32.js
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     COMMENT "Building b3_wasm_loader_lto_32_test3"
 )
