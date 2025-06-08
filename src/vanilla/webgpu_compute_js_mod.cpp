@@ -53,7 +53,13 @@ let frameBufferViewF32 = []; // The view into C++ memory
         // 2. Get pixel data
         const image = vc_gl3_context.getImageData(0, 0, vc_keepSize, vc_keepSize);
         const imageData = image.data; // This is a Uint8ClampedArray
-
+    // --- ADD THIS DIAGNOSTIC LOG ---
+    // This helps us see if the source image is blank or not.
+    // It will only log if the pixel is not black, to avoid flooding the console.
+    if (imageData[0] !== 0 || imageData[1] !== 0 || imageData[2] !== 0) {
+        console.log(`Source pixel data sample (R,G,B,A): [${imageData[0]}, ${imageData[1]}, ${imageData[2]}, ${imageData[3]}]`);
+    }
+    // --- END DIAGNOSTIC LOG ---
         // 3. Write data directly to the C++ buffer, normalizing to float
         const pixelCount = vc_keepSize * vc_keepSize * 4;
         if (vc_pixel_buffer_view.length < pixelCount) return;
