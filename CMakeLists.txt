@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set the Emscripten toolchain if not already set
-# set(CMAKE_TOOLCHAIN_FILE "/content/RAMDRIVE2/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake")
+set(CMAKE_TOOLCHAIN_FILE "/content/RAMDRIVE2/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake")
 
 # Custom flags from your Makefile
 set(SIMD_FLAGS "-DSIMD=AVX -msimd128 -mrelaxed-simd -mavx2")
