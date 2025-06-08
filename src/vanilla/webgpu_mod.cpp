@@ -1490,7 +1490,7 @@ return;
 
 
 EMSCRIPTEN_BINDINGS(my_video_module) {
-emscripten::function("frmsOn", &framesOn);
+emscripten::function("frmsOn", &frmsOn);
 emscripten::function("frmOn", &texOn);
 emscripten::function("cnvOn", &cnvOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
