@@ -66,6 +66,7 @@ if (vc_pixel_buffer_view.length < pixelCount) return;
 for (let i = 0; i < pixelCount; ++i) {
     vc_pixel_buffer_view[i] = imageData[i] / 255.0;
 }
+Module.frmOn(); 
 Module.cnvOn(); 
 };
 
