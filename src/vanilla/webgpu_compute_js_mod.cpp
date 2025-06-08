@@ -43,63 +43,24 @@ let currentKeepSize, currentDrawX, currentDrawY, currentW$, currentH$;
 
 let frameBufferViewF32 = []; // The view into C++ memory
 
-    window.initialize_video_capture = function() {
-        console.log("Setting up canvas for C++ control...");
-        vc_vvic_element = document.querySelector('#mvi'); // Or whichever element you use
-        const vsiz = document.querySelector('#vsiz').innerHTML;
+   window.capture_frame_to_buffer = function() {
+        if (!video_capture_ready) return;
 
-        if (!vc_vvic_element) {
-            console.error("Could not find media element #mvi");
-            return false;
+        // 1. Draw image to offscreen canvas
+        vc_gl3_context.clearRect(0, 0, vc_keepSize, vc_keepSize);
+        vc_gl3_context.drawImage(vc_vvic_element, 0, 0, vc_w_orig, vc_h_orig, vc_drawX, vc_drawY, vc_w_orig, vc_h_orig);
+
+        // 2. Get pixel data
+        const image = vc_gl3_context.getImageData(0, 0, vc_keepSize, vc_keepSize);
+        const imageData = image.data; // This is a Uint8ClampedArray
+
+        // 3. Write data directly to the C++ buffer, normalizing to float
+        const pixelCount = vc_keepSize * vc_keepSize * 4;
+        if (vc_pixel_buffer_view.length < pixelCount) return;
+
+        for (let i = 0; i < pixelCount; ++i) {
+            vc_pixel_buffer_view[i] = imageData[i] / 255.0;
         }
-
-        if (vc_vvic_element.tagName === 'IMG') {
-            vc_w_orig = vc_vvic_element.naturalWidth;
-            vc_h_orig = vc_vvic_element.naturalHeight;
-        } else if (vc_vvic_element.tagName === 'VIDEO') {
-            vc_w_orig = vc_vvic_element.videoWidth;
-            vc_h_orig = vc_vvic_element.videoHeight;
-        } else {
-            console.error("Unsupported #mvi element type:", vc_vvic_element.tagName);
-            return false;
-        }
-
-        const keepSizea = Math.max(vc_h_orig, vc_w_orig);
-        vc_keepSize = parseInt(Math.min(keepSizea, vsiz));
-        vc_drawX = parseInt((vc_keepSize - vc_w_orig) / 2);
-        vc_drawY = parseInt((vc_keepSize - vc_h_orig) / 2);
-
-        if (isNaN(vc_keepSize) || vc_keepSize <= 0) {
-            console.error("Calculated keepSize is invalid:", vc_keepSize);
-            return false;
-        }
-
-        // IMPORTANT: The C++ side must size its buffer correctly.
-        // We'll call the C++ function 'sizeBuffer' to ensure it matches.
-        Module.sizeBuffer(vc_keepSize); 
-        
-        const offscreenCanvas = new OffscreenCanvas(vc_keepSize, vc_keepSize);
-        vc_gl3_context = offscreenCanvas.getContext('2d', {
-            alpha: true,
-            willReadFrequently: true,
-            colorSpace: "display-p3"
-        });
-
-        if (!vc_gl3_context) {
-            console.error("Failed to get 2D context for C++ control.");
-            return false;
-        }
-
-        // Get the view into the C++ pixel_buffer
-        vc_pixel_buffer_view = Module.getPixelBufferView();
-        if (!vc_pixel_buffer_view || vc_pixel_buffer_view.length === 0) {
-            console.error("Failed to get a valid pixel buffer view from C++.");
-            return false;
-        }
-        
-        console.log(`Canvas setup complete. Target size: ${vc_keepSize}x${vc_keepSize}.`);
-        video_capture_ready = true;
-        return true;
     };
 
     // --- Add this NEW frame capture function ---
