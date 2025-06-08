@@ -7,6 +7,16 @@ FS.writeFile('/video/frame.gl',blank);
 FS.writeFile('/video/frameBFR.gl',blank);
 let running=0;
 
+let video_capture_ready = false;
+let vc_gl3_context = null; // 'vc' for 'video capture'
+let vc_vvic_element = null;
+let vc_keepSize = 0;
+let vc_drawX = 0;
+let vc_drawY = 0;
+let vc_w_orig = 0;
+let vc_h_orig = 0;
+let vc_pixel_buffer_view = null;
+
 // WebGPU globals
 let device = null;
 let webgpu_sampler = null;
@@ -33,237 +43,318 @@ let currentKeepSize, currentDrawX, currentDrawY, currentW$, currentH$;
 
 let frameBufferViewF32 = []; // The view into C++ memory
 
-async function drawFrameAsync() {
-    if (!device) {
-        console.warn("WebGPU device not initialized. Skipping frame.");
-        return;
-    }
+    window.initialize_video_capture = function() {
+        console.log("Setting up canvas for C++ control...");
+        vc_vvic_element = document.querySelector('#mvi'); // Or whichever element you use
+        const vsiz = document.querySelector('#vsiz').innerHTML;
 
-    const vvic_elem = document.querySelector('#mvi'); // Get the source element
-
-    // ---- 1. Determine current dimensions of vvic_elem ----
-    let current_vvic_w, current_vvic_h;
-    let vvic_content_ready = false;
-
-    if (vvic_elem.tagName === 'CANVAS') {
-        current_vvic_w = vvic_elem.width;
-        current_vvic_h = vvic_elem.height;
-        if (current_vvic_w > 0 && current_vvic_h > 0) vvic_content_ready = true;
-    } else if (vvic_elem.tagName === 'IMG') {
-        current_vvic_w = vvic_elem.naturalWidth;
-        current_vvic_h = vvic_elem.naturalHeight;
-        if (vvic_elem.complete && current_vvic_w > 0 && current_vvic_h > 0) vvic_content_ready = true;
-    } else if (vvic_elem.tagName === 'VIDEO') {
-        current_vvic_w = vvic_elem.videoWidth;
-        current_vvic_h = vvic_elem.videoHeight;
-        if (vvic_elem.readyState >= 3) {vvic_content_ready = true;} // HAVE_ENOUGH_DATA
-    }
-
-    const commandEncoder = device.createCommandEncoder();
-
-    // ---- 2. Update vvicGpuTexture and Render (if pause is 'ready') ----
-    if (window.pause === 'ready' && vvic_content_ready && current_vvic_w > 0 && current_vvic_h > 0) {
-        // Update currentW$ and currentH$ which are used by the shader via uniforms
-        // These should reflect the actual dimensions of the content being drawn.
-        // The original w$, h$ were calculated once. If vvic can change size (e.g. video), these need to update.
-        // For simplicity, using the initially calculated currentW$, currentH$ which map to w_orig, h_orig.
-        // If vvic's content size (current_vvic_w, current_vvic_h) should be used instead of w_orig, h_orig
-        // then currentW$ and currentH$ should be updated here with current_vvic_w, current_vvic_h.
-        // And drawX/drawY might need recalculation if you want to keep it centered based on new dimensions.
-        // Let's stick to the original w_orig, h_orig for drawing dimensions for now.
-        const imageDrawWidth = currentW$;
-        const imageDrawHeight = currentH$;
-
-
-        // Recreate source texture if vvic dimensions for drawing changed or not initialized
-        // (Assuming imageDrawWidth/Height are stable unless explicitly changed)
-        if (!vvicGpuTexture || vvic_cached_width !== current_vvic_w || vvic_cached_height !== current_vvic_h) {
-            if (vvicGpuTexture) {
-                vvicGpuTexture.destroy();
-            }
-            vvic_cached_width = current_vvic_w;
-            vvic_cached_height = current_vvic_h;
-
-            vvicGpuTexture = device.createTexture({
-                size: [vvic_cached_width, vvic_cached_height], // Use actual current dimensions of media
-                format: 'rgba8unorm',
-                usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
-            });
-
-            textureBindGroup = device.createBindGroup({ // Bind Group 0
-                layout: renderPipeline.getBindGroupLayout(0),
-                entries: [
-                    { binding: 0, resource: webgpu_sampler },
-                    { binding: 1, resource: vvicGpuTexture.createView() },
-                ],
-            });
+        if (!vc_vvic_element) {
+            console.error("Could not find media element #mvi");
+            return false;
         }
 
-        // Copy vvic content to vvicGpuTexture
-        // This uses the full vvic_elem (current_vvic_w x current_vvic_h) as source
-        device.queue.copyExternalImageToTexture(
-            { source: vvic_elem, flipY: false }, // flipY might be needed based on source and coordinate system expectations
-            { texture: vvicGpuTexture, premultipliedAlpha: true },
-            [vvic_cached_width, vvic_cached_height]
-        );
+        if (vc_vvic_element.tagName === 'IMG') {
+            vc_w_orig = vc_vvic_element.naturalWidth;
+            vc_h_orig = vc_vvic_element.naturalHeight;
+        } else if (vc_vvic_element.tagName === 'VIDEO') {
+            vc_w_orig = vc_vvic_element.videoWidth;
+            vc_h_orig = vc_vvic_element.videoHeight;
+        } else {
+            console.error("Unsupported #mvi element type:", vc_vvic_element.tagName);
+            return false;
+        }
 
-        // Update transform uniform buffer (drawX, drawY, imageDrawWidth, imageDrawHeight)
-        // currentDrawX, currentDrawY are offsets in keepSize texture
-        // imageDrawWidth, imageDrawHeight are dimensions of the image being drawn
-        device.queue.writeBuffer(transformUniformBuffer, 0, new Float32Array([currentDrawX, currentDrawY, imageDrawWidth, imageDrawHeight]));
+        const keepSizea = Math.max(vc_h_orig, vc_w_orig);
+        vc_keepSize = parseInt(Math.min(keepSizea, vsiz));
+        vc_drawX = parseInt((vc_keepSize - vc_w_orig) / 2);
+        vc_drawY = parseInt((vc_keepSize - vc_h_orig) / 2);
 
-        // Render vvicGpuTexture to renderTargetTexture
-        const renderPassDescriptor = {
-            colorAttachments: [{
-                view: renderTargetTexture.createView(),
-                clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }, // Clear to transparent black
-                loadOp: 'clear',
-                storeOp: 'store',
-            }],
-        };
-        const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-        passEncoder.setPipeline(renderPipeline);
-        passEncoder.setBindGroup(0, textureBindGroup);    // Sampler and vvicGpuTexture
-        passEncoder.setBindGroup(1, uniformBindGroup); // Transformation uniforms
-        passEncoder.draw(6); // Draw 2 triangles (a quad)
-        passEncoder.end();
+        if (isNaN(vc_keepSize) || vc_keepSize <= 0) {
+            console.error("Calculated keepSize is invalid:", vc_keepSize);
+            return false;
+        }
 
-    } else {
-        // If not ready or paused, just clear the renderTargetTexture
-        // This ensures the getImageData equivalent gets a black/transparent frame
-        const passEncoder = commandEncoder.beginRenderPass({
-            colorAttachments: [{
-                view: renderTargetTexture.createView(),
-                clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 },
-                loadOp: 'clear',
-                storeOp: 'store',
-            }],
+        // IMPORTANT: The C++ side must size its buffer correctly.
+        // We'll call the C++ function 'sizeBuffer' to ensure it matches.
+        Module.sizeBuffer(vc_keepSize); 
+        
+        const offscreenCanvas = new OffscreenCanvas(vc_keepSize, vc_keepSize);
+        vc_gl3_context = offscreenCanvas.getContext('2d', {
+            alpha: true,
+            willReadFrequently: true,
+            colorSpace: "display-p3"
         });
-        passEncoder.end();
-    }
 
-    // ---- 3. Copy from renderTargetTexture to readbackBuffer ----
-    commandEncoder.copyTextureToBuffer(
-        { texture: renderTargetTexture, mipLevel: 0 },
-        { buffer: readbackBuffer, bytesPerRow: Math.ceil((currentKeepSize * 4) / 256) * 256, rowsPerImage: currentKeepSize },
-        { width: currentKeepSize, height: currentKeepSize, depthOrArrayLayers: 1 }
-    );
+        if (!vc_gl3_context) {
+            console.error("Failed to get 2D context for C++ control.");
+            return false;
+        }
 
-    // ---- 4. Submit commands and Read Data Back ----
-    device.queue.submit([commandEncoder.finish()]);
+        // Get the view into the C++ pixel_buffer
+        vc_pixel_buffer_view = Module.getPixelBufferView();
+        if (!vc_pixel_buffer_view || vc_pixel_buffer_view.length === 0) {
+            console.error("Failed to get a valid pixel buffer view from C++.");
+            return false;
+        }
+        
+        console.log(`Canvas setup complete. Target size: ${vc_keepSize}x${vc_keepSize}.`);
+        video_capture_ready = true;
+        return true;
+    };
 
-    await readbackBuffer.mapAsync(GPUMapMode.READ);
-    const arrayBuffer = readbackBuffer.getMappedRange();
-    // Create a Uint8Array. Important: make a copy (.slice(0)) because the ArrayBuffer will be invalidated on unmap.
-    const pixelDataUint8 = new Uint8Array(arrayBuffer.slice(0));
-    readbackBuffer.unmap();
+    // --- Add this NEW frame capture function ---
+    // This function will be called repeatedly by the C++ render loop.
+    window.capture_frame_to_buffer = function() {
+        if (!video_capture_ready) return;
 
-    // ---- 5. Write to Emscripten FS ----
-    // Your original code converted to Float32Array: const pixelData = new Float32Array(imageData.data);
-    // This created a Float32 for each Uint8 component, which is unusual for image data.
-    // The pixelDataUint8 (RGBA8 format) is likely what your C++ side would expect if it's processing standard image data.
-    // If your C++ side truly expects Float32 for each component (R as float, G as float, etc.),
-    // you'd need to manually convert pixelDataUint8 to a Float32Array here.
-    // Example: const pixelDataFloat32 = new Float32Array(pixelDataUint8.length);
-    //          for(let i=0; i < pixelDataUint8.length; i++) pixelDataFloat32[i] = pixelDataUint8[i];
-    // But this is generally inefficient and uncommon. We'll use Uint8Array.
+        // 1. Draw image to offscreen canvas
+        vc_gl3_context.clearRect(0, 0, vc_keepSize, vc_keepSize);
+        vc_gl3_context.drawImage(vc_vvic_element, 0, 0, vc_w_orig, vc_h_orig, vc_drawX, vc_drawY, vc_w_orig, vc_h_orig);
 
-    if (window.fileStream) { // Check if fileStream is valid
-        FS.write(window.fileStream, pixelDataUint8, 0, pixelDataUint8.byteLength, 0, true /* canOwn: true, if FS can take ownership */);
-        // The FS.rename logic from your original code:
-        FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
-        FS.rename('/video/frame.gl', '/video/frameBFR.gl'); // This renames the fileStream's path if it was current
-        FS.rename('/video/frameB.gl', '/video/frame.gl');
+        // 2. Get pixel data
+        const image = vc_gl3_context.getImageData(0, 0, vc_keepSize, vc_keepSize);
+        const imageData = image.data; // This is a Uint8ClampedArray
 
-        // If frame.gl was renamed, fileStream might be invalid or point to the old name.
-        // You might need to re-open or manage file handles carefully if renaming the active stream's path.
-        // A safer approach for file rotation:
-        // 1. Write to a temporary name: e.g., '/video/frame_new.gl'
-        // 2. If '/video/frame.gl' exists, rename it to '/video/frame_old.gl'
-        // 3. Rename '/video/frame_new.gl' to '/video/frame.gl'
-        // 4. If '/video/frame_old.gl' exists, delete it (or keep as backup)
-        // This example keeps your existing rename logic.
-    }
+        // 3. Write data directly to the C++ buffer, normalizing to float
+        const pixelCount = vc_keepSize * vc_keepSize * 4;
+        if (vc_pixel_buffer_view.length < pixelCount) return;
 
-    Module.cnvOn(); // Signal C++ side
-        setTimeout(drawFrameAsync, 16.6); 
+        for (let i = 0; i < pixelCount; ++i) {
+            vc_pixel_buffer_view[i] = imageData[i] / 255.0;
+        }
+    };
+
+async function drawFrameAsync() {
+if (!device) {
+console.warn("WebGPU device not initialized. Skipping frame.");
+return;
+}
+
+const vvic_elem = document.querySelector('#mvi'); // Get the source element
+
+// ---- 1. Determine current dimensions of vvic_elem ----
+let current_vvic_w, current_vvic_h;
+let vvic_content_ready = false;
+
+if (vvic_elem.tagName === 'CANVAS') {
+current_vvic_w = vvic_elem.width;
+current_vvic_h = vvic_elem.height;
+if (current_vvic_w > 0 && current_vvic_h > 0) vvic_content_ready = true;
+} else if (vvic_elem.tagName === 'IMG') {
+current_vvic_w = vvic_elem.naturalWidth;
+current_vvic_h = vvic_elem.naturalHeight;
+if (vvic_elem.complete && current_vvic_w > 0 && current_vvic_h > 0) vvic_content_ready = true;
+} else if (vvic_elem.tagName === 'VIDEO') {
+current_vvic_w = vvic_elem.videoWidth;
+current_vvic_h = vvic_elem.videoHeight;
+if (vvic_elem.readyState >= 3) {vvic_content_ready = true;} // HAVE_ENOUGH_DATA
+}
+
+const commandEncoder = device.createCommandEncoder();
+
+// ---- 2. Update vvicGpuTexture and Render (if pause is 'ready') ----
+if (window.pause === 'ready' && vvic_content_ready && current_vvic_w > 0 && current_vvic_h > 0) {
+// Update currentW$ and currentH$ which are used by the shader via uniforms
+// These should reflect the actual dimensions of the content being drawn.
+// The original w$, h$ were calculated once. If vvic can change size (e.g. video), these need to update.
+// For simplicity, using the initially calculated currentW$, currentH$ which map to w_orig, h_orig.
+// If vvic's content size (current_vvic_w, current_vvic_h) should be used instead of w_orig, h_orig
+// then currentW$ and currentH$ should be updated here with current_vvic_w, current_vvic_h.
+// And drawX/drawY might need recalculation if you want to keep it centered based on new dimensions.
+// Let's stick to the original w_orig, h_orig for drawing dimensions for now.
+const imageDrawWidth = currentW$;
+const imageDrawHeight = currentH$;
+
+
+// Recreate source texture if vvic dimensions for drawing changed or not initialized
+// (Assuming imageDrawWidth/Height are stable unless explicitly changed)
+if (!vvicGpuTexture || vvic_cached_width !== current_vvic_w || vvic_cached_height !== current_vvic_h) {
+if (vvicGpuTexture) {
+vvicGpuTexture.destroy();
+}
+vvic_cached_width = current_vvic_w;
+vvic_cached_height = current_vvic_h;
+
+vvicGpuTexture = device.createTexture({
+size: [vvic_cached_width, vvic_cached_height], // Use actual current dimensions of media
+format: 'rgba8unorm',
+usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+});
+
+textureBindGroup = device.createBindGroup({ // Bind Group 0
+layout: renderPipeline.getBindGroupLayout(0),
+entries: [
+{ binding: 0, resource: webgpu_sampler },
+{ binding: 1, resource: vvicGpuTexture.createView() },
+],
+});
+}
+
+// Copy vvic content to vvicGpuTexture
+// This uses the full vvic_elem (current_vvic_w x current_vvic_h) as source
+device.queue.copyExternalImageToTexture(
+{ source: vvic_elem, flipY: false }, // flipY might be needed based on source and coordinate system expectations
+{ texture: vvicGpuTexture, premultipliedAlpha: true },
+[vvic_cached_width, vvic_cached_height]
+);
+
+// Update transform uniform buffer (drawX, drawY, imageDrawWidth, imageDrawHeight)
+// currentDrawX, currentDrawY are offsets in keepSize texture
+// imageDrawWidth, imageDrawHeight are dimensions of the image being drawn
+device.queue.writeBuffer(transformUniformBuffer, 0, new Float32Array([currentDrawX, currentDrawY, imageDrawWidth, imageDrawHeight]));
+
+// Render vvicGpuTexture to renderTargetTexture
+const renderPassDescriptor = {
+colorAttachments: [{
+view: renderTargetTexture.createView(),
+clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 }, // Clear to transparent black
+loadOp: 'clear',
+storeOp: 'store',
+}],
+};
+const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+passEncoder.setPipeline(renderPipeline);
+passEncoder.setBindGroup(0, textureBindGroup);// Sampler and vvicGpuTexture
+passEncoder.setBindGroup(1, uniformBindGroup); // Transformation uniforms
+passEncoder.draw(6); // Draw 2 triangles (a quad)
+passEncoder.end();
+
+} else {
+// If not ready or paused, just clear the renderTargetTexture
+// This ensures the getImageData equivalent gets a black/transparent frame
+const passEncoder = commandEncoder.beginRenderPass({
+colorAttachments: [{
+view: renderTargetTexture.createView(),
+clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 },
+loadOp: 'clear',
+storeOp: 'store',
+}],
+});
+passEncoder.end();
+}
+
+// ---- 3. Copy from renderTargetTexture to readbackBuffer ----
+commandEncoder.copyTextureToBuffer(
+{ texture: renderTargetTexture, mipLevel: 0 },
+{ buffer: readbackBuffer, bytesPerRow: Math.ceil((currentKeepSize * 4) / 256) * 256, rowsPerImage: currentKeepSize },
+{ width: currentKeepSize, height: currentKeepSize, depthOrArrayLayers: 1 }
+);
+
+// ---- 4. Submit commands and Read Data Back ----
+device.queue.submit([commandEncoder.finish()]);
+
+await readbackBuffer.mapAsync(GPUMapMode.READ);
+const arrayBuffer = readbackBuffer.getMappedRange();
+// Create a Uint8Array. Important: make a copy (.slice(0)) because the ArrayBuffer will be invalidated on unmap.
+const pixelDataUint8 = new Uint8Array(arrayBuffer.slice(0));
+readbackBuffer.unmap();
+
+// ---- 5. Write to Emscripten FS ----
+// Your original code converted to Float32Array: const pixelData = new Float32Array(imageData.data);
+// This created a Float32 for each Uint8 component, which is unusual for image data.
+// The pixelDataUint8 (RGBA8 format) is likely what your C++ side would expect if it's processing standard image data.
+// If your C++ side truly expects Float32 for each component (R as float, G as float, etc.),
+// you'd need to manually convert pixelDataUint8 to a Float32Array here.
+// Example: const pixelDataFloat32 = new Float32Array(pixelDataUint8.length);
+//  for(let i=0; i < pixelDataUint8.length; i++) pixelDataFloat32[i] = pixelDataUint8[i];
+// But this is generally inefficient and uncommon. We'll use Uint8Array.
+
+if (window.fileStream) { // Check if fileStream is valid
+FS.write(window.fileStream, pixelDataUint8, 0, pixelDataUint8.byteLength, 0, true /* canOwn: true, if FS can take ownership */);
+// The FS.rename logic from your original code:
+FS.rename('/video/frameBFR.gl', '/video/frameB.gl');
+FS.rename('/video/frame.gl', '/video/frameBFR.gl'); // This renames the fileStream's path if it was current
+FS.rename('/video/frameB.gl', '/video/frame.gl');
+
+// If frame.gl was renamed, fileStream might be invalid or point to the old name.
+// You might need to re-open or manage file handles carefully if renaming the active stream's path.
+// A safer approach for file rotation:
+// 1. Write to a temporary name: e.g., '/video/frame_new.gl'
+// 2. If '/video/frame.gl' exists, rename it to '/video/frame_old.gl'
+// 3. Rename '/video/frame_new.gl' to '/video/frame.gl'
+// 4. If '/video/frame_old.gl' exists, delete it (or keep as backup)
+// This example keeps your existing rename logic.
+}
+
+Module.cnvOn(); // Signal C++ side
+setTimeout(drawFrameAsync, 16.6); 
 }
 
 
 async function canvasStartSize2() {
-    // ---- 1. Initial Setup and Parameter Calculation (from your original code) ----
-    const vvic_elem = document.querySelector('#mvi'); // Renamed to avoid conflict with global vvic
-    const srsiz_val = document.querySelector('#srsiz').innerHTML;
-    const vsiz_val = document.querySelector('#vsiz').innerHTML;
-    const SiZ_val = window.innerHeight;
-    let w_orig, h_orig; // w$, h$ from your original code
-    if (vvic_elem.tagName == 'CANVAS') {
-        // If vvic_elem is a canvas, ensure its dimensions are set before reading
-        // vvic_elem.width = vsiz_val; // Example, adjust as per your logic
-        // vvic_elem.height = vsiz_val; // Example
-        w_orig = vvic_elem.width;
-        h_orig = vvic_elem.height;
-    } else if (vvic_elem.tagName == 'IMG') {
-        w_orig = vvic_elem.naturalWidth;
-        h_orig = vvic_elem.naturalHeight;
-        // Original code set vvic_elem.width/height here, which can distort.
-        // WebGPU copyExternalImageToTexture will use natural dimensions.
-    } else if (vvic_elem.tagName == 'VIDEO') {
-        w_orig = vvic_elem.videoWidth;
-        h_orig = vvic_elem.videoHeight;
-    } else {
-        console.error("Unsupported #mvi element type:", vvic_elem.tagName);
-        return;
-    }
-    const keepSize_val = Math.min(Math.max(h_orig, w_orig), parseFloat(vsiz_val));
-    const drawX_val = (keepSize_val - w_orig) / 2;
-    const drawY_val = (keepSize_val - h_orig) / 2;
-    console.log("Target canvas size for WebGPU: ", keepSize_val, ", ", keepSize_val);
-    console.log("Image original dims: ", w_orig, "x", h_orig);
-    console.log("Drawing at: ", drawX_val, ",", drawY_val);
-    // Store these for the draw loop
-    currentKeepSize = keepSize_val;
-    currentDrawX = drawX_val;
-    currentDrawY = drawY_val;
-    currentW$ = w_orig; // This is the w$ that should be used for drawing dimension
-    currentH$ = h_orig; // This is the h$ that should be used for drawing dimension
-    // Update canvas elements for display (if any, this part is from your original)
-    // const scnv = document.querySelector('#scanvas');
-    // const bcnv = document.querySelector('#bcanvas');
-    // if (scnv) { scnv.height = SiZ_val; scnv.width = SiZ_val; }
-    // if (bcnv) {
-    //     bcnv.height = keepSize_val; bcnv.style.height = keepSize_val + 'px';
-    //     bcnv.width = keepSize_val; bcnv.style.width = keepSize_val + 'px';
-    // }
-    // OffscreenCanvas is not directly used for WebGPU context in this approach
-    // ---- 2. WebGPU Initialization ----
-    if (!navigator.gpu) {
-        console.error("WebGPU not supported on this browser.");
-        alert("WebGPU not supported on this browser.");
-        return;
-    }
-    const adapter = await navigator.gpu.requestAdapter();
-    if (!adapter) {
-        console.error("Failed to get GPU adapter.");
-        alert("Failed to get GPU adapter.");
-        return;
-    }
-    device = await adapter.requestDevice();
-    if (!device) {
-        console.error("Failed to get GPU device.");
-        alert("Failed to get GPU device.");
-        return;
-    }
-    // ---- 3. Create WebGPU Resources ----
-    webgpu_sampler = device.createSampler({
-        magFilter: 'linear',
-        minFilter: 'linear',
-    });
-    renderTargetTexture = device.createTexture({
-        size: [currentKeepSize, currentKeepSize],
-        format: 'rgba8unorm', // Common format, good for image data
-        usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
-    });
+// ---- 1. Initial Setup and Parameter Calculation (from your original code) ----
+const vvic_elem = document.querySelector('#mvi'); // Renamed to avoid conflict with global vvic
+const srsiz_val = document.querySelector('#srsiz').innerHTML;
+const vsiz_val = document.querySelector('#vsiz').innerHTML;
+const SiZ_val = window.innerHeight;
+let w_orig, h_orig; // w$, h$ from your original code
+if (vvic_elem.tagName == 'CANVAS') {
+// If vvic_elem is a canvas, ensure its dimensions are set before reading
+// vvic_elem.width = vsiz_val; // Example, adjust as per your logic
+// vvic_elem.height = vsiz_val; // Example
+w_orig = vvic_elem.width;
+h_orig = vvic_elem.height;
+} else if (vvic_elem.tagName == 'IMG') {
+w_orig = vvic_elem.naturalWidth;
+h_orig = vvic_elem.naturalHeight;
+// Original code set vvic_elem.width/height here, which can distort.
+// WebGPU copyExternalImageToTexture will use natural dimensions.
+} else if (vvic_elem.tagName == 'VIDEO') {
+w_orig = vvic_elem.videoWidth;
+h_orig = vvic_elem.videoHeight;
+} else {
+console.error("Unsupported #mvi element type:", vvic_elem.tagName);
+return;
+}
+const keepSize_val = Math.min(Math.max(h_orig, w_orig), parseFloat(vsiz_val));
+const drawX_val = (keepSize_val - w_orig) / 2;
+const drawY_val = (keepSize_val - h_orig) / 2;
+console.log("Target canvas size for WebGPU: ", keepSize_val, ", ", keepSize_val);
+console.log("Image original dims: ", w_orig, "x", h_orig);
+console.log("Drawing at: ", drawX_val, ",", drawY_val);
+// Store these for the draw loop
+currentKeepSize = keepSize_val;
+currentDrawX = drawX_val;
+currentDrawY = drawY_val;
+currentW$ = w_orig; // This is the w$ that should be used for drawing dimension
+currentH$ = h_orig; // This is the h$ that should be used for drawing dimension
+// Update canvas elements for display (if any, this part is from your original)
+// const scnv = document.querySelector('#scanvas');
+// const bcnv = document.querySelector('#bcanvas');
+// if (scnv) { scnv.height = SiZ_val; scnv.width = SiZ_val; }
+// if (bcnv) {
+// bcnv.height = keepSize_val; bcnv.style.height = keepSize_val + 'px';
+// bcnv.width = keepSize_val; bcnv.style.width = keepSize_val + 'px';
+// }
+// OffscreenCanvas is not directly used for WebGPU context in this approach
+// ---- 2. WebGPU Initialization ----
+if (!navigator.gpu) {
+console.error("WebGPU not supported on this browser.");
+alert("WebGPU not supported on this browser.");
+return;
+}
+const adapter = await navigator.gpu.requestAdapter();
+if (!adapter) {
+console.error("Failed to get GPU adapter.");
+alert("Failed to get GPU adapter.");
+return;
+}
+device = await adapter.requestDevice();
+if (!device) {
+console.error("Failed to get GPU device.");
+alert("Failed to get GPU device.");
+return;
+}
+// ---- 3. Create WebGPU Resources ----
+webgpu_sampler = device.createSampler({
+magFilter: 'linear',
+minFilter: 'linear',
+});
+renderTargetTexture = device.createTexture({
+size: [currentKeepSize, currentKeepSize],
+format: 'rgba8unorm', // Common format, good for image data
+usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC | GPUTextureUsage.COPY_DST,
+});
 
 const bytesPerPixel = 4; // For rgba8unorm format
 const unpaddedBytesPerRow = currentKeepSize * bytesPerPixel;
@@ -271,145 +362,145 @@ const paddedBytesPerRow = Math.ceil(unpaddedBytesPerRow / 256) * 256;
 
  const readbackBufferSize = paddedBytesPerRow * currentKeepSize; 
 readbackBuffer = device.createBuffer({
-        size: readbackBufferSize,
-        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-    });
+size: readbackBufferSize,
+usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+});
 
-    // Uniform Buffers for transformation
-    transformUniformBuffer = device.createBuffer({
-        size: 4 * 4, // vec4<f32> for (drawX, drawY, w_img, h_img)
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-    });
-    targetUniformBuffer = device.createBuffer({
-        size: 2 * 4, // vec2<f32> for (target_width, target_height)
-        usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-    });
-    // Write initial target size to uniform buffer (assuming keepSize is fixed for the session)
-    device.queue.writeBuffer(targetUniformBuffer, 0, new Float32Array([currentKeepSize, currentKeepSize]));
-    // ---- 4. Define Shaders (WGSL) ----
-    const shaderModule = device.createShaderModule({
-        code: `
-            struct VertexOutput {
-                @builtin(position) position: vec4<f32>,
-                @location(0) texCoord: vec2<f32>,
-            };
-            @group(1) @binding(0) var<uniform> transform_p: vec4<f32>; // x: drawX, y: drawY, z: w_img, w: h_img
-            @group(1) @binding(1) var<uniform> target_p: vec2<f32>;  // x: target_width, y: target_height
-            // Unit quad vertices (0,0), (1,0), (0,1), (1,1), (1,0), (1,1)
-            // Covers area from (0,0) to (1,1)
-            const POSITIONS = array<vec2<f32>, 6>(
-                vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0),
-                vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0)
-            );
-            // Standard texture coordinates
-            const TEXCOORDS = array<vec2<f32>, 6>(
-                vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0),
-                vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0)
-            );
-            @vertex
-            fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
-                var out: VertexOutput;
-                let pos_unit = POSITIONS[vertexIndex]; // (0..1, 0..1)
-                let draw_x_px = transform_p.x;
-                let draw_y_px = transform_p.y;
-                let img_w_px = transform_p.z;
-                let img_h_px = transform_p.w;
-                let target_w_px = target_p.x;
-                let target_h_px = target_p.y;
-                let final_x_px = draw_x_px + pos_unit.x * img_w_px;
-                let final_y_px = draw_y_px + pos_unit.y * img_h_px;
-                // Convert to Normalized Device Coordinates (-1 to 1 for X and Y)
-                // WebGPU NDC Y is upwards. To map 2D canvas top-left (0,0) to top-left of screen:
-                // X_ndc = (pixel_x / width_px) * 2.0 - 1.0
-                // Y_ndc = (1.0 - (pixel_y / height_px)) * 2.0 - 1.0  <- This maps Y=0 to +1 (top), Y=height to -1 (bottom)
-                // Y_ndc = 1.0 - (final_y_px / target_h_px) * 2.0;  <-- This flips Y
-                out.position = vec4<f32>(
-                    (final_x_px / target_w_px) * 2.0 - 1.0,
-                    (1.0 - (final_y_px / target_h_px) * 2.0), // Flip Y to match 2D canvas
-                    0.0, // Z
-                    1.0  // W
-                );
-                out.texCoord = TEXCOORDS[vertexIndex];
-                return out;
-            }
-            @group(0) @binding(0) var smplr: sampler;
-            @group(0) @binding(1) var txtr: texture_2d<f32>;
-            @fragment
-            fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-                return textureSample(txtr, smplr, in.texCoord);
-            }
-        `,
-    });
-    // ---- 5. Create Render Pipeline ----
-    const pipelineLayout = device.createPipelineLayout({
-        bindGroupLayouts: [
-            // Group 0: Sampler and Texture
-            device.createBindGroupLayout({
-                entries: [
-                    { binding: 0, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
-                    { binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: {} },
-                ],
-            }),
-            // Group 1: Uniforms
-            device.createBindGroupLayout({
-                entries: [
-                    { binding: 0, visibility: GPUShaderStage.VERTEX, buffer: { type: 'uniform'} },
-                    { binding: 1, visibility: GPUShaderStage.VERTEX, buffer: { type: 'uniform'} },
-                ]
-            })
-        ],
-    });
-    renderPipeline = device.createRenderPipeline({
-        layout: pipelineLayout,
-        vertex: {
-            module: shaderModule,
-            entryPoint: 'vs_main',
-        },
-        fragment: {
-            module: shaderModule,
-            entryPoint: 'fs_main',
-            targets: [{ format: renderTargetTexture.format }], // Output format matches target texture
-        },
-        primitive: {
-            topology: 'triangle-list',
-        },
-    });
-    // Create the uniform bind group (Group 1)
-    uniformBindGroup = device.createBindGroup({
-        layout: renderPipeline.getBindGroupLayout(1),
-        entries: [
-            { binding: 0, resource: { buffer: transformUniformBuffer } },
-            { binding: 1, resource: { buffer: targetUniformBuffer } },
-        ],
-    });
-    // ---- 6. Event Listeners and Starting the Loop (from your original code) ----
-    document.querySelector('#moveFwdb').addEventListener('click', function() {
-        Module.ccall('frmsOff');
-        console.log('stopping frames for move');
-        window.pause = 'loading'; // Assuming pause is a global or window property
-        setTimeout(function() {
-            window.pause = 'ready';
-            Module.ccall('frmsOn');
-        }, 1900);
-    });
-    // File stream (ensure 'FS' is Emscripten's FS object)
-    // Make sure fileStream is initialized appropriately before this point
-    if (!window.fileStream) { // Example of lazy initialization if not done earlier
-        window.fileStream = FS.open('/video/frame.gl', 'w');
-    }
-    if (window.running == 0) { // Assuming 'running' is global or window property
-        setTimeout(() => {
-            console.log('Sending to WebGPU C++ (if applicable): ', currentKeepSize, vsiz_val, srsiz_val);
-            // Adjust this call if your C++ side expects different parameters or no call at this stage
-            Module.ccall("startWebGPUC", null, ["Number", "Number", "Number"], [currentKeepSize, parseFloat(vsiz_val), parseFloat(srsiz_val)]);
-            window.running = 1;
-          //  setInterval(drawFrameAsync, 16.6); // ~60 FPS
-            drawFrameAsync();
-        }, 250);
-    } else {
-            drawFrameAsync();
-        // setInterval(drawFrameAsync, 16.6);
-    }
+// Uniform Buffers for transformation
+transformUniformBuffer = device.createBuffer({
+size: 4 * 4, // vec4<f32> for (drawX, drawY, w_img, h_img)
+usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+});
+targetUniformBuffer = device.createBuffer({
+size: 2 * 4, // vec2<f32> for (target_width, target_height)
+usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+});
+// Write initial target size to uniform buffer (assuming keepSize is fixed for the session)
+device.queue.writeBuffer(targetUniformBuffer, 0, new Float32Array([currentKeepSize, currentKeepSize]));
+// ---- 4. Define Shaders (WGSL) ----
+const shaderModule = device.createShaderModule({
+code: `
+struct VertexOutput {
+@builtin(position) position: vec4<f32>,
+@location(0) texCoord: vec2<f32>,
+};
+@group(1) @binding(0) var<uniform> transform_p: vec4<f32>; // x: drawX, y: drawY, z: w_img, w: h_img
+@group(1) @binding(1) var<uniform> target_p: vec2<f32>;  // x: target_width, y: target_height
+// Unit quad vertices (0,0), (1,0), (0,1), (1,1), (1,0), (1,1)
+// Covers area from (0,0) to (1,1)
+const POSITIONS = array<vec2<f32>, 6>(
+vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0),
+vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0)
+);
+// Standard texture coordinates
+const TEXCOORDS = array<vec2<f32>, 6>(
+vec2<f32>(0.0, 0.0), vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0),
+vec2<f32>(0.0, 1.0), vec2<f32>(1.0, 0.0), vec2<f32>(1.0, 1.0)
+);
+@vertex
+fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
+var out: VertexOutput;
+let pos_unit = POSITIONS[vertexIndex]; // (0..1, 0..1)
+let draw_x_px = transform_p.x;
+let draw_y_px = transform_p.y;
+let img_w_px = transform_p.z;
+let img_h_px = transform_p.w;
+let target_w_px = target_p.x;
+let target_h_px = target_p.y;
+let final_x_px = draw_x_px + pos_unit.x * img_w_px;
+let final_y_px = draw_y_px + pos_unit.y * img_h_px;
+// Convert to Normalized Device Coordinates (-1 to 1 for X and Y)
+// WebGPU NDC Y is upwards. To map 2D canvas top-left (0,0) to top-left of screen:
+// X_ndc = (pixel_x / width_px) * 2.0 - 1.0
+// Y_ndc = (1.0 - (pixel_y / height_px)) * 2.0 - 1.0  <- This maps Y=0 to +1 (top), Y=height to -1 (bottom)
+// Y_ndc = 1.0 - (final_y_px / target_h_px) * 2.0;  <-- This flips Y
+out.position = vec4<f32>(
+(final_x_px / target_w_px) * 2.0 - 1.0,
+(1.0 - (final_y_px / target_h_px) * 2.0), // Flip Y to match 2D canvas
+0.0, // Z
+1.0  // W
+);
+out.texCoord = TEXCOORDS[vertexIndex];
+return out;
+}
+@group(0) @binding(0) var smplr: sampler;
+@group(0) @binding(1) var txtr: texture_2d<f32>;
+@fragment
+fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
+return textureSample(txtr, smplr, in.texCoord);
+}
+`,
+});
+// ---- 5. Create Render Pipeline ----
+const pipelineLayout = device.createPipelineLayout({
+bindGroupLayouts: [
+// Group 0: Sampler and Texture
+device.createBindGroupLayout({
+entries: [
+{ binding: 0, visibility: GPUShaderStage.FRAGMENT, sampler: {} },
+{ binding: 1, visibility: GPUShaderStage.FRAGMENT, texture: {} },
+],
+}),
+// Group 1: Uniforms
+device.createBindGroupLayout({
+entries: [
+{ binding: 0, visibility: GPUShaderStage.VERTEX, buffer: { type: 'uniform'} },
+{ binding: 1, visibility: GPUShaderStage.VERTEX, buffer: { type: 'uniform'} },
+]
+})
+],
+});
+renderPipeline = device.createRenderPipeline({
+layout: pipelineLayout,
+vertex: {
+module: shaderModule,
+entryPoint: 'vs_main',
+},
+fragment: {
+module: shaderModule,
+entryPoint: 'fs_main',
+targets: [{ format: renderTargetTexture.format }], // Output format matches target texture
+},
+primitive: {
+topology: 'triangle-list',
+},
+});
+// Create the uniform bind group (Group 1)
+uniformBindGroup = device.createBindGroup({
+layout: renderPipeline.getBindGroupLayout(1),
+entries: [
+{ binding: 0, resource: { buffer: transformUniformBuffer } },
+{ binding: 1, resource: { buffer: targetUniformBuffer } },
+],
+});
+// ---- 6. Event Listeners and Starting the Loop (from your original code) ----
+document.querySelector('#moveFwdb').addEventListener('click', function() {
+Module.ccall('frmsOff');
+console.log('stopping frames for move');
+window.pause = 'loading'; // Assuming pause is a global or window property
+setTimeout(function() {
+window.pause = 'ready';
+Module.ccall('frmsOn');
+}, 1900);
+});
+// File stream (ensure 'FS' is Emscripten's FS object)
+// Make sure fileStream is initialized appropriately before this point
+if (!window.fileStream) { // Example of lazy initialization if not done earlier
+window.fileStream = FS.open('/video/frame.gl', 'w');
+}
+if (window.running == 0) { // Assuming 'running' is global or window property
+setTimeout(() => {
+console.log('Sending to WebGPU C++ (if applicable): ', currentKeepSize, vsiz_val, srsiz_val);
+// Adjust this call if your C++ side expects different parameters or no call at this stage
+Module.ccall("startWebGPUC", null, ["Number", "Number", "Number"], [currentKeepSize, parseFloat(vsiz_val), parseFloat(srsiz_val)]);
+window.running = 1;
+  //  setInterval(drawFrameAsync, 16.6); // ~60 FPS
+drawFrameAsync();
+}, 250);
+} else {
+drawFrameAsync();
+// setInterval(drawFrameAsync, 16.6);
+}
 }
 
 function flipImageData(imageData){
@@ -434,7 +525,7 @@ return n;
 }}
 
 let pause='ready';
-    
+
 function canvasStart2(){
 let vvic=document.querySelector('#mvi');
 let srsiz=document.querySelector('#srsiz').innerHTML;
@@ -473,26 +564,26 @@ preserveDrawingBuffer:false
 gl3.imageSmoothingEnabled=false;
 let fileStream=FS.open('/video/frame.gl','w');
   function drawFrame() {
-    if (pause === 'ready') {
-      gl3.clearRect(0, 0, w$, h$);
-      gl3.drawImage(vvic, 0, 0, SiZ, SiZ, 0, 0, w$, h$);
-    }else{
-        console.log('frames stopped');
-        }
-    const image = gl3.getImageData(0, 0, w$, h$);
-    const imageData = image.data;
-    const pixelData = new Float64Array(imageData);
-    FS.write(fileStream, pixelData, 0, pixelData.length, 0);
-    Module.frmOn();
+if (pause === 'ready') {
+  gl3.clearRect(0, 0, w$, h$);
+  gl3.drawImage(vvic, 0, 0, SiZ, SiZ, 0, 0, w$, h$);
+}else{
+console.log('frames stopped');
+}
+const image = gl3.getImageData(0, 0, w$, h$);
+const imageData = image.data;
+const pixelData = new Float64Array(imageData);
+FS.write(fileStream, pixelData, 0, pixelData.length, 0);
+Module.frmOn();
   }
   if (running == 0) {
-    setTimeout(() => {
-      Module.ccall("startWebGPUC", null,"Number",[vsiz,srsiz]);
-      running = 1;
-      setInterval(drawFrame, 16.6); 
-    }, 250);
+setTimeout(() => {
+  Module.ccall("startWebGPUC", null,"Number",[vsiz,srsiz]);
+  running = 1;
+  setInterval(drawFrame, 16.6); 
+}, 250);
   } else {
-    setInterval(drawFrame, 16.6);
+setInterval(drawFrame, 16.6);
   }
 }
 
@@ -889,7 +980,7 @@ preserveDrawingBuffer:false
 });
 // gl3.imageSmoothingEnabled=false;
 const fileStream=FS.open('/video/frame.gl','w+');
-let matrix=    gl3.createImageData(vsiz,vsiz);
+let matrix=gl3.createImageData(vsiz,vsiz);
 for (let i = 0; i < matrix.data.length; i += 4){
 matrix.data[i+0] = 0;
 matrix.data[i+1] = 0;
@@ -1039,11 +1130,11 @@ document.querySelector('#stat').style.backgroundColor='yellow';
 ff.addEventListener("load", function() {
   let sarrayBuffer = ff.response;
   if (sarrayBuffer) {
-    audioContext.decodeAudioData(sarrayBuffer).then(audioBuffer => {
-      processAudioBuffer(audioBuffer);
-    }).catch(err => {
-      console.error('Error decoding audio data:', err);
-    });
+audioContext.decodeAudioData(sarrayBuffer).then(audioBuffer => {
+  processAudioBuffer(audioBuffer);
+}).catch(err => {
+  console.error('Error decoding audio data:', err);
+});
   }
 });
 ff.send();
@@ -1065,11 +1156,11 @@ w$=parseInt(document.querySelector("#mvi").width);
 h$=parseInt(document.querySelector("#mvi").height);
 SiZ=window.innerHeight;
 if (w$ > h$) {
-            cropSize = h$;
-            sx = (w$ - h$) / 2;
+cropSize = h$;
+sx = (w$ - h$) / 2;
 } else {
-            cropSize = w$;
-            sy = (h$ - w$) / 2;
+cropSize = w$;
+sy = (h$ - w$) / 2;
 }
 // vvi.height=SiZ;
 // vvi.width=Math.min(w$,(SiZ/h$)*w$);
@@ -1082,11 +1173,11 @@ w$=parseInt(document.querySelector("#ivi").width);
 h$=parseInt(document.querySelector("#ivi").height);
 SiZ=window.innerHeight;
 if (w$ > h$) {
-            cropSize = h$;
-            sx = (w$ - h$) / 2;
+cropSize = h$;
+sx = (w$ - h$) / 2;
 } else {
-            cropSize = w$;
-            sy = (h$ - w$) / 2;
+cropSize = w$;
+sy = (h$ - w$) / 2;
 }
 // vvi.height=SiZ;
 // vvi.width=Math.min(w$,(SiZ/h$)*w$);
@@ -1109,7 +1200,7 @@ console.log('Starting..');
 frameBufferViewF32 = Module.getPixelBufferView();
 },250);
 }
-     //    console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
+ //console.log(`Obtained C++ buffer view with length: ${frameBufferViewF32.length}`);
 // const bufferPtr = Module.get_buffer_ptr();
 const bufferSizeFloats = w$*h$*4;
 // const frameView = new Float32Array(Module.HEAPF32.buffer, bufferPtr, bufferSizeFloats);
@@ -1200,7 +1291,7 @@ floatArray[i] = imageData[i] / 255.0;
 // Module.processCopiedDataVal(imageData);
 Module.frmOn();
 },16.666);
-}                 //  have gemini help crop to square
+} //  have gemini help crop to square
 
 
 
@@ -1209,198 +1300,198 @@ Module.frmOn();
 let animationIntervalId = null;
 
 function videoStart() {
-    // 1. Interval Management: Clear any existing animation interval
-    if (animationIntervalId) {
-        clearInterval(animationIntervalId);
-        animationIntervalId = null;
-    }
+// 1. Interval Management: Clear any existing animation interval
+if (animationIntervalId) {
+clearInterval(animationIntervalId);
+animationIntervalId = null;
+}
 
-    let vvi, h$, w$, SiZ;
-    const media_mode = document.querySelector('#media').value;
-    let cropSize; // The side length of the square to cut from the source
-    let sx = 0;   // Source X for cropping
-    let sy = 0;   // Source Y for cropping
+let vvi, h$, w$, SiZ;
+const media_mode = document.querySelector('#media').value;
+let cropSize; // The side length of the square to cut from the source
+let sx = 0;   // Source X for cropping
+let sy = 0;   // Source Y for cropping
 
-    if (media_mode == 'vid') {
-        vvi = document.querySelector('#mvi');
-        // Ensure video metadata is loaded to get correct dimensions
-        // This might require waiting for 'loadedmetadata' event if dimensions are 0 initially
-        w$ = parseInt(vvi.videoWidth || vvi.width);
-        h$ = parseInt(vvi.videoHeight || vvi.height);
-        SiZ = window.innerHeight;
+if (media_mode == 'vid') {
+vvi = document.querySelector('#mvi');
+// Ensure video metadata is loaded to get correct dimensions
+// This might require waiting for 'loadedmetadata' event if dimensions are 0 initially
+w$ = parseInt(vvi.videoWidth || vvi.width);
+h$ = parseInt(vvi.videoHeight || vvi.height);
+SiZ = window.innerHeight;
 
-        if (w$ > h$) {
-            cropSize = h$;
-            sx = (w$ - h$) / 2;
-        } else {
-            cropSize = w$;
-            sy = (h$ - w$) / 2;
-        }
-    } else if (media_mode == 'img') {
-        vvi = document.querySelector('#ivi');
-        // Ensure image is loaded to get correct dimensions
-        // This might require waiting for 'load' event if dimensions are 0 initially
-        w$ = parseInt(vvi.naturalWidth || vvi.width);
-        h$ = parseInt(vvi.naturalHeight || vvi.height);
-        SiZ = window.innerHeight;
+if (w$ > h$) {
+cropSize = h$;
+sx = (w$ - h$) / 2;
+} else {
+cropSize = w$;
+sy = (h$ - w$) / 2;
+}
+} else if (media_mode == 'img') {
+vvi = document.querySelector('#ivi');
+// Ensure image is loaded to get correct dimensions
+// This might require waiting for 'load' event if dimensions are 0 initially
+w$ = parseInt(vvi.naturalWidth || vvi.width);
+h$ = parseInt(vvi.naturalHeight || vvi.height);
+SiZ = window.innerHeight;
 
-        if (w$ > h$) {
-            cropSize = h$;
-            sx = (w$ - h$) / 2;
-        } else {
-            cropSize = w$;
-            sy = (h$ - w$) / 2;
-        }
-    } else {
-        console.error("Unknown media mode:", media_mode);
-        return; // Exit if media_mode is not recognized
-    }
+if (w$ > h$) {
+cropSize = h$;
+sx = (w$ - h$) / 2;
+} else {
+cropSize = w$;
+sy = (h$ - w$) / 2;
+}
+} else {
+console.error("Unknown media mode:", media_mode);
+return; // Exit if media_mode is not recognized
+}
 
-    // Ensure w$ and h$ (and thus cropSize) are valid before proceeding
-    if (!w$ || !h$ || !cropSize) {
-        console.warn("Media dimensions are not available yet or are invalid. Retrying in 100ms.");
-        // Potentially retry or ensure media is loaded before calling videoStart
-        setTimeout(videoStart, 100);
-        return;
-    }
+// Ensure w$ and h$ (and thus cropSize) are valid before proceeding
+if (!w$ || !h$ || !cropSize) {
+console.warn("Media dimensions are not available yet or are invalid. Retrying in 100ms.");
+// Potentially retry or ensure media is loaded before calling videoStart
+setTimeout(videoStart, 100);
+return;
+}
 
-    // Read target processing size (vsiz) and source size info (srsiz) from HTML
-    // These are assumed to be set correctly in your HTML
-    const srsiz = parseInt(document.querySelector('#srsiz').innerHTML);
-    const vsiz = parseInt(document.querySelector('#vsiz').innerHTML);
+// Read target processing size (vsiz) and source size info (srsiz) from HTML
+// These are assumed to be set correctly in your HTML
+const srsiz = parseInt(document.querySelector('#srsiz').innerHTML);
+const vsiz = parseInt(document.querySelector('#vsiz').innerHTML);
 
-    if (isNaN(vsiz) || vsiz <= 0) {
-        console.error("#vsiz HTML element has invalid content. It should be a positive number.");
-        return;
-    }
-    if (isNaN(srsiz)) {
-        console.error("#srsiz HTML element has invalid content.");
-        // Decide if srsiz is critical and return if necessary
-    }
+if (isNaN(vsiz) || vsiz <= 0) {
+console.error("#vsiz HTML element has invalid content. It should be a positive number.");
+return;
+}
+if (isNaN(srsiz)) {
+console.error("#srsiz HTML element has invalid content.");
+// Decide if srsiz is critical and return if necessary
+}
 
 
-    // Initialize or re-initialize WebAssembly Module
-    // The parameters to ccall (vvi.height, vsiz, srsiz) are kept as in your original code.
-    // Ensure these are the correct parameters your Wasm module expects.
-    // Specifically, vvi.height might be h$ (cropped height before scaling if that's relevant).
-    if (running == 0) {
-        setTimeout(function() {
-            Module.ccall("startWebGPUi", null, ["number", "number", "number"], [h$, vsiz, srsiz]);
-            console.log('Starting WebGPU (initial)...');
-            frameBufferViewF32 = Module.getPixelBufferView(); // Get buffer for pixel data
-            running = 1;
-            // Start processing loop only after Wasm is initialized and buffer is ready
-            if (frameBufferViewF32) {
-                startProcessingLoop();
-            } else {
-                console.error("Failed to get pixel buffer view from Wasm module.");
-            }
-        }, 250);
-    } else {
-        setTimeout(function() {
-            Module.ccall("startWebGPUbi", null, ["number", "number", "number"], [h$, vsiz, srsiz]);
-            console.log('Starting WebGPU (re-init)...');
-            frameBufferViewF32 = Module.getPixelBufferView(); // Re-get buffer if necessary
-             // Start processing loop only after Wasm is initialized and buffer is ready
-            if (frameBufferViewF32) {
-                startProcessingLoop();
-            } else {
-                console.error("Failed to get pixel buffer view from Wasm module (re-init).");
-            }
-        }, 250);
-    }
+// Initialize or re-initialize WebAssembly Module
+// The parameters to ccall (vvi.height, vsiz, srsiz) are kept as in your original code.
+// Ensure these are the correct parameters your Wasm module expects.
+// Specifically, vvi.height might be h$ (cropped height before scaling if that's relevant).
+if (running == 0) {
+setTimeout(function() {
+Module.ccall("startWebGPUi", null, ["number", "number", "number"], [h$, vsiz, srsiz]);
+console.log('Starting WebGPU (initial)...');
+frameBufferViewF32 = Module.getPixelBufferView(); // Get buffer for pixel data
+running = 1;
+// Start processing loop only after Wasm is initialized and buffer is ready
+if (frameBufferViewF32) {
+startProcessingLoop();
+} else {
+console.error("Failed to get pixel buffer view from Wasm module.");
+}
+}, 250);
+} else {
+setTimeout(function() {
+Module.ccall("startWebGPUbi", null, ["number", "number", "number"], [h$, vsiz, srsiz]);
+console.log('Starting WebGPU (re-init)...');
+frameBufferViewF32 = Module.getPixelBufferView(); // Re-get buffer if necessary
+ // Start processing loop only after Wasm is initialized and buffer is ready
+if (frameBufferViewF32) {
+startProcessingLoop();
+} else {
+console.error("Failed to get pixel buffer view from Wasm module (re-init).");
+}
+}, 250);
+}
 
-    // This function will contain the canvas operations and the setInterval
-    function startProcessingLoop() {
-        console.log("Source media dimensions (w,h): ", w$, ",", h$);
-        console.log("Crop settings (sx,sy,cropSize): ", sx, ",", sy, ",", cropSize);
-        console.log("Target processing size (vsiz): ", vsiz);
+// This function will contain the canvas operations and the setInterval
+function startProcessingLoop() {
+console.log("Source media dimensions (w,h): ", w$, ",", h$);
+console.log("Crop settings (sx,sy,cropSize): ", sx, ",", sy, ",", cropSize);
+console.log("Target processing size (vsiz): ", vsiz);
 
-        // 2. OffscreenCanvas Creation:
-        // Create the OffscreenCanvas with the target processing dimensions 'vsiz x vsiz'.
-        const cnvb = new OffscreenCanvas(vsiz, vsiz);
+// 2. OffscreenCanvas Creation:
+// Create the OffscreenCanvas with the target processing dimensions 'vsiz x vsiz'.
+const cnvb = new OffscreenCanvas(vsiz, vsiz);
 
-        // Setup for main display canvas (scanvas) and an intermediate canvas (bcanvas)
-        const cnv = document.querySelector('#scanvas');  // Final display canvas
-        const cnvc = document.querySelector('#bcanvas'); // Intermediate display canvas (shows what's on OffscreenCanvas)
+// Setup for main display canvas (scanvas) and an intermediate canvas (bcanvas)
+const cnv = document.querySelector('#scanvas');  // Final display canvas
+const cnvc = document.querySelector('#bcanvas'); // Intermediate display canvas (shows what's on OffscreenCanvas)
 
-        cnv.height = SiZ;
-        cnv.width = SiZ;
+cnv.height = SiZ;
+cnv.width = SiZ;
 
-        // Set bcanvas (presumably for debugging/previewing the OffscreenCanvas content)
-        // to the same dimensions as the OffscreenCanvas.
-        cnvc.height = vsiz;
-        cnvc.width = vsiz;
-        cnvc.style.height = vsiz + 'px';
-        cnvc.style.width = vsiz + 'px';
+// Set bcanvas (presumably for debugging/previewing the OffscreenCanvas content)
+// to the same dimensions as the OffscreenCanvas.
+cnvc.height = vsiz;
+cnvc.width = vsiz;
+cnvc.style.height = vsiz + 'px';
+cnvc.style.width = vsiz + 'px';
 
-        const gl3 = cnvb.getContext('2d', {
-            // Note: 'colorType' is not a standard 2D context option.
-            // For standard 2D context, color space is managed differently.
-            // If you intended WebGL, options are different. Assuming 2D for now.
-            alpha: true,
-            willReadFrequently: true, // Set to true as you are using getImageData frequently
-            // desynchronized: true, // Consider for lower latency if supported and applicable
-            // powerPreference: "high-performance", // Good choice
-        });
+const gl3 = cnvb.getContext('2d', {
+// Note: 'colorType' is not a standard 2D context option.
+// For standard 2D context, color space is managed differently.
+// If you intended WebGL, options are different. Assuming 2D for now.
+alpha: true,
+willReadFrequently: true, // Set to true as you are using getImageData frequently
+// desynchronized: true, // Consider for lower latency if supported and applicable
+// powerPreference: "high-performance", // Good choice
+});
 
-        if (!gl3) {
-            console.error("Failed to get 2D context from OffscreenCanvas.");
-            return;
-        }
+if (!gl3) {
+console.error("Failed to get 2D context from OffscreenCanvas.");
+return;
+}
 
-        // Initial draw and data extraction (if needed immediately before interval)
-        // This part is largely similar to what's in the interval, so you might only need the interval.
-        // However, if the first frame is critical to be processed fast, keep it.
-        gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
-        let image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
-        let imageData = image.data;
-        const pixelCount = vsiz * vsiz * 4; // 4. Corrected: Use vsiz for pixel count
+// Initial draw and data extraction (if needed immediately before interval)
+// This part is largely similar to what's in the interval, so you might only need the interval.
+// However, if the first frame is critical to be processed fast, keep it.
+gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
+let image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
+let imageData = image.data;
+const pixelCount = vsiz * vsiz * 4; // 4. Corrected: Use vsiz for pixel count
 
-        // Check if frameBufferViewF32 is valid and has enough space
-        if (!frameBufferViewF32 || frameBufferViewF32.length < pixelCount) {
-             console.error(`frameBufferViewF32 is not correctly initialized or is too small. Expected: ${pixelCount}, Got: ${frameBufferViewF32 ? frameBufferViewF32.length : 'null'}`);
-             return; // Stop if buffer is not ready
-        }
+// Check if frameBufferViewF32 is valid and has enough space
+if (!frameBufferViewF32 || frameBufferViewF32.length < pixelCount) {
+ console.error(`frameBufferViewF32 is not correctly initialized or is too small. Expected: ${pixelCount}, Got: ${frameBufferViewF32 ? frameBufferViewF32.length : 'null'}`);
+ return; // Stop if buffer is not ready
+}
 
-        for (let i = 0; i < pixelCount; ++i) {
-            frameBufferViewF32[i] = imageData[i] / 255.0; // Normalize uint8 (0-255) to float (0.0-1.0)
-        }
-        Module.frmOn(); // Send the first frame to Wasm
+for (let i = 0; i < pixelCount; ++i) {
+frameBufferViewF32[i] = imageData[i] / 255.0; // Normalize uint8 (0-255) to float (0.0-1.0)
+}
+Module.frmOn(); // Send the first frame to Wasm
 
-        // --- Animation Loop using setInterval ---
-        animationIntervalId = setInterval(function() {
-            // Clear the OffscreenCanvas for the new frame
-            gl3.clearRect(0, 0, vsiz, vsiz);
+// --- Animation Loop using setInterval ---
+animationIntervalId = setInterval(function() {
+// Clear the OffscreenCanvas for the new frame
+gl3.clearRect(0, 0, vsiz, vsiz);
 
-            // Draw the current state of the video/image (cropped and scaled) onto the OffscreenCanvas
-            // sx, sy, cropSize are from the source media (vvi)
-            // 0, 0, vsiz, vsiz are for the destination (cnvb)
-            gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
+// Draw the current state of the video/image (cropped and scaled) onto the OffscreenCanvas
+// sx, sy, cropSize are from the source media (vvi)
+// 0, 0, vsiz, vsiz are for the destination (cnvb)
+gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
 
-            // Get the pixel data from the OffscreenCanvas
-            image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
-            imageData = image.data;
-            // pixelCount is already defined correctly based on vsiz
+// Get the pixel data from the OffscreenCanvas
+image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
+imageData = image.data;
+// pixelCount is already defined correctly based on vsiz
 
-            // Normalize and copy pixel data to the WebAssembly module's buffer
-            for (let i = 0; i < pixelCount; ++i) {
-                const normalizedValue = imageData[i] / 255.0;
-                frameBufferViewF32[i] = normalizedValue;
-            }
+// Normalize and copy pixel data to the WebAssembly module's buffer
+for (let i = 0; i < pixelCount; ++i) {
+const normalizedValue = imageData[i] / 255.0;
+frameBufferViewF32[i] = normalizedValue;
+}
 
-            // Notify the WebAssembly module that a new frame is ready
-            Module.frmOn();
+// Notify the WebAssembly module that a new frame is ready
+Module.frmOn();
 /*
-            // Optional: If you want to display the content of the OffscreenCanvas on 'bcanvas'
-            const cnvcCtx = cnvc.getContext('2d');
-            if (cnvcCtx) {
-                cnvcCtx.clearRect(0,0,vsiz,vsiz);
-                cnvcCtx.drawImage(cnvb, 0, 0, vsiz, vsiz);
-            }
+// Optional: If you want to display the content of the OffscreenCanvas on 'bcanvas'
+const cnvcCtx = cnvc.getContext('2d');
+if (cnvcCtx) {
+cnvcCtx.clearRect(0,0,vsiz,vsiz);
+cnvcCtx.drawImage(cnvb, 0, 0, vsiz, vsiz);
+}
 */
-        }, 16.666); // Aim for roughly 60 FPS
-    }
+}, 16.666); // Aim for roughly 60 FPS
+}
 }
 
 
@@ -1922,8 +2013,15 @@ getShader(pth2,'compute.wgsl');
 getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 setTimeout(function(){
-canvasStartSize();
-},2000);
+// canvasStartSize();
+if (window.initialize_video_capture()) {
+            // After JS setup is successful, call the C++ function
+            // that enables video mode in the render loop.
+            Module.cnvOn(); 
+        } else {
+            console.error("Initialization for video capture failed!");
+        }
+},200);
 });
 
 document.querySelector('#startBtnB').addEventListener('click',function(){
