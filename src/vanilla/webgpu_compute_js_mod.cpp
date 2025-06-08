@@ -74,7 +74,7 @@ Module.cnvOn();
     // --- Add this NEW frame capture function ---
     // This function will be called repeatedly by the C++ render loop.
 window.initialize_video_capture = function() {
-    console.log("Setting up canvas for C++ control...");
+    console.log("Setting up canvas for C++ control... test");
     vc_vvic_element = document.querySelector('#mvi');
     const vsiz = document.querySelector('#vsiz').innerHTML;
 
