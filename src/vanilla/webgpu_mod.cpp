@@ -44,7 +44,7 @@ on_b.at(4,4)=1;
 
 EM_JS(void, js_capture_frame, (), {
 console.log('trying capture_frame_to_buffer.');
-window.capture_frame_to_buffer();
+Module.capture_frame_to_buffer();
 });
 
 /*
