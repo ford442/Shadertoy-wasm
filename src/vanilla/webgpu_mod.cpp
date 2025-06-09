@@ -144,6 +144,11 @@ on_b.at(5,5)=1;
 return EM_TRUE;
 }
 
+EM_BOOL cnvOff(){
+on_b.at(5,5)=0;
+return EM_TRUE;
+}
+
 EM_BOOL framesOff(){
 on.at(3,3)=0;
 on_b.at(4,4)=0;
@@ -423,7 +428,7 @@ const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(emscripten_align1_float); /
 */
       
 wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
-on_b.at(5,5)=0;
+    // on_b.at(5,5)=0;
 }
       
 if(on_b.at(4,4)==1){
