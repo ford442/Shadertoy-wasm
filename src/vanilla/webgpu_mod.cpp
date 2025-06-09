@@ -137,9 +137,13 @@ on_b.at(4,4)=1;
 return EM_TRUE;
 }
 
-EM_BOOL cnvOn(){
-if(on.at(3,3)==1){
-on_b.at(5,5)=1;
+EM_BOOL cnvOn() {
+emscripten_log(EM_LOG_CONSOLE, "C++: cnvOn() function has been called.");
+if (on.at(3,3) == 1) {
+on_b.at(5,5) = 1;
+emscripten_log(EM_LOG_CONSOLE, "C++: SUCCESS! on_b.at(5,5) flag was set to 1.");
+} else {
+emscripten_log(EM_LOG_WARN, "C++: PREREQUISITE FAILED in cnvOn(). 'on.at(3,3)' is 0. Flag was NOT set.");
 }
 return EM_TRUE;
 }
