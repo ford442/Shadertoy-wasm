@@ -15,7 +15,7 @@ let vc_drawX = 0;
 let vc_drawY = 0;
 let vc_w_orig = 0;
 let vc_h_orig = 0;
-let vc_pixel_buffer_view = null;
+let vc_pixel_buffer_view = [];
 
 // WebGPU globals
 let device = null;
