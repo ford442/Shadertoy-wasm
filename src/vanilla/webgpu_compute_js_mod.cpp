@@ -131,6 +131,7 @@ return false;
 }
 console.log(`Canvas setup complete. Target size: ${vc_keepSize}x${vc_keepSize}.`);
 video_capture_ready = true;
+Module.frmsOn();
 Module.cnvOn();
 return true;
 };
