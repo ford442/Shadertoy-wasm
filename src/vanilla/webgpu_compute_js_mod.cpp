@@ -44,30 +44,25 @@ let currentKeepSize, currentDrawX, currentDrawY, currentW$, currentH$;
 let frameBufferViewF32 = []; // The view into C++ memory
 
 window.capture_frame_to_buffer = function() {
-      
 if (!video_capture_ready) {
 console.log('video capture not ready.');
 return;
 }
 console.log('vid capture func.');
-
 // 1. Draw image to offscreen canvas
 vc_gl3_context.clearRect(0, 0, vc_keepSize, vc_keepSize);
 vc_gl3_context.drawImage(vc_vvic_element, 0, 0, vc_w_orig, vc_h_orig, vc_drawX, vc_drawY, vc_w_orig, vc_h_orig);
-
 // 2. Get pixel data
 const image = vc_gl3_context.getImageData(0, 0, vc_keepSize, vc_keepSize);
 const imageData = image.data; // This is a Uint8ClampedArray
-
 // 3. Write data directly to the C++ buffer, normalizing to float
 const pixelCount = vc_keepSize * vc_keepSize * 4;
 if (vc_pixel_buffer_view.length < pixelCount) return;
-
 for (let i = 0; i < pixelCount; ++i) {
     vc_pixel_buffer_view[i] = imageData[i] / 255.0;
 }
-Module.frmOn(); 
-Module.cnvOn(); 
+// Module.frmOn();
+Module.cnvOn();
 };
 
 
@@ -77,12 +72,10 @@ window.initialize_video_capture = function() {
     console.log("Setting up canvas for C++ control... test");
     vc_vvic_element = document.querySelector('#mvi');
     const vsiz = document.querySelector('#vsiz').innerHTML;
-
     if (!vc_vvic_element) {
 console.error("Could not find media element #mvi");
 return false;
     }
-
     // --- THIS BLOCK IS NOW CORRECTED ---
     if (vc_vvic_element.tagName === 'IMG') {
 vc_w_orig = vc_vvic_element.naturalWidth;
@@ -99,44 +92,37 @@ console.error("Unsupported #mvi element type:", vc_vvic_element.tagName);
 return false;
     }
     // --- END CORRECTION ---
-
     if (!vc_w_orig || !vc_h_orig) {
 console.warn(`Source #mvi dimensions are not valid (${vc_w_orig}x${vc_h_orig}). The media might not be loaded yet.`);
 // You might want to add a small delay and retry here if this becomes an issue.
     }
-
     const keepSizea = Math.max(vc_h_orig, vc_w_orig);
     vc_keepSize = parseInt(Math.min(keepSizea, vsiz));
     vc_drawX = parseInt((vc_keepSize - vc_w_orig) / 2);
     vc_drawY = parseInt((vc_keepSize - vc_h_orig) / 2);
-
     if (isNaN(vc_keepSize) || vc_keepSize <= 0) {
 console.error("Calculated keepSize is invalid:", vc_keepSize);
 return false;
     }
-
     Module.sizeBuffer(vc_keepSize);
-
     const offscreenCanvas = new OffscreenCanvas(vc_keepSize, vc_keepSize);
     vc_gl3_context = offscreenCanvas.getContext('2d', {
 alpha: true,
 willReadFrequently: true,
 colorSpace: "display-p3"
     });
-
     if (!vc_gl3_context) {
 console.error("Failed to get 2D context for C++ control.");
 return false;
     }
-
     vc_pixel_buffer_view = Module.getPixelBufferView();
     if (!vc_pixel_buffer_view || vc_pixel_buffer_view.length === 0) {
 console.error("Failed to get a valid pixel buffer view from C++.");
 return false;
     }
-
     console.log(`Canvas setup complete. Target size: ${vc_keepSize}x${vc_keepSize}.`);
     video_capture_ready = true;
+      Module.frmsOn();
     return true;
 };
 
