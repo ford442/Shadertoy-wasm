@@ -47,6 +47,81 @@ console.log('trying capture_frame_to_buffer.');
 Module.capture_frame_to_buffer();
 });
 
+EM_JS(bool, initialize_video_capture, (), {
+    // Store state on the 'Module' object to make it accessible across EM_JS calls.
+    Module.vc_capture_ready = false;
+    Module.vc_gl3_context = null;
+    Module.vc_vvic_element = null;
+    Module.vc_keepSize = 0;
+    Module.vc_drawX = 0;
+    Module.vc_drawY = 0;
+    Module.vc_w_orig = 0;
+    Module.vc_h_orig = 0;
+
+    console.log("EM_JS: Setting up canvas for C++ control...");
+    Module.vc_vvic_element = document.querySelector('#mvi');
+    const vsiz = document.querySelector('#vsiz').innerHTML;
+
+    if (!Module.vc_vvic_element) {
+        console.error("EM_JS: Could not find media element #mvi");
+        return false;
+    }
+
+    // This logic correctly handles IMG, VIDEO, and CANVAS sources.
+    const tagName = Module.vc_vvic_element.tagName;
+    if (tagName === 'IMG') {
+        Module.vc_w_orig = Module.vc_vvic_element.naturalWidth;
+        Module.vc_h_orig = Module.vc_vvic_element.naturalHeight;
+    } else if (tagName === 'VIDEO') {
+        Module.vc_w_orig = Module.vc_vvic_element.videoWidth;
+        Module.vc_h_orig = Module.vc_vvic_element.videoHeight;
+    } else if (tagName === 'CANVAS') {
+        Module.vc_w_orig = Module.vc_vvic_element.width;
+        Module.vc_h_orig = Module.vc_vvic_element.height;
+    } else {
+        console.error("EM_JS: Unsupported #mvi element type:", tagName);
+        return false;
+    }
+
+    const keepSizea = Math.max(Module.vc_h_orig, Module.vc_w_orig);
+    Module.vc_keepSize = parseInt(Math.min(keepSizea, vsiz));
+    Module.vc_drawX = parseInt((Module.vc_keepSize - Module.vc_w_orig) / 2);
+    Module.vc_drawY = parseInt((Module.vc_keepSize - Module.vc_h_orig) / 2);
+
+    if (isNaN(Module.vc_keepSize) || Module.vc_keepSize <= 0) {
+        console.error("EM_JS: Calculated keepSize is invalid:", Module.vc_keepSize);
+        return false;
+    }
+
+    // Call back to C++ to ensure the buffer is the correct size.
+    Module.sizeBuffer(Module.vc_keepSize);
+
+    const offscreenCanvas = new OffscreenCanvas(Module.vc_keepSize, Module.vc_keepSize);
+    Module.vc_gl3_context = offscreenCanvas.getContext('2d', {
+        alpha: true, willReadFrequently: true, colorSpace: "display-p3"
+    });
+
+    if (!Module.vc_gl3_context) return false;
+
+    console.log(`EM_JS: Canvas setup complete. Target size: ${Module.vc_keepSize}x${Module.vc_keepSize}.`);
+    Module.vc_capture_ready = true;
+    return true;
+});
+
+EM_JS(void, capture_frame_to_buffer, (), {
+    if (!Module.vc_capture_ready) return;
+    const pixel_buffer_view = Module.getPixelBufferView();
+    if (!pixel_buffer_view || pixel_buffer_view.length === 0) return;
+    Module.vc_gl3_context.clearRect(0, 0, Module.vc_keepSize, Module.vc_keepSize);
+    Module.vc_gl3_context.drawImage(Module.vc_vvic_element, 0, 0, Module.vc_w_orig, Module.vc_h_orig, Module.vc_drawX, Module.vc_drawY, Module.vc_w_orig, Module.vc_h_orig);
+    const image = Module.vc_gl3_context.getImageData(0, 0, Module.vc_keepSize, Module.vc_keepSize);
+    const imageData = image.data;
+    const pixelCount = Module.vc_keepSize * Module.vc_keepSize * 4;
+    for (let i = 0; i < pixelCount; ++i) {
+        pixel_buffer_view[i] = imageData[i] / 255.0;
+    }
+});
+
 /*
 bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
 // emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
@@ -141,6 +216,7 @@ EM_BOOL cnvOn() {
 emscripten_log(EM_LOG_CONSOLE, "C++: cnvOn() function has been called.");
 if (on.at(3,3) == 1) {
 on_b.at(5,5) = 1;
+  initialize_video_capture();
 emscripten_log(EM_LOG_CONSOLE, "C++: SUCCESS! on_b.at(5,5) flag was set to 1.");
 } else {
 emscripten_log(EM_LOG_WARN, "C++: PREREQUISITE FAILED in cnvOn(). 'on.at(3,3)' is 0. Flag was NOT set.");
@@ -400,8 +476,8 @@ fram.close();
 convert_u8_to_float_avx2(data, pixel_buffer);
 */
   //    EM_JS way
-js_capture_frame();
-
+capture_frame_to_buffer();
+  
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 
 /*      // regular
