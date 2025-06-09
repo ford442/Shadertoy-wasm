@@ -43,7 +43,7 @@ let currentKeepSize, currentDrawX, currentDrawY, currentW$, currentH$;
 
 let frameBufferViewF32 = []; // The view into C++ memory
 
-window.capture_frame_to_buffer = function() {
+Module.capture_frame_to_buffer = function() {
 if (!video_capture_ready) {
 console.log('video capture not ready.');
 return;
@@ -67,7 +67,7 @@ Module.cnvOn();
 
 // --- Add this NEW frame capture function ---
 // This function will be called repeatedly by the C++ render loop.
-window.initialize_video_capture = function() {
+Module.initialize_video_capture = function() {
 console.log("Setting up canvas for C++ control... test");
 vc_vvic_element = document.querySelector('#mvi');
 const vsiz = document.querySelector('#vsiz').innerHTML;
