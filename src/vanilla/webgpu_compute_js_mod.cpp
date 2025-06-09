@@ -2026,7 +2026,7 @@ getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 setTimeout(function(){
 // canvasStartSize();
-if (window.initialize_video_capture()) {
+if (Module.initialize_video_capture()) {
 // After JS setup is successful, call the C++ function
 // that enables video mode in the render loop.
 Module.ccall('frmsOn', null, [], []); 
