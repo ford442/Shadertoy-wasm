@@ -103,6 +103,16 @@ if (isNaN(vc_keepSize) || vc_keepSize <= 0) {
 console.error("Calculated keepSize is invalid:", vc_keepSize);
 return false;
 }
+document.querySelector('#moveFwdb').addEventListener('click',function(){
+Module.ccall('cnvOff');
+// console.log('stopping frames for move');
+pause = 'loading';
+setTimeout(function(){
+pause = 'ready';
+Module.ccall('cnvOn');
+// console.log('restarting frames for move');
+}, 1900);
+});
 Module.sizeBuffer(vc_keepSize);
 const offscreenCanvas = new OffscreenCanvas(vc_keepSize, vc_keepSize);
 vc_gl3_context = offscreenCanvas.getContext('2d', {
@@ -121,7 +131,7 @@ return false;
 }
 console.log(`Canvas setup complete. Target size: ${vc_keepSize}x${vc_keepSize}.`);
 video_capture_ready = true;
- // Module.frmsOn();
+Module.cnvOn();
 return true;
 };
 
