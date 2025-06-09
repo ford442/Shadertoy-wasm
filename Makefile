@@ -312,7 +312,7 @@ loader_es6:
 	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
 	 wasm_loader_32.o --output_eol linux -rtlib=compiler-rt --closure 0 --closureFriendly \
-	 -sEXPORT_ES6=1 -sUSE_ES6_IMPORT_META=0 -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
+	 -sEXPORT_ES6=1 -sES6_IMPORT_META=0 -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 
 loader_pm:
