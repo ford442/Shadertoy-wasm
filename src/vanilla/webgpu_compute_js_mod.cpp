@@ -104,12 +104,12 @@ console.error("Calculated keepSize is invalid:", vc_keepSize);
 return false;
 }
 document.querySelector('#moveFwdb').addEventListener('click',function(){
-Module.ccall('cnvOff');
+Module.cnvOff();
 // console.log('stopping frames for move');
 pause = 'loading';
 setTimeout(function(){
 pause = 'ready';
-Module.ccall('cnvOn');
+Module.cnvOn();
 // console.log('restarting frames for move');
 }, 1900);
 });
