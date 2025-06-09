@@ -109,6 +109,7 @@ EM_JS(bool, initialize_video_capture, (), {
 });
 
 EM_JS(void, capture_frame_to_buffer, (), {
+    console.log('frame');
     if (!Module.vc_capture_ready) return;
     const pixel_buffer_view = Module.getPixelBufferView();
     if (!pixel_buffer_view || pixel_buffer_view.length === 0) return;
