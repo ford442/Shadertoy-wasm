@@ -43,7 +43,7 @@ on_b.at(4,4)=1;
 }
 
 EM_JS(void, js_capture_frame, (), {
-  console.log('trying capture_frame_to_buffer.');
+console.log('trying capture_frame_to_buffer.');
 window.capture_frame_to_buffer();
 });
 
@@ -1490,7 +1490,7 @@ return;
 
 
 EMSCRIPTEN_BINDINGS(my_video_module) {
-emscripten::function("frmsOn", &frmsOn);
+emscripten::function("frmsOn", &framesOn);
 emscripten::function("frmOn", &texOn);
 emscripten::function("cnvOn", &cnvOn);
 emscripten::function("getPixelBufferView", &getPixelBufferView);
