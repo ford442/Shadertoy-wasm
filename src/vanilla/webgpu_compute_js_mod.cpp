@@ -1414,6 +1414,62 @@ cnvcCtx.drawImage(cnvb, 0, 0, vsiz, vsiz);
 }
 
 
+function videoStartHandle(){
+var swp = document.querySelector('#mvi');
+swp.id='mmvi';
+var vvi=document.querySelector('#ivi');
+vvi.id='mvi';
+let SiZ=window.innerHeight;
+let w$=parseInt(document.querySelector("#mvi").width);
+let h$=parseInt(document.querySelector("#mvi").height);
+if(running==0){
+setTimeout(function(){
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
+Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
+console.log('Starting..');
+running=1;
+},250);
+}else{
+setTimeout(function(){
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
+Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
+console.log('Starting..');
+},250);
+}
+console.log("img size: ",h$,", ",w$);
+Module.cnvOn();
+}
+
+function imageStartHandle(){
+var swp = document.querySelector('#mvi');
+swp.id='mmvi';
+var vvi=document.querySelector('#ivi');
+vvi.id='mvi';
+let SiZ=window.innerHeight;
+let w$=parseInt(document.querySelector("#mvi").width);
+let h$=parseInt(document.querySelector("#mvi").height);
+if(running==0){
+setTimeout(function(){
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
+Module.ccall("startWebGPUi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
+console.log('Starting..');
+running=1;
+},250);
+}else{
+setTimeout(function(){
+let srsiz=document.querySelector('#srsiz').innerHTML;
+let vsiz=document.querySelector('#vsiz').innerHTML;
+Module.ccall("startWebGPUbi",null,["Number","Number","Number"],[vvi.height,vsiz,srsiz]);
+console.log('Starting..');
+},250);
+}
+console.log("img size: ",h$,", ",w$);
+Module.cnvOn();
+}
+
 function imageStart(){
 var vvi=document.querySelector('#ivi');
 let SiZ=window.innerHeight;
@@ -1899,12 +1955,12 @@ scanVideos();
 setTimeout(function(){
 loada()},2200);
 setTimeout(function(){
-videoStart()},4200);
+videoStartA()},4200);
 }
 if(media_mode=='img'){
 scanImages();
 setTimeout(function(){
-imageStart()},1200);
+imageStartHandle()},1200);
 setTimeout(function(){
 loada()},2200);
 }
@@ -1936,7 +1992,7 @@ setTimeout(function(){
 // canvasStartSize();
 // After JS setup is successful, call the C++ function
 // that enables video mode in the render loop.
-Module.ccall('frmsOn', null, [], []); 
+Module.frmsOn(); 
 Module.cnvOn(); 
 },200);
 });
