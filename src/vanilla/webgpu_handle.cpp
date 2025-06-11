@@ -491,7 +491,7 @@ WGpuImageCopyExternalImage source = WGPU_IMAGE_COPY_EXTERNAL_IMAGE_DEFAULT_INITI
 source.source = js_canvas_handle; // The handle to the JS canvas
 
 WGpuImageCopyTextureTagged destination = WGPU_IMAGE_COPY_TEXTURE_TAGGED_DEFAULT_INITIALIZER;
-destination.texture = canvasTexture;
+destination.texture = WGPU_Texture.at(0,0,3); // Re-use the handle!
 
 wgpu_queue_copy_external_image_to_texture(WGPU_Queue.at(0,0,0),&source,&destination,szeV.at(7,7),szeV.at(7,7),1);
 
@@ -522,11 +522,14 @@ for (; i < vec_size; ++i) {
 const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(emscripten_align1_float); // Should this be pixel_buffer.size() * sizeof(float) / height? Or width*4*sizeof(float)? Check calculation.
 */
     
-const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
     // on_b.at(5,5)=0;
 }
-
+if(on_b.at(5,5)==0){
+    
+const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
+wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
+    
+}
 if(on_b.at(4,4)==1){
 
 INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
