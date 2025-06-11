@@ -524,16 +524,9 @@ const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(emscripten_align1_float); /
     
     // on_b.at(5,5)=0;
 }
-if(on_b.at(5,5)==0){
-    
-const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
-    
-}
+
 if(on_b.at(4,4)==1){
 
-INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
-wtv.at(6,6)=INVTextureView;
 
       
       //  Frame Data 
@@ -562,16 +555,15 @@ wtv.at(6,6)=INVTextureView;
     }
 */
       
-const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
-// frame_tensor.at(0,0)=data;
-// fjs_data_pointer.at(0,0)=floatData.data();
-// fjsv_data_pointer.at(0,0)=&floatData; // (std::vector<float*>)
-//     frame_tensorf.at(0,0)=floatData;
-// frame_tensorGL.at(0,0)=data;
-// wetd.at(0,0).source=texid.at(0,0);
-//   wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),&frame_tensor.at(0,0),bytesPerRow,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
+if(on_b.at(5,5)==0){
 
+INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
+wtv.at(6,6)=INVTextureView;
+
+const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
+wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
+    
+}
 /*    //  highway way
 const HWY_FULL(uint8_t) d;
 const size_t N = data.size();  
