@@ -64,10 +64,29 @@ scr.text=jsCode;
 document.body.appendChild(scr);
 setTimeout(function(){
 var ModuleA=lib1ink();
+
+    /**
+     * This is our custom JavaScript function that C++ will call.
+     * By defining it here, Emscripten will attach it to the module instance.
+     * @param {string} selector - The CSS selector for the canvas.
+     * @returns {number} The handle to the canvas object for wasm_webgpu.
+     */
+
+ModuleA.getCanvasHandleForWasm=function(selector) {
+        const canvas = document.querySelector(selector);
+        if (!canvas) {
+            console.error(`Canvas with selector "${selector}" not found!`);
+            return 0;
+        }
+        // 'wgpuStore' is a function provided by lib_webgpu.js that gets
+        // attached to the module instance. Use 'this.wgpuStore' to call it
+        // correctly from within a function on the module object.
+        return this.wgpuStore(canvas);
+};
+
 ModuleA.onRuntimeInitialized=function(){
 console.log('call mod main');
 ModuleA.callMain();
-
 /*
 const mountPointInA = "/video2"; // This path will be created in Module A's FS
 const rootPathInB = "/"; // Which part of Module B's FS to expose. '/' is its root.
@@ -78,8 +97,8 @@ fs: FS               // Module B's actual FS object
 }, mountPointInA);
 console.log('[Module B JS]: Successfully mounted Module B\'s FS root at \'' + mountPointInA + '\' in Module A\'s FS.');
 */
-                          
 };
+  
 },2000);
 }
 };
