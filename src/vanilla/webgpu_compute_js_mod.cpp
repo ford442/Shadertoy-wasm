@@ -394,12 +394,12 @@ entries: [
 });
 // ---- 6. Event Listeners and Starting the Loop (from your original code) ----
 document.querySelector('#moveFwdb').addEventListener('click', function() {
-Module.ccall('frmsOff');
+Module.frmsOff();
 console.log('stopping frames for move');
 window.pause = 'loading'; // Assuming pause is a global or window property
 setTimeout(function() {
 window.pause = 'ready';
-Module.ccall('frmsOn');
+Module.frmsOn();
 }, 1900);
 });
 // File stream (ensure 'FS' is Emscripten's FS object)
@@ -564,12 +564,12 @@ premultipliedAlpha:false,
 preserveDrawingBuffer:false
 });
 document.querySelector('#moveFwdb').addEventListener('click',function(){
-Module.ccall('frmsOff');
+Module.frmsOff();
 console.log('stopping frames for move');
 pause = 'loading';
 setTimeout(function(){
 pause = 'ready';
-Module.ccall('frmsOn');
+Module.frmsOn();
 // console.log('restarting frames for move');
 }, 1900);
 });
@@ -663,12 +663,12 @@ premultipliedAlpha:false,
 preserveDrawingBuffer:false
 });
 document.querySelector('#moveFwdb').addEventListener('click',function(){
-Module.ccall('frmsOff');
+Module.frmsOff();
 console.log('stopping frames for move');
 pause = 'loading';
 setTimeout(function(){
 pause = 'ready';
-Module.ccall('frmsOn');
+Module.frmsOn();
 // console.log('restarting frames for move');
 }, 1900);
 });
@@ -755,12 +755,12 @@ premultipliedAlpha:true,
 preserveDrawingBuffer:false
 });
 document.querySelector('#moveFwdb').addEventListener('click',function(){
-Module.ccall('frmsOff');
+Module.frmsOff();
 console.log('stopping frames for move');
 pause = 'loading';
 setTimeout(function(){
 pause = 'ready';
-Module.ccall('frmsOn');
+Module.frmsOn();
 // console.log('restarting frames for move');
 }, 1900);
 });
