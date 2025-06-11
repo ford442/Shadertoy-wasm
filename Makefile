@@ -778,7 +778,7 @@ b3_compute_mod_test5:
 	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sWASM_LEGACY_EXCEPTIONS=0
 
 
-b3_compute_mod_handle:
+b3_compute_handle:
 	 em++ src/vanilla/webgpu_handle.cpp $(STDS) -pipe -lembind -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
