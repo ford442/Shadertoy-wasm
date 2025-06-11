@@ -803,7 +803,7 @@ b3_compute_handle:
 	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=1 -sTEXTDECODER=1 -sEMBIND_STD_STRING_IS_UTF8=0 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=1 -sAUTO_NATIVE_LIBRARIES=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
-	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
+	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
 	 -sASYNCIFY=2 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='emmalloc' \
 	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
