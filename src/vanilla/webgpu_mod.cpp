@@ -47,6 +47,10 @@ console.log('trying capture_frame_to_buffer.');
 Module.capture_frame_to_buffer();
 });
 
+EM_JS(WGpuObjectBase, get_canvas_handle_for_wasm, (const char* selector), {
+return Module.getCanvasHandleForWasm(UTF8ToString(selector));
+});
+
 EM_JS(bool, initialize_video_capture, (), {
     // Store state on the 'Module' object to make it accessible across EM_JS calls.
     Module.vc_capture_ready = false;
