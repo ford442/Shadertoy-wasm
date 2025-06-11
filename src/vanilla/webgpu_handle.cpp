@@ -471,8 +471,9 @@ passDesc2.occlusionQuerySet=0;
 // passDesc2.maxDrawCount=6;
 passDesc2.timestampWrites=renderTimestampWrites;
 wrpd.at(1,1)=passDesc2;
-      
+
 if(on_b.at(5,5)==1){
+    
 /*  //   js way
 fsm::ifstream fram(Fnm2,std::ios::binary);
 boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
@@ -480,11 +481,19 @@ fram.close();
       
  // AVX 2
 convert_u8_to_float_avx2(data, pixel_buffer);
-*/
+
   //    EM_JS way
 capture_frame_to_buffer();
-  
-const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
+  */
+
+    //   js handle way
+WGpuImageCopyExternalImage source = WGPU_IMAGE_COPY_EXTERNAL_IMAGE_DEFAULT_INITIALIZER;
+source.source = js_canvas_handle; // The handle to the JS canvas
+
+WGpuImageCopyTextureTagged destination = WGPU_IMAGE_COPY_TEXTURE_TAGGED_DEFAULT_INITIALIZER;
+destination.texture = canvasTexture;
+
+wgpu_queue_copy_external_image_to_texture(WGPU_Queue.at(0,0,0),&source,&destination,szeV.at(7,7),szeV.at(7,7),1);
 
 /*      // regular
 std::transform(data.begin(),data.end(),pixel_buffer.begin(),[](uint8_t val){return val/255.0f;});
@@ -512,11 +521,12 @@ for (; i < vec_size; ++i) {
 }
 const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(emscripten_align1_float); // Should this be pixel_buffer.size() * sizeof(float) / height? Or width*4*sizeof(float)? Check calculation.
 */
-      
+    
+const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
     // on_b.at(5,5)=0;
 }
-      
+
 if(on_b.at(4,4)==1){
 
 INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
@@ -1452,7 +1462,7 @@ if(on.at(0,0)!=0){
 emscripten_cancel_main_loop();
 }
 if(on.at(0,0)==0){
-js_canvas_handle = get_canvas_handle_for_wasm("#js_canvas");
+js_canvas_handle = get_canvas_handle_for_wasm("#mvi");
 }
 // emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);  //  60hz
 // emscripten_set_main_loop_timing(EM_TIMING_RAF, 2);  //  30hz
