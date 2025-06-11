@@ -17,12 +17,13 @@ namespace fsm = boost::filesystem;
 
 static boost::container::vector<emscripten_align1_float> pixel_buffer;
 
+WGpuObjectBase js_canvas_handle;
+
 EM_BOOL buffer_resize(emscripten_align1_int sz){
 size_t num_elements = (size_t)sz * sz * 4;
 pixel_buffer.resize(num_elements);
 return EM_TRUE;
 }
-
 
 emscripten::val getPixelBufferView() {
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
@@ -1447,7 +1448,12 @@ u_time.t2=boost::chrono::high_resolution_clock::now();
 u_time.t3=boost::chrono::high_resolution_clock::now();
 u_time.time_spanb=boost::chrono::duration<boost::compute::double_,boost::chrono::seconds::period>(u_time.t2-u_time.t3);
 u_time.time_spana=boost::chrono::duration<boost::compute::double_,boost::chrono::seconds::period>(u_time.t2-u_time.t1);
-if(on.at(0,0)!=0){emscripten_cancel_main_loop();}
+if(on.at(0,0)!=0){
+emscripten_cancel_main_loop();
+}
+if(on.at(0,0)==0){
+js_canvas_handle = get_canvas_handle_for_wasm("#js_canvas");
+}
 // emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);  //  60hz
 // emscripten_set_main_loop_timing(EM_TIMING_RAF, 2);  //  30hz
 emscripten_set_main_loop((void(*)())raf,0,0);
