@@ -472,19 +472,19 @@ passDesc2.timestampWrites=renderTimestampWrites;
 wrpd.at(1,1)=passDesc2;
       
 if(on_b.at(5,5)==1){
-/*  //   js way
+ //   js way
 fsm::ifstream fram(Fnm2,std::ios::binary);
 boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
 fram.close();
       
  // AVX 2
 convert_u8_to_float_avx2(data, pixel_buffer);
-*/
+/* 
   //    EM_JS way
 capture_frame_to_buffer();
   
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
-
+*/
 /*      // regular
 std::transform(data.begin(),data.end(),pixel_buffer.begin(),[](uint8_t val){return val/255.0f;});
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
@@ -513,7 +513,7 @@ const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(emscripten_align1_float); /
 */
       
 wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
-    // on_b.at(5,5)=0;
+on_b.at(5,5)=0;
 }
       
 if(on_b.at(4,4)==1){
