@@ -479,6 +479,8 @@ fram.close();
       
  // AVX 2
 convert_u8_to_float_avx2(data, pixel_buffer);
+const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
+
 /* 
   //    EM_JS way
 capture_frame_to_buffer();
