@@ -1989,11 +1989,11 @@ getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 setTimeout(function(){
 // initialize_video_capture();
-// canvasStartSize();
+canvasStartSize();
 // After JS setup is successful, call the C++ function
 // that enables video mode in the render loop.
-Module.frmsOn(); 
-Module.cnvOn(); 
+// Module.frmsOn(); 
+// Module.cnvOn(); 
 },200);
 });
 
