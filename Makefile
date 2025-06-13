@@ -44,7 +44,7 @@ WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigato
 b3_cropcircle:
 	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O3 -m32 -mtune=wasm32 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -o cropcircle.o
 	 emcc $(STDS) -O3 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
-	 -sFORCE_FILESYSTEM=1 --bind -lembind -mtune=wasm32 -sASYNCIFY=2 \
+	 -sFORCE_FILESYSTEM=1 --bind -lembind -mtune=wasm32 -sASYNCIFY=2 -sASYNCIFY_STACK_SIZE=81920 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --extern-pre-js gpujsx.js cropcircle.o -o $(BIN_NAME).js 
 
