@@ -29,14 +29,14 @@ GL_FLAGS = -sGL_ENABLE_GET_PROC_ADDRESS -sFULL_ES3=1 -sFULL_ES2=0 -sUSE_GLFW=0 \
 	 -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sGL_TRACK_ERRORS=0
 
 LINK_FLAGS = -DQUAD $(LDFLAGS) -sDEFAULT_TO_CXX=1 -sALLOW_TABLE_GROWTH=1 -sEMULATE_FUNCTION_POINTER_CASTS=0 -sSUPPORT_BIG_ENDIAN=0 \
-	 -sWASM_BIGINT=1 -sOFFSCREENCANVAS_SUPPORT=1 -pthread -openmp -sMALLOC='mimalloc' \
+	 -sWASM_BIGINT=1 -sOFFSCREENCANVAS_SUPPORT=1 -pthread -sDEFAULT_PTHREAD_STACK_SIZE=8mb -openmp -sMALLOC='mimalloc' \
 	 -sTRUSTED_TYPES=1 -sIGNORE_MISSING_MAIN=0 -sABORT_ON_WASM_EXCEPTIONS=0 \
 	 -sDEMANGLE_SUPPORT=0 -sASSERTIONS=0 --typed-function-references --enable-reference-types -fno-strict-aliasing \
 	 -sTEXTDECODER=0 --use-preload-plugins --closure 0 --closureFriendly \
 	 -sWASMFS=1 -sTOTAL_STACK=65536 -sENVIRONMENT='web,worker' -sSTRICT_JS=1 \
 	 -sGLOBAL_BASE=352321536 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
-	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=3221225472 --output_eol linux -mllvm -wasm-enable-eh \
-	 -rtlib=compiler-rt-mt -sAUTO_ARCHIVE_INDEXES=0 -sWASM_LEGACY_EXCEPTIONS=0
+	 -sALLOW_MEMORY_GROWTH=0 -sMAXIMUM_MEMORY=4gb -sINITIAL_HEAP=1024mb --output_eol linux -mllvm -wasm-enable-eh \
+	 -rtlib=compiler-rt-mt -sAUTO_ARCHIVE_INDEXES=0
 
 WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
 	 -lmath.js -lhtml5.js -lint53.js
@@ -44,7 +44,7 @@ WEBGPU_FLAGS = -sASYNCIFY=1 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigato
 b3_cropcircle:
 	 em++ $(STDS) -c src/vanilla/cropcircle.cpp -O3 -m32 -mtune=wasm32 $(COMMON_FLAGS) $(SIMD_FLAGS) $(BOOST_FLAGS) -o cropcircle.o
 	 emcc $(STDS) -O3 $(COMMON_FLAGS) $(LINK_FLAGS) $(GL_FLAGS) $(BOOST_FLAGS) \
-	 -sFORCE_FILESYSTEM=1 --bind -lembind -mtune=wasm32 \
+	 -sFORCE_FILESYSTEM=1 --bind -lembind -mtune=wasm32 -sASYNCIFY=2 \
 	 -sEXPORTED_FUNCTIONS='["_main","_nano","_rotat","_emem"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --extern-pre-js gpujsx.js cropcircle.o -o $(BIN_NAME).js 
 
