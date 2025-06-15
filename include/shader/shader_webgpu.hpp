@@ -1,3 +1,109 @@
+#pragma once // Added pragma once
+
+#include <boost/cstdfloat.hpp> // Keep original includes that might be used by other parts
+
+#include "../../include/shader/defs.hpp"
+// #include <stdio.h> // Already commented
+#include <stdlib.h>
+#include <cstdint>
+#include <stdarg.h>
+#include <new>
+#include <cstring> // For memcpy, strlen
+#include <math.h>
+#include <cfloat>
+#include <ctime>
+// #include <iostream> // Provided by WebGPUComputePipeline's iostream
+#include <vector>
+#include <climits>
+#include <functional>
+#include <memory> // For std::unique_ptr
+#include <string> // For std::string
+#include <iostream> // For std::cerr, std::cout (used by WebGPUComputePipeline)
+
+#include <webgpu/webgpu.h> // WebGPU definitions
+
+// Forward declaration for Run class if WebGPUComputePipeline needs to know about it.
+// class Run; // Not strictly needed if Run just owns a pipeline ptr and WebGPUComputePipeline is defined first.
+
+class WebGPUComputePipeline {
+public:
+    WebGPUComputePipeline(const std::string& shader_filepath, const std::string& entry_point, size_t input_size_bytes, size_t result_size_bytes); // Changed shader_source to shader_filepath
+    ~WebGPUComputePipeline();
+
+    bool initialize();
+    bool runCompute();
+
+    void setInputDataValue(uint8_t value, size_t index);
+    void setInputData(const std::vector<uint8_t>& data);
+    const std::vector<uint32_t>& getComputeResult() const;
+    bool isInitialized() const { return initialized_; }
+
+private:
+    // WebGPU handles
+    WGPUInstance instance_ = nullptr;
+    WGPUAdapter adapter_ = nullptr;
+    WGPUDevice device_ = nullptr;
+    WGPUQueue queue_ = nullptr;
+    WGPUBuffer input_buffer_ = nullptr;
+    WGPUBuffer result_buffer_ = nullptr;
+    WGPUBuffer staging_buffer_ = nullptr;
+    WGPUShaderModule compute_module_ = nullptr;
+    WGPUComputePipeline pipeline_ = nullptr;
+    WGPUBindGroupLayout bind_group_layout_ = nullptr;
+    WGPUBindGroup bind_group_ = nullptr;
+
+    // Descriptors
+    WGPURequestAdapterOptions adapter_options_ = {};
+    WGPUDeviceDescriptor device_descriptor_ = {};
+    WGPUBufferDescriptor input_buffer_desc_ = {};
+    WGPUBufferDescriptor result_buffer_desc_ = {};
+    WGPUBufferDescriptor staging_buffer_desc_ = {};
+    WGPUShaderModuleWGSLDescriptor shader_module_wgsl_desc_ = {};
+    WGPUShaderModuleDescriptor shader_module_desc_ = {};
+    WGPUComputePipelineDescriptor pipeline_desc_ = {};
+
+    // Data
+    std::vector<uint8_t> input_data_;
+    std::vector<uint32_t> result_data_;
+    size_t input_buffer_size_bytes_;
+    size_t result_buffer_size_bytes_;
+
+    // Shader info
+    std::string shader_source_;
+    std::string entry_point_;
+
+    bool initialized_ = false;
+    bool buffers_created_ = false;
+
+    // Async callback static trampolines
+    static void onAdapterRequestEnded(WGPURequestAdapterStatus status, WGPUAdapter adapter, const char* message, void* userdata);
+    static void onDeviceRequestEnded(WGPURequestDeviceStatus status, WGPUDevice device, const char* message, void* userdata);
+    static void onStagingBufferMapCallback(WGPUBufferMapAsyncStatus status, void* userdata);
+
+
+    // Instance methods for callbacks
+    void handleAdapterRequestEnded(WGPURequestAdapterStatus status, WGPUAdapter adapter, const char* message);
+    void handleDeviceRequestEnded(WGPURequestDeviceStatus status, WGPUDevice device, const char* message);
+    void handleStagingBufferMap(WGPUBufferMapAsyncStatus status); // May not be used if polling in runCompute
+
+    // Internal setup methods
+    // bool setupAdapter(); // Integrated into initialize()
+    bool setupDevice();
+    bool createBuffers();
+    bool createShaderModule();
+    bool createPipeline();
+
+    // Logging and error handling
+    static void deviceLostCallback(WGPUDeviceLostReason reason, char const * message, void * userdata);
+    static void uncapturedErrorCallback(WGPUErrorType type, char const * message, void * userdata);
+
+    void releaseResources();
+
+    friend class Run; // Grant Run access if needed for calling private methods or managing state
+};
+
+
+// Original content continues below
 #include <boost/cstdfloat.hpp>
 
 #include "../../include/shader/defs.hpp"
@@ -15,9 +121,7 @@
 #include <vector>
 #include <climits>
 
-#include <functional>
-
-template<class ArgumentType,class ResultType>
+// template<class ArgumentType,class ResultType> // This was already part of the inserted section's includes
 
 struct unary_function{
 typedef ArgumentType argument_type;
@@ -81,9 +185,9 @@ typedef ResultType result_type;
 #include "../../include/shader/intrins.hpp"
 // #include "../../include/shader/gl.hpp"
 #include "../../include/shader/egl.hpp"
-#include "../../lib/lib_webgpu.h"
+#include "../../lib/lib_webgpu.h" // This is the C header for WebGPU, keep it.
 
-#include <emscripten/html5.h>
+#include <emscripten/html5.h> // Keep Emscripten specific includes
 
 #ifndef OPENGL_CORE_PROFILE
 #define OPENGL_CORE_PROFILE 1
@@ -258,7 +362,7 @@ return shader;
 
 };
 
-static inline char wgl_cmp_src[2000]=
+/* static inline char wgl_cmp_src[2000]= // Commented out as it's now loaded from shaders/compute_shader.wgsl
 "@group(0)@binding(0)var<storage,read>inputBuffer:array<u32,262144>;"
 "@group(0)@binding(1)var<storage,read_write>outputBuffer:array<u32,262144>;"
 "@group(0)@binding(2)var textureA:texture_storage_2d<rgba32uint,write>;"
@@ -272,9 +376,9 @@ static inline char wgl_cmp_src[2000]=
 "outputBuffer[m+2]=255-inputBuffer[0];"
 "outputBuffer[m+3]=255;"
 "}"
-"}";
+"}"; */
 
-static inline char cm_hdr_src[2300]=
+/* static inline char cm_hdr_src[2300]= // Commented out: loaded from shaders/common_header.glsl
 "#version 300 es\n"
 "#extension GL_ALL_EXTENSIONS : enable\n"
 "#extension all_spir_v_extensions : enable\n"
@@ -320,24 +424,24 @@ static inline char cm_hdr_src[2300]=
 "precision mediump isampler2D;precision mediump isampler3D;precision mediump isamplerCube;"
 "precision mediump isampler2DArray;precision mediump usampler2D;precision mediump usampler3D;"
 "precision mediump usamplerCube;precision mediump usampler2DArray;precision mediump samplerCubeShadow;"
-"precision mediump sampler2DArrayShadow;\n";
+"precision mediump sampler2DArrayShadow;\n"; */
 
-static inline char vrt_bdy_src[100]=
+/* static inline char vrt_bdy_src[100]= // Commented out: loaded from shaders/vertex_shader.glsl
 "precision mediump int;\n"
-"layout(location=0)in vec4 iPosition;void main(){gl_Position=iPosition;}\n";
+"layout(location=0)in vec4 iPosition;void main(){gl_Position=iPosition;}\n"; */
 
-static inline char frg_hdr_src[1000]=
+/* static inline char frg_hdr_src[1000]= // Commented out: loaded from shaders/fragment_header.glsl
 "precision mediump int;\n"
 "uniform int iFrameRate;"
 "uniform int iFrame;uniform float iTime;uniform float iTimeDelta;uniform vec4 iDate;"
 "uniform float iChannelTime[4];uniform vec3 iChannelResolution[4];uniform vec3 iResolution;"
 "uniform vec4 iMouse;uniform sampler2D iChannel0;uniform sampler2D iChannel1;uniform sampler2D iChannel2;"
 "uniform sampler2D iChannel3;"
-"out vec4 fragColor;\n";
+"out vec4 fragColor;\n"; */
 
-static inline char frg_ftr_src[420]=
-"void main(){mainImage(fragColor,gl_FragCoord.xy);}\n\0";
-/*
+/* static inline char frg_hdr_src[1000]= // Commented out as shaders/fragment_header.glsl is used
+"void main(){mainImage(fragColor,gl_FragCoord.xy);}\n\0"; */
+/* // This is the start of the ShaderToy multi-pass example, not frg_ftr_src itself
 "#define mainImage mainImage0(out dvec4 O,dvec2 U);"
 "int _N=3;void mainImage(out dvec4 O,dvec2 U){"
 "dvec4 o;O=dvec4(0);"
@@ -418,51 +522,51 @@ static i_tensor cntxi=i_tensor{2,2};
 static mouse_tensor mms=mouse_tensor{2,2};
 static mouse_tensor mms2=mouse_tensor{2,2};
 static void_tensor bin=void_tensor{1,1};
-static wa_tensor WGPU_Adapter=wa_tensor{1,1,2};
-static wd_tensor WGPU_Device=wd_tensor{1,1,2};
-static wq_tensor WGPU_Queue=wq_tensor{1,1,2};
-static cb_tensor WGPU_CommandBuffer=cb_tensor{1,1,3};
-static wb_tensor WGPU_Buffers=wb_tensor{3,3,3};
-static ce_tensor WGPU_CommandEncoder=ce_tensor{1,1,4};
-static cpe_tensor WGPU_ComputePassCommandEncoder=cpe_tensor{1,1,3};
-static cp_tensor WGPU_ComputePipeline=cp_tensor{1,1,1};
-static pl_tensor WGPU_ComputePipelineLayout=pl_tensor{1,1,1};
-static cm_tensor WGPU_ComputeModule=cm_tensor{1,1,1};
-static bg_tensor WGPU_BindGroup=bg_tensor{1,1,2};
-static bgl_tensor WGPU_BindGroupLayout=bgl_tensor{1,1,2};
-static bgle_tensor WGPU_BindGroupLayoutEntries=bgle_tensor{1,1,2};
-static bge_tensor WGPU_BindGroupEntries=bge_tensor{1,1,2};
-static bmc_tensor WGPU_MapCallback=bmc_tensor{1,1,3};
-static wdc_tensor WGPU_ComputeDoneCallback=wdc_tensor{1,1,3};
-static oac_tensor WGPU_ObtainedAdapterCallback=oac_tensor{1,1,2};
-static odc_tensor WGPU_ObtainedDeviceCallback=odc_tensor{1,1,2};
-static bbl_tensor WGPU_BufferBindingLayout=bbl_tensor{1,1,4};
-static bd_tensor WGPU_BufferDescriptor=bd_tensor{1,1,4};
-static md_tensor WGPU_ShaderModuleDescriptor=md_tensor{1,1,3};
-static di_tensor WGPU_BufferMappedRange=di_tensor{1,1,1};
-static void_tensor WGPU_UserData=void_tensor{1,1,2};
-static rao_tensor WGPU_RequestAdapterOptions=rao_tensor{1,1,1};
-static dd_tensor WGPU_DeviceDescriptor=dd_tensor{1,1,1};
-static uiptr_tensor WGPU_ResultBuffer=uiptr_tensor{1,1,1};
-static uiptr_tensor WGPU_InputBuffer=uiptr_tensor{1,1,1};
-static i53_tensor WGPU_BufferRange=i53_tensor{1,1,2};
-static i53_tensor WGPU_BufferSize=i53_tensor{1,1,1};
-static tex_tensor WGPU_Texture=tex_tensor{1,1,1};
-static td_tensor WGPU_TextureDescriptor=td_tensor{1,1,1};
-static stbl_tensor WGPU_StorageTextureBindingLayout=stbl_tensor{1,1,1};
-static tvd_tensor WGPU_TextureViewDescriptor=tvd_tensor{1,1,1};
-static tv_tensor WGPU_TextureView=tv_tensor{1,1,1};
-static uiptr_tensor WGPU_ColorBuffer=uiptr_tensor{1,1,1};
-static ced_tensor WGPU_CommandEncoderDescriptor=ced_tensor{1,1,1};
-static bms_tensor WGPU_BufferStatus=bms_tensor{1,1,1};
+// static wa_tensor WGPU_Adapter=wa_tensor{1,1,2}; // Replaced by WebGPUComputePipeline member
+// static wd_tensor WGPU_Device=wd_tensor{1,1,2}; // Replaced by WebGPUComputePipeline member
+// static wq_tensor WGPU_Queue=wq_tensor{1,1,2}; // Replaced by WebGPUComputePipeline member
+// static cb_tensor WGPU_CommandBuffer=cb_tensor{1,1,3}; // Replaced by WebGPUComputePipeline member
+// static wb_tensor WGPU_Buffers=wb_tensor{3,3,3}; // Replaced by WebGPUComputePipeline member
+// static ce_tensor WGPU_CommandEncoder=ce_tensor{1,1,4}; // Replaced by WebGPUComputePipeline member
+// static cpe_tensor WGPU_ComputePassCommandEncoder=cpe_tensor{1,1,3}; // Replaced by WebGPUComputePipeline member
+// static cp_tensor WGPU_ComputePipeline=cp_tensor{1,1,1}; // Replaced by WebGPUComputePipeline member
+// static pl_tensor WGPU_ComputePipelineLayout=pl_tensor{1,1,1}; // Replaced by WebGPUComputePipeline member
+// static cm_tensor WGPU_ComputeModule=cm_tensor{1,1,1}; // Replaced by WebGPUComputePipeline member
+// static bg_tensor WGPU_BindGroup=bg_tensor{1,1,2}; // Replaced by WebGPUComputePipeline member
+// static bgl_tensor WGPU_BindGroupLayout=bgl_tensor{1,1,2}; // Replaced by WebGPUComputePipeline member
+// static bgle_tensor WGPU_BindGroupLayoutEntries=bgle_tensor{1,1,2}; // Managed by WebGPUComputePipeline
+// static bge_tensor WGPU_BindGroupEntries=bge_tensor{1,1,2}; // Managed by WebGPUComputePipeline
+// static bmc_tensor WGPU_MapCallback=bmc_tensor{1,1,3}; // Callbacks are now static members of WebGPUComputePipeline
+// static wdc_tensor WGPU_ComputeDoneCallback=wdc_tensor{1,1,3}; // Callbacks are now static members of WebGPUComputePipeline
+// static oac_tensor WGPU_ObtainedAdapterCallback=oac_tensor{1,1,2}; // Callbacks are now static members of WebGPUComputePipeline
+// static odc_tensor WGPU_ObtainedDeviceCallback=odc_tensor{1,1,2}; // Callbacks are now static members of WebGPUComputePipeline
+// static bbl_tensor WGPU_BufferBindingLayout=bbl_tensor{1,1,4}; // Managed by WebGPUComputePipeline
+// static bd_tensor WGPU_BufferDescriptor=bd_tensor{1,1,4}; // Managed by WebGPUComputePipeline
+// static md_tensor WGPU_ShaderModuleDescriptor=md_tensor{1,1,3}; // Managed by WebGPUComputePipeline
+// static di_tensor WGPU_BufferMappedRange=di_tensor{1,1,1}; // Result handling within WebGPUComputePipeline
+// static void_tensor WGPU_UserData=void_tensor{1,1,2}; // Userdata for callbacks handled by WebGPUComputePipeline instance
+// static rao_tensor WGPU_RequestAdapterOptions=rao_tensor{1,1,1}; // Options are members of WebGPUComputePipeline
+// static dd_tensor WGPU_DeviceDescriptor=dd_tensor{1,1,1}; // Options are members of WebGPUComputePipeline
+static uiptr_tensor WGPU_ResultBuffer=uiptr_tensor{1,1,1}; // Still used for GL texture update (deferred)
+static uiptr_tensor WGPU_InputBuffer=uiptr_tensor{1,1,1}; // Restoring this as WGPU_Input_Array is still used externally.
+// static i53_tensor WGPU_BufferRange=i53_tensor{1,1,2}; // Result handling within WebGPUComputePipeline
+// static i53_tensor WGPU_BufferSize=i53_tensor{1,1,1}; // Size info in WebGPUComputePipeline
+// static tex_tensor WGPU_Texture=tex_tensor{1,1,1}; // Texture resources managed by WebGPUComputePipeline if used
+// static td_tensor WGPU_TextureDescriptor=td_tensor{1,1,1}; // Texture resources managed by WebGPUComputePipeline if used
+// static stbl_tensor WGPU_StorageTextureBindingLayout=stbl_tensor{1,1,1}; // Texture resources managed by WebGPUComputePipeline if used
+// static tvd_tensor WGPU_TextureViewDescriptor=tvd_tensor{1,1,1}; // Texture resources managed by WebGPUComputePipeline if used
+// static tv_tensor WGPU_TextureView=tv_tensor{1,1,1}; // Texture resources managed by WebGPUComputePipeline if used
+// static uiptr_tensor WGPU_ColorBuffer=uiptr_tensor{1,1,1}; // Related to old texture/buffer copies
+// static ced_tensor WGPU_CommandEncoderDescriptor=ced_tensor{1,1,1}; // Managed by WebGPUComputePipeline
+// static bms_tensor WGPU_BufferStatus=bms_tensor{1,1,1}; // Internal state, not needed globally
 
-uint32_t workgroupSize=64;
-uint32_t OutputBufferUnits=262144;
-uint32_t OutputBufferBytes=262144*4;
-uint32_t InputBufferUnits=262144;
-uint32_t InputBufferBytes=262144*4;
-uint64_t WGPU_InputRangeSize=OutputBufferBytes;
-const char * Entry="computeStuff";
+uint32_t workgroupSize=64; // Still potentially useful for reference or if pipeline uses it
+uint32_t OutputBufferUnits=262144; // Still potentially useful for reference or if pipeline uses it
+uint32_t OutputBufferBytes=262144*4; // Used by WebGPUComputePipeline constructor, keep for now
+uint32_t InputBufferUnits=262144; // Still potentially useful for reference or if pipeline uses it
+uint32_t InputBufferBytes=262144*4; // Used by WebGPUComputePipeline constructor, keep for now
+uint64_t WGPU_InputRangeSize=OutputBufferBytes; // Potentially unused, review later
+const char * Entry="computeStuff"; // Used by WebGPUComputePipeline constructor, keep for now
 // uint32_t invocationCount=BufferMapSize/sizeof(int);
 // uint32_t workgroupCount=(invocationCount+workgroupSize-1)/workgroupSize;
 WGPU_MAP_MODE_FLAGS mode1=0x1; // READ MODE
@@ -479,64 +583,279 @@ GLuint srgbTexture;
 GLuint frameBuffer;
 GLuint depthBuffer;
 WGpuTexture textureA;
-WGpuAdapter adapter=0;
-WGpuDevice device=0;
-WGpuQueue queue=0;
-WGpuBindGroupLayout bindGroupLayout=0;
-WGpuBindGroupLayout bindGroupLayoutB=0;
-WGpuComputePipeline computePipeline=0;
-WGpuBuffer inputBuffer=0;
-WGpuBuffer outputBuffer=0;
-WGpuBuffer mapBuffer=0;
-WGpuBuffer uniBuffer=0;
-WGpuShaderModule cs=0;
-WGpuCommandBuffer commandBuffer=0;
-WGpuCommandEncoder encoder=0;
-WGpuComputePassEncoder computePass=0;
-WGpuBindGroup bindGroup=0;
-WGpuBindGroup bindGroupB=0;
-WGpuPipelineLayout pipelineLayout=0;
-WGpuQuerySet querySet=0;
-WGpuComputePassDescriptor computePassDescriptor={};
-WGpuCommandBufferDescriptor commandBufferDescriptor={};
-WGpuCommandEncoderDescriptor commandEncoderDescriptor={};
-WGpuDeviceDescriptor deviceDescriptor={};
-WGpuBindGroupLayoutEntry bindGroupLayoutEntries[3]={};
-WGpuBindGroupLayoutEntry bindGroupLayoutEntriesB[2]={};
-WGpuBindGroupEntry bindGroupEntry[3]={};
-WGpuBindGroupEntry bindGroupEntryB[2]={};
-WGpuBufferBindingLayout bufferBindingLayout1={3};
-WGpuBufferBindingLayout bufferBindingLayout2={2};
-WGpuBufferBindingLayout bufferBindingLayout3={2};
-WGpuBufferBindingLayout bufferBindingLayout4={2};
-WGpuStorageTextureBindingLayout storageTextureBindingLayout1={1,34,2};
-WGpuRequestAdapterOptions options={WGPU_POWER_PREFERENCE_HIGH_PERFORMANCE,false};
-std::vector<float>color_input(InputBufferUnits);
-std::vector<uint8_t>input(InputBufferBytes);
-std::vector<uint8_t>outputd(OutputBufferBytes);
-std::vector<uint8_t>outpute(OutputBufferBytes);
-WGpuBufferDescriptor bufferDescriptorI={262144*4,WGPU_BUFFER_USAGE_STORAGE|WGPU_BUFFER_USAGE_COPY_DST,false};
-WGpuBufferDescriptor bufferDescriptorO={262144*4,WGPU_BUFFER_USAGE_STORAGE|WGPU_BUFFER_USAGE_COPY_SRC,false};
-WGpuBufferDescriptor bufferDescriptorM={262144*4,WGPU_BUFFER_USAGE_MAP_READ|WGPU_BUFFER_USAGE_COPY_DST,false};
-WGpuBufferDescriptor bufferDescriptorC={262144*4,WGPU_BUFFER_USAGE_MAP_READ|WGPU_BUFFER_USAGE_COPY_DST,false};
-// 14 = R32FLOAT   34 = RGBA32UINT
-WGpuTextureDescriptor textureDescriptorA={256,256,1,1,1,2,34,WGPU_TEXTURE_USAGE_STORAGE_BINDING|WGPU_TEXTURE_USAGE_COPY_SRC|WGPU_TEXTURE_USAGE_COPY_DST};
-WGpuTextureViewDescriptor textureViewDescriptorA={34,WGPU_TEXTURE_VIEW_DIMENSION_2D};
-char * cmp_bdy=wgl_cmp_src;
-WGpuShaderModuleDescriptor shaderModuleDescriptor={cmp_bdy,0,NULL};
-int randomNumber=0,entropySeed=0;
-std::random_device randomizer;
-int raN=0;
-int raND=0;
-uint32_t * WGPU_Result_Array=new uint32_t[OutputBufferBytes];
-uint32_t * WGPU_Input_Array=new uint32_t[InputBufferBytes];
-uint32_t * WGPU_Color_Input_Array=new uint32_t[InputBufferBytes];
-WGpuImageCopyTexture WGPU_Input_Image={};
-WGpuImageCopyTexture WGPU_Output_Image={};
-WGpuImageCopyBuffer WGPU_Input_Buffer={};
-WGpuImageCopyBuffer WGPU_Output_Buffer={};
-WGpuImageCopyBuffer WGPU_Mapped_Buffer={};
+// WGpuAdapter adapter=0; // Replaced by WebGPUComputePipeline member
+// WGpuDevice device=0; // Replaced by WebGPUComputePipeline member
+// WGpuQueue queue=0; // Replaced by WebGPUComputePipeline member
+// WGpuBindGroupLayout bindGroupLayout=0; // Replaced by WebGPUComputePipeline member
+// WGpuBindGroupLayout bindGroupLayoutB=0; // Unused second layout
+// WGpuComputePipeline computePipeline=0; // Replaced by WebGPUComputePipeline member
+// WGpuBuffer inputBuffer=0; // Replaced by WebGPUComputePipeline member
+// WGpuBuffer outputBuffer=0; // Replaced by WebGPUComputePipeline member
+// WGpuBuffer mapBuffer=0; // Replaced by WebGPUComputePipeline member (staging_buffer_)
+// WGpuBuffer uniBuffer=0; // Potentially unused uniform buffer
+// WGpuShaderModule cs=0; // Replaced by WebGPUComputePipeline member
+// WGpuCommandBuffer commandBuffer=0; // Created on demand in WebGPUComputePipeline
+// WGpuCommandEncoder encoder=0; // Created on demand in WebGPUComputePipeline
+// WGpuComputePassEncoder computePass=0; // Created on demand in WebGPUComputePipeline
+// WGpuBindGroup bindGroup=0; // Replaced by WebGPUComputePipeline member
+// WGpuBindGroup bindGroupB=0; // Unused second bind group
+// WGpuPipelineLayout pipelineLayout=0; // Replaced by WebGPUComputePipeline member
+// WGpuQuerySet querySet=0; // Unused
+// WGpuComputePassDescriptor computePassDescriptor={}; // Created on demand in WebGPUComputePipeline
+// WGpuCommandBufferDescriptor commandBufferDescriptor={}; // Created on demand in WebGPUComputePipeline
+// WGpuCommandEncoderDescriptor commandEncoderDescriptor={}; // Created on demand in WebGPUComputePipeline
+// WGpuDeviceDescriptor deviceDescriptor={}; // Template for device creation, now member of WebGPUComputePipeline
+// WGpuBindGroupLayoutEntry bindGroupLayoutEntries[3]={}; // Managed by WebGPUComputePipeline
+// WGpuBindGroupLayoutEntry bindGroupLayoutEntriesB[2]={}; // Unused
+// WGpuBindGroupEntry bindGroupEntry[3]={}; // Managed by WebGPUComputePipeline
+// WGpuBindGroupEntry bindGroupEntryB[2]={}; // Unused
+// WGpuBufferBindingLayout bufferBindingLayout1={3}; // Managed by WebGPUComputePipeline
+// WGpuBufferBindingLayout bufferBindingLayout2={2}; // Managed by WebGPUComputePipeline
+// WGpuBufferBindingLayout bufferBindingLayout3={2}; // Managed by WebGPUComputePipeline
+// WGpuBufferBindingLayout bufferBindingLayout4={2}; // Managed by WebGPUComputePipeline
+// WGpuStorageTextureBindingLayout storageTextureBindingLayout1={1,34,2}; // Managed by WebGPUComputePipeline if textures are used
+// WGpuRequestAdapterOptions options={WGPU_POWER_PREFERENCE_HIGH_PERFORMANCE,false}; // Member of WebGPUComputePipeline
+std::vector<float>color_input(InputBufferUnits); // Potentially related to WGPU_Color_Input_Array, review if used elsewhere
+// std::vector<uint8_t>input(InputBufferBytes); // This was the global input, now handled by pipeline's input_data_
+std::vector<uint8_t>outputd(OutputBufferBytes); // Potentially for debugging, review if used
+std::vector<uint8_t>outpute(OutputBufferBytes); // Potentially for debugging, review if used
+// WGpuBufferDescriptor bufferDescriptorI={262144*4,WGPU_BUFFER_USAGE_STORAGE|WGPU_BUFFER_USAGE_COPY_DST,false}; // Member of WebGPUComputePipeline
+// WGpuBufferDescriptor bufferDescriptorO={262144*4,WGPU_BUFFER_USAGE_STORAGE|WGPU_BUFFER_USAGE_COPY_SRC,false}; // Member of WebGPUComputePipeline
+// WGpuBufferDescriptor bufferDescriptorM={262144*4,WGPU_BUFFER_USAGE_MAP_READ|WGPU_BUFFER_USAGE_COPY_DST,false}; // Member of WebGPUComputePipeline
+// WGpuBufferDescriptor bufferDescriptorC={262144*4,WGPU_BUFFER_USAGE_MAP_READ|WGPU_BUFFER_USAGE_COPY_DST,false}; // Unused or similar to M
+// WGpuTextureDescriptor textureDescriptorA={256,256,1,1,1,2,34,WGPU_TEXTURE_USAGE_STORAGE_BINDING|WGPU_TEXTURE_USAGE_COPY_SRC|WGPU_TEXTURE_USAGE_COPY_DST}; // Managed by pipeline if textures used
+// WGpuTextureViewDescriptor textureViewDescriptorA={34,WGPU_TEXTURE_VIEW_DIMENSION_2D}; // Managed by pipeline if textures used
+// char * cmp_bdy=wgl_cmp_src; // This is fine, wgl_cmp_src is used.
+// WGpuShaderModuleDescriptor shaderModuleDescriptor={cmp_bdy,0,NULL}; // Member of WebGPUComputePipeline
+int randomNumber=0,entropySeed=0; // Used by rNd4, keep
+std::random_device randomizer; // Used by rNd4, keep
+int raN=0; // Used in Unifrm, related to GL texture updates. Keep for now.
+// int raND=0; // Unused, commenting out.
+uint32_t * WGPU_Result_Array=new uint32_t[OutputBufferBytes]; // Still used for GL texture update (deferred part)
+// uint32_t * WGPU_Input_Array=new uint32_t[InputBufferBytes]; // Replaced by pipeline's input_data_
+uint32_t * WGPU_Color_Input_Array=new uint32_t[InputBufferBytes]; // Potentially unused. Review. (Leaving for now)
+// WGpuImageCopyTexture WGPU_Input_Image={}; // Related to old texture copies, likely unused
+// WGpuImageCopyTexture WGPU_Output_Image={}; // Related to old texture copies, likely unused
+// WGpuImageCopyBuffer WGPU_Input_Buffer={}; // Related to old texture copies, likely unused
+// WGpuImageCopyBuffer WGPU_Output_Buffer={}; // Related to old texture copies, likely unused
+// WGpuImageCopyBuffer WGPU_Mapped_Buffer={}; // Related to old texture copies, likely unused
 unsigned char * ColorA=new unsigned char[262144*sizeof(unsigned char)];
+
+// Commenting out old WebGPU global functions and callbacks
+// inline int rNd4(int randomMax){ // This function is still used by Run::Unifrm, so keep it.
+// The following are being removed as they are part of the old global WebGPU system
+/*
+WGpuBufferMapCallback mapCallbackStart=[](WGpuBuffer buffer,void * userData,WGPU_MAP_MODE_FLAGS mode,double_int53_t offset,double_int53_t size){
+return;
+};
+
+WGpuBufferMapCallback mapCallbackRun=[](WGpuBuffer buffer,void * userData,WGPU_MAP_MODE_FLAGS mode,double_int53_t offset,double_int53_t size){
+return;
+};
+
+WGpuOnSubmittedWorkDoneCallback onComputeDoneStart=[](WGpuQueue queue,void *userData){
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)==3){
+double_int53_t WGPU_Range_PointerB=wgpu_buffer_get_mapped_range(WGPU_Buffers.at(2,0,2),0,OutputBufferBytes);
+WGPU_BufferRange.at(0,0,1)=WGPU_Range_PointerB;
+wgpu_buffer_read_mapped_range(WGPU_Buffers.at(2,0,2), WGPU_BufferRange.at(0,0,1) ,0,WGPU_ResultBuffer.at(0,0,0),OutputBufferBytes);
+raN=rNd4(3);
+  /*
+glActiveTexture(GL_TEXTURE0+raN);
+glBindTexture(GL_TEXTURE_2D,wtexture[raN]);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+// glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_R,GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,&WGPU_ResultBuffer.at(0,0,0));
+glGenerateMipmap(GL_TEXTURE_2D); // broken gl textures without
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+  *//*
+}
+if(WGPU_BufferStatus.at(0,0,0)!=1){
+wgpu_buffer_unmap(WGPU_Buffers.at(2,0,2));
+}
+return;
+};
+
+WGpuOnSubmittedWorkDoneCallback onComputeDoneRun=[](WGpuQueue queue,void *userData){
+int rndm=0;
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)==3){
+double_int53_t WGPU_Range_PointerC=wgpu_buffer_get_mapped_range(WGPU_Buffers.at(2,0,2),0,OutputBufferBytes);
+WGPU_BufferRange.at(0,0,0)=WGPU_Range_PointerC;
+wgpu_buffer_read_mapped_range(WGPU_Buffers.at(2,0,2),  WGPU_BufferRange.at(0,0,0) ,0,WGPU_ResultBuffer.at(0,0,0),OutputBufferBytes);
+rndm=rNd4(3);
+  /*
+glActiveTexture(GL_TEXTURE0+raN);
+glBindTexture(GL_TEXTURE_2D,wtexture[raN]);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+// glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_R,GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,&WGPU_ResultBuffer.at(0,0,0));
+glGenerateMipmap(GL_TEXTURE_2D); // broken gl textures without
+  *//*
+}
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)==3){
+wgpu_buffer_unmap(WGPU_Buffers.at(2,0,2));
+}
+return;
+};
+
+static void raf(){
+WGPU_TextureDescriptor.at(0,0,0)=textureDescriptorA;
+WGPU_CommandEncoderDescriptor.at(0,0,0)=commandEncoderDescriptor;
+WGPU_Texture.at(0,0,0)=wgpu_device_create_texture(WGPU_Device.at(0,0,0),&WGPU_TextureDescriptor.at(0,0,0));
+WGPU_Texture.at(0,0,1)=wgpu_device_create_texture(WGPU_Device.at(0,0,0),&WGPU_TextureDescriptor.at(0,0,0));
+WGPU_Input_Image.texture=WGPU_Texture.at(0,0,0);
+WGPU_Output_Image.texture=WGPU_Texture.at(0,0,1);
+WGPU_TextureViewDescriptor.at(0,0,0)=textureViewDescriptorA;
+WGPU_ResultBuffer.at(0,0,0)=WGPU_Result_Array;
+WGPU_InputBuffer.at(0,0,0)=WGPU_Input_Array;
+WGPU_ColorBuffer.at(0,0,0)=WGPU_Color_Input_Array;
+WGPU_BufferDescriptor.at(0,0,0)=bufferDescriptorI;
+WGPU_BufferDescriptor.at(0,0,1)=bufferDescriptorO;
+WGPU_BufferDescriptor.at(0,0,2)=bufferDescriptorM;
+WGPU_BufferDescriptor.at(0,0,3)=bufferDescriptorC;
+WGPU_Buffers.at(1,1,1)=wgpu_device_create_buffer(WGPU_Device.at(0,0,0),&WGPU_BufferDescriptor.at(0,0,0));
+WGPU_Buffers.at(0,0,0)=wgpu_device_create_buffer(WGPU_Device.at(0,0,0),&WGPU_BufferDescriptor.at(0,0,1));
+WGPU_Buffers.at(1,0,1)=wgpu_device_create_buffer(WGPU_Device.at(0,0,0),&WGPU_BufferDescriptor.at(0,0,2));
+WGPU_Buffers.at(2,0,2)=wgpu_device_create_buffer(WGPU_Device.at(0,0,0),&WGPU_BufferDescriptor.at(0,0,3));
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)!=1){
+wgpu_buffer_unmap(WGPU_Buffers.at(2,0,2));
+}
+WGPU_Output_Buffer.buffer=WGPU_Buffers.at(0,0,0);
+WGPU_Output_Buffer.bytesPerRow=4096;
+WGPU_Output_Buffer.rowsPerImage=256;
+WGPU_Mapped_Buffer.buffer=WGPU_Buffers.at(2,0,2);
+WGPU_Mapped_Buffer.bytesPerRow=4096;
+WGPU_Mapped_Buffer.rowsPerImage=256;
+raN=rNd4(256);
+input[0]=raN;
+WGPU_InputBuffer.at(0,0,0)[0]=raN;
+WGPU_ShaderModuleDescriptor.at(0,0,0)=shaderModuleDescriptor;
+WGPU_ComputeModule.at(0,0,0)=wgpu_device_create_shader_module(WGPU_Device.at(0,0,0),&WGPU_ShaderModuleDescriptor.at(0,0,0));
+WGPU_BufferBindingLayout.at(0,0,1)=bufferBindingLayout1;
+WGPU_BufferBindingLayout.at(0,0,2)=bufferBindingLayout2;
+WGPU_BufferBindingLayout.at(0,0,3)=bufferBindingLayout3;
+WGPU_BufferBindingLayout.at(0,0,4)=bufferBindingLayout4;
+WGPU_StorageTextureBindingLayout.at(0,0,0)=storageTextureBindingLayout1;
+bindGroupLayoutEntries[0].binding=0;
+bindGroupLayoutEntries[0].visibility=WGPU_SHADER_STAGE_COMPUTE;
+bindGroupLayoutEntries[0].type=1;
+bindGroupLayoutEntries[0].layout.buffer=WGPU_BufferBindingLayout.at(0,0,1);
+bindGroupLayoutEntries[1].binding=1;
+bindGroupLayoutEntries[1].visibility=WGPU_SHADER_STAGE_COMPUTE;
+bindGroupLayoutEntries[1].type=1;
+bindGroupLayoutEntries[1].layout.buffer=WGPU_BufferBindingLayout.at(0,0,2);
+bindGroupLayoutEntries[2].binding=2;
+bindGroupLayoutEntries[2].visibility=WGPU_SHADER_STAGE_COMPUTE;
+bindGroupLayoutEntries[2].type=4;
+bindGroupLayoutEntries[2].layout.storageTexture=WGPU_StorageTextureBindingLayout.at(0,0,0);
+WGPU_BindGroupLayoutEntries.at(0,0,0)=bindGroupLayoutEntries;
+WGPU_BindGroupLayout.at(0,0,0)=wgpu_device_create_bind_group_layout(WGPU_Device.at(0,0,0),WGPU_BindGroupLayoutEntries.at(0,0,0),2);
+WGPU_ComputePipelineLayout.at(0,0,0)=wgpu_device_create_pipeline_layout(WGPU_Device.at(0,0,0),&WGPU_BindGroupLayout.at(0,0,0),1);
+WGPU_ComputePipeline.at(0,0,0)=wgpu_device_create_compute_pipeline(WGPU_Device.at(0,0,0),WGPU_ComputeModule.at(0,0,0),Entry,WGPU_ComputePipelineLayout.at(0,0,0),NULL,0);
+bindGroupEntry[0].binding=0;
+bindGroupEntry[0].resource=WGPU_Buffers.at(1,1,1);
+bindGroupEntry[0].bufferBindOffset=0;
+bindGroupEntry[0].bufferBindSize=InputBufferBytes;
+bindGroupEntry[1].binding=1;
+bindGroupEntry[1].resource=WGPU_Buffers.at(0,0,0);
+bindGroupEntry[1].bufferBindOffset=0;
+bindGroupEntry[1].bufferBindSize=OutputBufferBytes;
+bindGroupEntry[2].binding=2;
+bindGroupEntry[2].resource=WGPU_Texture.at(0,0,0);
+WGPU_BindGroupEntries.at(0,0,0)=bindGroupEntry;
+WGPU_BindGroup.at(0,0,0)=wgpu_device_create_bind_group(WGPU_Device.at(0,0,0),WGPU_BindGroupLayout.at(0,0,0),WGPU_BindGroupEntries.at(0,0,0),2);
+WGPU_Queue.at(0,0,0)=wgpu_device_get_queue(WGPU_Device.at(0,0,0));
+WGPU_CommandEncoder.at(0,0,0)=wgpu_device_create_command_encoder_simple(WGPU_Device.at(0,0,0));
+WGPU_ComputePassCommandEncoder.at(0,0,0)=wgpu_command_encoder_begin_compute_pass(WGPU_CommandEncoder.at(0,0,0),&computePassDescriptor);
+wgpu_compute_pass_encoder_set_pipeline(WGPU_ComputePassCommandEncoder.at(0,0,0),WGPU_ComputePipeline.at(0,0,0));
+wgpu_encoder_set_bind_group(WGPU_ComputePassCommandEncoder.at(0,0,0),0,WGPU_BindGroup.at(0,0,0),0,0);
+wgpu_queue_write_buffer(WGPU_Queue.at(0,0,0),WGPU_Buffers.at(1,1,1),0,WGPU_InputBuffer.at(0,0,0),InputBufferBytes);
+wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),4,1,64);
+wgpu_encoder_end(WGPU_ComputePassCommandEncoder.at(0,0,0));
+wgpu_command_encoder_copy_buffer_to_texture(WGPU_CommandEncoder.at(0,0,0),&WGPU_Output_Buffer,&WGPU_Output_Image,256,256,1);
+wgpu_command_encoder_copy_texture_to_buffer(WGPU_CommandEncoder.at(0,0,0),&WGPU_Output_Image,&WGPU_Mapped_Buffer,256,256,1);
+WGPU_CommandBuffer.at(0,0,0)=wgpu_encoder_finish(WGPU_CommandEncoder.at(0,0,0));
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)!=1){
+wgpu_buffer_unmap(WGPU_Buffers.at(2,0,2));
+}
+wgpu_queue_set_on_submitted_work_done_callback(WGPU_Queue.at(0,0,0),WGPU_ComputeDoneCallback.at(0,0,0),0);
+wgpu_queue_submit_one(WGPU_Queue.at(0,0,0),WGPU_CommandBuffer.at(0,0,0));
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)!=3){
+wgpu_buffer_map_sync(WGPU_Buffers.at(2,0,2),mode1,0,OutputBufferBytes);
+}
+return;
+}
+
+static void WGPU_Run(){
+int RraN=rNd4(256);
+input[0]=RraN;
+WGPU_InputBuffer.at(0,0,0)[0]=RraN;
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)!=1){
+wgpu_buffer_unmap(WGPU_Buffers.at(2,0,2));
+}
+WGPU_Queue.at(0,0,0)=wgpu_device_get_queue(WGPU_Device.at(0,0,0));
+WGPU_CommandEncoder.at(0,0,0)=wgpu_device_create_command_encoder_simple(WGPU_Device.at(0,0,0));
+WGPU_ComputePassCommandEncoder.at(0,0,0)=wgpu_command_encoder_begin_compute_pass(WGPU_CommandEncoder.at(0,0,0),&computePassDescriptor);
+wgpu_compute_pass_encoder_set_pipeline(WGPU_ComputePassCommandEncoder.at(0,0,0),WGPU_ComputePipeline.at(0,0,0));
+wgpu_encoder_set_bind_group(WGPU_ComputePassCommandEncoder.at(0,0,0),0,WGPU_BindGroup.at(0,0,0),0,0);
+wgpu_queue_write_buffer(WGPU_Queue.at(0,0,0),WGPU_Buffers.at(1,1,1),0,WGPU_InputBuffer.at(0,0,0),InputBufferBytes);
+wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),4,1,64);
+wgpu_encoder_end(WGPU_ComputePassCommandEncoder.at(0,0,0));
+wgpu_command_encoder_copy_buffer_to_texture(WGPU_CommandEncoder.at(0,0,0),&WGPU_Output_Buffer,&WGPU_Output_Image,256,256,1);
+wgpu_command_encoder_copy_texture_to_buffer(WGPU_CommandEncoder.at(0,0,0),&WGPU_Output_Image,&WGPU_Mapped_Buffer,256,256,1);
+WGPU_CommandBuffer.at(0,0,0)=wgpu_encoder_finish(WGPU_CommandEncoder.at(0,0,0));
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)!=1){
+wgpu_buffer_unmap(WGPU_Buffers.at(2,0,2));
+}
+wgpu_queue_set_on_submitted_work_done_callback(WGPU_Queue.at(0,0,0),WGPU_ComputeDoneCallback.at(0,0,1),0);
+wgpu_queue_submit_one(WGPU_Queue.at(0,0,0),WGPU_CommandBuffer.at(0,0,0));
+WGPU_BufferStatus.at(0,0,0)=wgpu_buffer_map_state(WGPU_Buffers.at(2,0,2));
+if(WGPU_BufferStatus.at(0,0,0)!=3){
+wgpu_buffer_map_sync(WGPU_Buffers.at(2,0,2),mode1,0,OutputBufferBytes);
+}
+return;
+}
+
+static void ObtainedWebGpuDeviceStart2(WGpuDevice result,void * userData){
+device=result;
+WGPU_Device.at(0,0,1)=result;
+raf();
+return;
+}
+
+static void ObtainedWebGpuDeviceStart(WGpuDevice result,void * userData){
+device=result;
+WGPU_Device.at(0,0,0)=result;
+wgpu_adapter_request_device_async(WGPU_Adapter.at(0,0,1),&WGPU_DeviceDescriptor.at(0,0,0),WGPU_ObtainedDeviceCallback.at(0,0,1),&WGPU_UserData.at(0,0,1));
+return;
+}
+
+static void ObtainedWebGpuAdapterStart2(WGpuAdapter result,void * userData){
+WGPU_Adapter.at(0,0,1)=result;
+wgpu_adapter_request_device_async(WGPU_Adapter.at(0,0,0),&WGPU_DeviceDescriptor.at(0,0,0),WGPU_ObtainedDeviceCallback.at(0,0,0),&WGPU_UserData.at(0,0,0));
+}
+
+static void ObtainedWebGpuAdapterStart(WGpuAdapter result,void * userData){
+adapter=result;
+WGPU_Adapter.at(0,0,0)=result;
+navigator_gpu_request_adapter_async(&WGPU_RequestAdapterOptions.at(0,0,0),WGPU_ObtainedAdapterCallback.at(0,0,1),&WGPU_UserData.at(0,0,1));
+return;
+}
+*/
+// End of commenting out old WebGPU global functions and callbacks
 
 inline int rNd4(int randomMax){
 entropySeed=(randomMax)*randomizer();
@@ -755,22 +1074,22 @@ navigator_gpu_request_adapter_async(&WGPU_RequestAdapterOptions.at(0,0,0),WGPU_O
 return;
 }
 
-void WGPU_Start(){
-WGPU_UserData.at(0,0,0)=userDataA;
-WGPU_UserData.at(0,0,1)=userDataB;
-WGPU_ObtainedDeviceCallback.at(0,0,0)=ObtainedWebGpuDeviceStart;
-WGPU_ObtainedDeviceCallback.at(0,0,1)=ObtainedWebGpuDeviceStart2;
-WGPU_DeviceDescriptor.at(0,0,0)=deviceDescriptor;
-WGPU_RequestAdapterOptions.at(0,0,0)=options;
-WGPU_ObtainedAdapterCallback.at(0,0,0)=ObtainedWebGpuAdapterStart;
-WGPU_ObtainedAdapterCallback.at(0,0,1)=ObtainedWebGpuAdapterStart2;
-WGPU_ComputeDoneCallback.at(0,0,0)=onComputeDoneStart;
-WGPU_ComputeDoneCallback.at(0,0,1)=onComputeDoneRun;
-WGPU_MapCallback.at(0,0,0)=mapCallbackStart;
-WGPU_MapCallback.at(0,0,1)=mapCallbackRun;
-navigator_gpu_request_adapter_async(&WGPU_RequestAdapterOptions.at(0,0,0),WGPU_ObtainedAdapterCallback.at(0,0,0),&WGPU_UserData.at(0,0,0));
-return;
-}
+// void WGPU_Start(){ // Removed as it's replaced by webgpu_pipeline_->initialize() in Run::strt()
+// WGPU_UserData.at(0,0,0)=userDataA;
+// WGPU_UserData.at(0,0,1)=userDataB;
+// WGPU_ObtainedDeviceCallback.at(0,0,0)=ObtainedWebGpuDeviceStart;
+// WGPU_ObtainedDeviceCallback.at(0,0,1)=ObtainedWebGpuDeviceStart2;
+// WGPU_DeviceDescriptor.at(0,0,0)=deviceDescriptor;
+// WGPU_RequestAdapterOptions.at(0,0,0)=options;
+// WGPU_ObtainedAdapterCallback.at(0,0,0)=ObtainedWebGpuAdapterStart;
+// WGPU_ObtainedAdapterCallback.at(0,0,1)=ObtainedWebGpuAdapterStart2;
+// WGPU_ComputeDoneCallback.at(0,0,0)=onComputeDoneStart;
+// WGPU_ComputeDoneCallback.at(0,0,1)=onComputeDoneRun;
+// WGPU_MapCallback.at(0,0,0)=mapCallbackStart;
+// WGPU_MapCallback.at(0,0,1)=mapCallbackRun;
+// navigator_gpu_request_adapter_async(&WGPU_RequestAdapterOptions.at(0,0,0),WGPU_ObtainedAdapterCallback.at(0,0,0),&WGPU_UserData.at(0,0,0));
+// return;
+// }
   
 class GPU{
 
@@ -905,6 +1224,17 @@ EmscriptenWebGLContextAttributes attr;
 EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx=0;
 
 GPU gpu;
+
+// Shader content storage for GLSL parts
+std::string glsl_common_header_;
+std::string glsl_vertex_shader_body_;
+std::string glsl_fragment_header_;
+std::string glsl_fragment_main_body_; // For the content of Fnm (e.g. shader.glsl)
+std::string glsl_fragment_footer_;
+
+// Added WebGPU pipeline member
+std::unique_ptr<WebGPUComputePipeline> webgpu_pipeline_;
+bool enable_webgpu_compute_ = true; // Added for conditional execution
 
 public:
 
@@ -1087,6 +1417,15 @@ glUniform1f(uni_chn_tme[1],wasm_f64x2_extract_lane(sse2.at(0,0),0));
 glUniform1f(uni_chn_tme[2],wasm_f64x2_extract_lane(sse2.at(0,0),0));
 glUniform1f(uni_chn_tme[3],wasm_f64x2_extract_lane(sse2.at(0,0),0));
 glUniform1f(uni_tme_dlt,d_time.at(1,1));
+
+//========== WebGPU Compute Integration Point Start ==========
+// if (enable_webgpu_compute_ && webgpu_pipeline_ && webgpu_pipeline_->isInitialized()) { // Check enable_webgpu_compute_ flag
+if (webgpu_pipeline_ && webgpu_pipeline_->isInitialized()) { // Keeping previous unconditional behavior for now
+    int random_val = rNd4(256); // Using existing random function
+    webgpu_pipeline_->setInputDataValue(static_cast<uint8_t>(random_val), 0);
+    webgpu_pipeline_->runCompute();
+}
+//========== WebGPU Compute Integration Point End ==========
 // glUniform1f(uni_tme_dlt,wasm_f64x2_extract_lane(sse.at(0,1),0));
   // webgpu
 const time_t timE=time(0);
@@ -1100,37 +1439,62 @@ int sc=datE->tm_sec;
 i_date.at(1,0)=dy;
 i_date.at(1,1)=(hr*3600)+(mi*60)+(sc);
 glUniform4i(uni_dte,i_date.at(0,0),i_date.at(0,1),i_date.at(1,0),i_date.at(1,1));
-/*
-int tfrm=(uni_i.at(0,0)%4);
-if(uni_i.at(0,0)%45==0){
-raN=rNd4(3);
-WGPU_Run();   //  launch WebGPU
-glUniform1i(smp_chn[raN],raN);
-// glBindTexture(GL_TEXTURE_2D,0);
+
+// New WebGPU logic, replacing the old commented out WGPU_Run and texture update logic.
+// int tfrm=(uni_i.at(0,0)%4); // Original comment line
+
+if(uni_i.at(0,0)%45==0) { // This condition was used for WGPU_Run
+    if (webgpu_pipeline_ && webgpu_pipeline_->isInitialized()) {
+        int random_val = rNd4(256);
+        webgpu_pipeline_->setInputDataValue(static_cast<uint8_t>(random_val), 0);
+        if (!webgpu_pipeline_->runCompute()) {
+            // Optional: handle compute run failure
+            // std::cerr << "WebGPU compute run failed in Unifrm." << std::endl;
+        }
+    }
 }
-if(uni_i.at(0,0)%15==0){
-raN=rNd4(3);
-glActiveTexture(GL_TEXTURE0+raN);
-glBindTexture(GL_TEXTURE_2D,wtexture[raN]);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);	
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
-// glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_R,GL_CLAMP_TO_EDGE);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,&WGPU_ResultBuffer.at(0,0,0));
-glGenerateMipmap(GL_TEXTURE_2D); // broken gl textures without
-glUniform1i(smp_chn[raN],raN);
+
+if(uni_i.at(0,0)%15==0) { // This block used WGPU_ResultBuffer for GL texture update.
+    // The task defers updating GL textures with webgpu_pipeline_->getComputeResult().
+    // So, for now, this will continue to use the global WGPU_ResultBuffer.
+    // This global WGPU_ResultBuffer will no longer be updated by WebGPU calls once WGPU_Run is fully removed.
+    // This part of the code will eventually need to use webgpu_pipeline_->getComputeResult().
+    // For now, to prevent breaking GL rendering completely, we leave it using the (potentially stale) global.
+    int current_raN_tex_update = rNd4(3); // Use a distinct variable name to avoid collision if raN was used above
+                                       // and to ensure this block has its own random texture index.
+    glActiveTexture(GL_TEXTURE0 + current_raN_tex_update);
+    glBindTexture(GL_TEXTURE_2D, wtexture[current_raN_tex_update]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    // If webgpu_pipeline_ is ready and has results, could use them. For now, using old global.
+    // const std::vector<uint32_t>& results = webgpu_pipeline_->getComputeResult();
+    // if (webgpu_pipeline_ && webgpu_pipeline_->isInitialized() && !results.empty() && (results.size() * sizeof(uint32_t) >= (size_t)width * height * 4) ) {
+    //    glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE, results.data());
+    // } else {
+       glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width,height,0,GL_RGBA,GL_UNSIGNED_BYTE,WGPU_ResultBuffer.at(0,0,0));
+    // }
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glUniform1i(smp_chn[current_raN_tex_update], current_raN_tex_update);
 }
-  // buffer frame/time
+
+// Original uniform buffer logic (kept as is)
 // glBindBuffer(GL_UNIFORM_BUFFER,uniBlock);
 // glBufferSubData(GL_UNIFORM_BUFFER,8,4,&uni_i.at(0,0)); 
 // glBufferSubData(GL_UNIFORM_BUFFER,12,4,&d_time.at(0,0)); 
 // glBindBuffer(GL_UNIFORM_BUFFER,0);
-  glUniform1i(smp_chn[0],0);
- glUniform1i(smp_chn[1],1);
- glUniform1i(smp_chn[2],2);
- glUniform1i(smp_chn[3],3);
- */
+
+// Original iChannel samplers (kept as is)
+// These were inside the commented block but seem generally useful for ShaderToy compatibility.
+// If they are only for WebGPU updated textures, this might need adjustment later.
+glUniform1i(smp_chn[0],0);
+glUniform1i(smp_chn[1],1);
+glUniform1i(smp_chn[2],2);
+glUniform1i(smp_chn[3],3);
+
+// End of new WebGPU logic block
 glUniform1i(uni_frm,uni_i.at(0,0));
 // glFlush();
 eglSwapBuffers(display,surface);
@@ -1210,6 +1574,7 @@ return nullptr;
 }
 
 boost::function<EM_BOOL()>strt=[this](){
+//========== OpenGL/EGL Initialization Start ==========
 typedef struct{GLfloat XYZW[4];}Vertex;
 gpu.setFloats();
 const Vertex vrt[8]={{gpu.gFm1(),gpu.gFm1(),gpu.gF(),gpu.gF()},{gpu.gF(),gpu.gFm1(),gpu.gF(),gpu.gF()},{gpu.gF(),gpu.gF(),gpu.gF(),gpu.gF()},{gpu.gFm1(),gpu.gF(),gpu.gF(),gpu.gF()},{gpu.gFm1(),gpu.gFm1(),gpu.gFm1(),gpu.gF()},{gpu.gF(),gpu.gFm1(),gpu.gFm1(),gpu.gF()},{gpu.gF(),gpu.gF(),gpu.gFm1(),gpu.gF()},{gpu.gFm1(),gpu.gF(),gpu.gF(),gpu.gF()}};
@@ -1233,8 +1598,31 @@ const Vertex vrt[8]={{gpu.gFm1(),gpu.gFm1(),gpu.gF(),gpu.gF()},{gpu.gF(),gpu.gFm
 eglconfig=NULL;
 uni_i.at(0,0)=0;
 clk_l=true;
-const char * frag_body=rd_fl(Fnm);
-std::string frag_body_S=frag_body;
+
+// Load GLSL shader parts from files
+char* temp_shader_cstr;
+
+temp_shader_cstr = rd_fl("shaders/common_header.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/common_header.glsl" << std::endl; /* Handle error, maybe return EM_FALSE */ }
+else { glsl_common_header_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl("shaders/vertex_shader.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/vertex_shader.glsl" << std::endl; /* Handle error */ }
+else { glsl_vertex_shader_body_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl("shaders/fragment_header.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/fragment_header.glsl" << std::endl; /* Handle error */ }
+else { glsl_fragment_header_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl(Fnm); // Fnm is "shaders/shader.glsl"
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read " << Fnm << std::endl; /* Handle error */ }
+else { glsl_fragment_main_body_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl("shaders/fragment_footer.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/fragment_footer.glsl" << std::endl; /* Handle error */ }
+else { glsl_fragment_footer_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+// std::string frag_body_S=frag_body; // Old line, frag_body char* is freed. Use glsl_fragment_main_body_ if needed as string.
 emscripten_webgl_init_context_attributes(&attr);
 attr.alpha=EM_TRUE;
 attr.stencil=EM_TRUE;
@@ -1426,13 +1814,26 @@ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,Sh.at(1,0));
 glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indc),indc,GL_DYNAMIC_DRAW);
   //    boost::compute::buffer index_buffer(GL_ELEMENT_ARRAY_BUFFER,sizeof(indc),indc,GL_STATIC_DRAW);
 // nanoPause();
-src[0]=cm_hdr;
-src[1]=vrt_bdy;
+// src[0]=cm_hdr; // Old way
+// src[1]=vrt_bdy; // Old way
+if (glsl_common_header_.empty() || glsl_vertex_shader_body_.empty()) {
+    std::cerr << "FATAL: Vertex shader parts not loaded into strings." << std::endl; return EM_FALSE;
+}
+src[0]=glsl_common_header_.c_str();
+src[1]=glsl_vertex_shader_body_.c_str();
 boost::uint_t<24>::least vtx=compile.cmpl_shd(GL_VERTEX_SHADER,2,src);
-src[0]=cm_hdr;
-src[1]=frg_hdr;
-src[2]=frag_body;
-src[3]=frg_ftr;
+
+// src[0]=cm_hdr; // Old way
+// src[1]=frg_hdr; // Old way
+// src[2]=frag_body; // Old way, original frag_body char* is freed. Use glsl_fragment_main_body_.c_str()
+// src[3]=frg_ftr; // Old way
+if (glsl_common_header_.empty() || glsl_fragment_header_.empty() || glsl_fragment_main_body_.empty() || glsl_fragment_footer_.empty()) {
+    std::cerr << "FATAL: Fragment shader parts not loaded into strings." << std::endl; return EM_FALSE;
+}
+src[0]=glsl_common_header_.c_str();
+src[1]=glsl_fragment_header_.c_str();
+src[2]=glsl_fragment_main_body_.c_str();
+src[3]=glsl_fragment_footer_.c_str();
 boost::uint_t<24>::least frag=compile.cmpl_shd(GL_FRAGMENT_SHADER,4,src);
 boost::uint_t<24>::least shd_prg=glCreateProgram();
 PRGin(shd_prg);
@@ -1675,8 +2076,22 @@ glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,width1,height1,0,GL_RGBA,GL_UNSIGNED_BYTE,ColorA);
 glGenerateMipmap(GL_TEXTURE_2D);
 glUniform1i(smp_chn[3],3);
-// WGPU_Start();
-// usleep(125);
+//========== OpenGL/EGL Initialization End ==========
+
+//========== WebGPU Compute Pipeline Initialization Start ==========
+if (!webgpu_pipeline_) {
+    webgpu_pipeline_ = std::make_unique<WebGPUComputePipeline>(
+        "shaders/compute_shader.wgsl", // WGSL Shader filepath
+        Entry,                         // Entry point, defined in this file
+        InputBufferBytes,              // Defined in this file
+        OutputBufferBytes              // Defined in this file
+    );
+}
+if (webgpu_pipeline_) {
+    webgpu_pipeline_->initialize();
+}
+// usleep(125); // Original sleep call, kept for now
+//========== WebGPU Compute Pipeline Initialization End ==========
 
 
   // date/time
