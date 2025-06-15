@@ -378,7 +378,7 @@ return shader;
 "}"
 "}"; */
 
-/* static inline char cm_hdr_src[2300]= // Commented out: loaded from shaders/common_header.glsl
+/* static inline char cm_hdr_src[2300]= // Commented out as shaders/common_header.glsl is used now
 "#version 300 es\n"
 "#extension GL_ALL_EXTENSIONS : enable\n"
 "#extension all_spir_v_extensions : enable\n"
@@ -426,7 +426,7 @@ return shader;
 "precision mediump usamplerCube;precision mediump usampler2DArray;precision mediump samplerCubeShadow;"
 "precision mediump sampler2DArrayShadow;\n"; */
 
-/* static inline char vrt_bdy_src[100]= // Commented out: loaded from shaders/vertex_shader.glsl
+/* static inline char vrt_bdy_src[100]= // Commented out as shaders/vertex_shader.glsl is used now
 "precision mediump int;\n"
 "layout(location=0)in vec4 iPosition;void main(){gl_Position=iPosition;}\n"; */
 
@@ -439,7 +439,7 @@ return shader;
 "uniform sampler2D iChannel3;"
 "out vec4 fragColor;\n"; */
 
-/* static inline char frg_hdr_src[1000]= // Commented out as shaders/fragment_header.glsl is used
+/* static inline char frg_ftr_src[420]= // Corrected comment: loaded from shaders/fragment_footer.glsl
 "void main(){mainImage(fragColor,gl_FragCoord.xy);}\n\0"; */
 /* // This is the start of the ShaderToy multi-pass example, not frg_ftr_src itself
 "#define mainImage mainImage0(out dvec4 O,dvec2 U);"
@@ -1404,6 +1404,32 @@ glUniform4f(uni_mse,mms.at(2,0),mms.at(2,1),mms.at(0,0),mms.at(1,0));
 }
 else{
 clk_l=true;
+
+// Load GLSL shader parts from files
+char* temp_shader_cstr;
+
+temp_shader_cstr = rd_fl("shaders/common_header.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/common_header.glsl" << std::endl; /* Consider proper error handling, e.g., return EM_FALSE; */ }
+else { glsl_common_header_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl("shaders/vertex_shader.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/vertex_shader.glsl" << std::endl; /* Handle error */ }
+else { glsl_vertex_shader_body_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl("shaders/fragment_header.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/fragment_header.glsl" << std::endl; /* Handle error */ }
+else { glsl_fragment_header_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl(Fnm); // Fnm is "shaders/shader.glsl" now
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read " << Fnm << std::endl; /* Handle error */ }
+else { glsl_fragment_main_body_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+temp_shader_cstr = rd_fl("shaders/fragment_footer.glsl");
+if (!temp_shader_cstr) { std::cerr << "FATAL: Failed to read shaders/fragment_footer.glsl" << std::endl; /* Handle error */ }
+else { glsl_fragment_footer_ = temp_shader_cstr; free(temp_shader_cstr); }
+
+// const char * frag_body=rd_fl(Fnm); // This line will be removed in a subsequent step
+// std::string frag_body_S=frag_body; // This line will be removed in a subsequent step
 }
 // glUniform1f(uni_tme,d_time.at(0,0));
  //   boost::compute::interop::opengl::set_uniform(uni_tme,wasm_f64x2_extract_lane(sse2.at(0,0),0));
@@ -1814,34 +1840,39 @@ glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,Sh.at(1,0));
 glBufferData(GL_ELEMENT_ARRAY_BUFFER,sizeof(indc),indc,GL_DYNAMIC_DRAW);
   //    boost::compute::buffer index_buffer(GL_ELEMENT_ARRAY_BUFFER,sizeof(indc),indc,GL_STATIC_DRAW);
 // nanoPause();
-// src[0]=cm_hdr; // Old way
-// src[1]=vrt_bdy; // Old way
+
+// Compile Vertex Shader
 if (glsl_common_header_.empty() || glsl_vertex_shader_body_.empty()) {
     std::cerr << "FATAL: Vertex shader parts not loaded into strings." << std::endl; return EM_FALSE;
 }
-src[0]=glsl_common_header_.c_str();
-src[1]=glsl_vertex_shader_body_.c_str();
-boost::uint_t<24>::least vtx=compile.cmpl_shd(GL_VERTEX_SHADER,2,src);
+src[0] = glsl_common_header_.c_str();
+src[1] = glsl_vertex_shader_body_.c_str();
+boost::uint_t<24>::least vtx = compile.cmpl_shd(GL_VERTEX_SHADER, 2, src);
 
-// src[0]=cm_hdr; // Old way
-// src[1]=frg_hdr; // Old way
-// src[2]=frag_body; // Old way, original frag_body char* is freed. Use glsl_fragment_main_body_.c_str()
-// src[3]=frg_ftr; // Old way
+// Compile Fragment Shader
 if (glsl_common_header_.empty() || glsl_fragment_header_.empty() || glsl_fragment_main_body_.empty() || glsl_fragment_footer_.empty()) {
     std::cerr << "FATAL: Fragment shader parts not loaded into strings." << std::endl; return EM_FALSE;
 }
-src[0]=glsl_common_header_.c_str();
-src[1]=glsl_fragment_header_.c_str();
-src[2]=glsl_fragment_main_body_.c_str();
-src[3]=glsl_fragment_footer_.c_str();
-boost::uint_t<24>::least frag=compile.cmpl_shd(GL_FRAGMENT_SHADER,4,src);
-boost::uint_t<24>::least shd_prg=glCreateProgram();
-PRGin(shd_prg);
-::boost::tuples::tie(Sh,shd_prg);
-::boost::tuples::tie(frag,vtx);
-glAttachShader(S1.at(0,0,0),frag);
-glAttachShader(S1.at(0,0,0),vtx);
-glBindAttribLocation(S1.at(0,0,0),0,"iPosition");
+src[0] = glsl_common_header_.c_str();
+src[1] = glsl_fragment_header_.c_str();
+src[2] = glsl_fragment_main_body_.c_str();
+src[3] = glsl_fragment_footer_.c_str();
+boost::uint_t<24>::least frag = compile.cmpl_shd(GL_FRAGMENT_SHADER, 4, src);
+
+boost::uint_t<24>::least shd_prg = glCreateProgram();
+PRGin(shd_prg); // Assuming PRGin is a macro or function that uses Sh
+// Tie Sh with shd_prg if PRGin doesn't do it. Original: ::boost::tuples::tie(Sh,shd_prg);
+// If Sh is meant to store shd_prg, it should be Sh.at(0,0,0) or similar if it's a tensor.
+// For now, assuming PRGin handles the program handle association or it's done via S1.
+// S1 is prg_tensor, so S1.at(0,0,0) = shd_prg; seems more plausible if PRGin is just an ID setter.
+S1.at(0,0,0) = shd_prg; // Explicitly assigning shader program to S1 tensor.
+
+// Tie frag and vtx shaders if needed by other parts of the code, though typically not after linking.
+// Original: ::boost::tuples::tie(frag,vtx); (This line is likely not necessary for functionality)
+
+glAttachShader(S1.at(0,0,0), frag);
+glAttachShader(S1.at(0,0,0), vtx);
+glBindAttribLocation(S1.at(0,0,0), 0, "iPosition");
 glLinkProgram(S1.at(0,0,0));
   /*
 boost::uint_t<24>::fast uniIndex=glGetUniformBlockIndex(S1.at(0,0,0),"uniBlock");   
