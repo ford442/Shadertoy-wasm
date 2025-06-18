@@ -1284,7 +1284,7 @@ function videoStart() {
     // Specifically, vvi.height might be h$ (cropped height before scaling if that's relevant).
     if (running == 0) {
         setTimeout(function() {
-            Module.ccall("startWebGPUi", null, ["number", "number", "number"], [cropSize, vsiz, srsiz]);
+            Module.ccall("startWebGPUi", null, ["number", "number", "number"], [vsiz, vsiz, srsiz]);
             console.log('Starting WebGPU (initial)...');
             frameBufferViewF32 = Module.getPixelBufferView(); // Get buffer for pixel data
             running = 1;
@@ -1297,7 +1297,7 @@ function videoStart() {
         }, 250);
     } else {
         setTimeout(function() {
-            Module.ccall("startWebGPUbi", null, ["number", "number", "number"], [cropSize, vsiz, srsiz]);
+            Module.ccall("startWebGPUbi", null, ["number", "number", "number"], [vsiz, vsiz, srsiz]);
             console.log('Starting WebGPU (re-init)...');
             frameBufferViewF32 = Module.getPixelBufferView(); // Re-get buffer if necessary
              // Start processing loop only after Wasm is initialized and buffer is ready
