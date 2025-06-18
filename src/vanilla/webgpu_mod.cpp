@@ -362,7 +362,7 @@ buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
 }
 */
 
-boost::function<EM_BOOL()>render=[](){
+std::function<EM_BOOL()>render=[](){
 u64_uni.at(3,3)++; 
 
 if(ms_l==true){
