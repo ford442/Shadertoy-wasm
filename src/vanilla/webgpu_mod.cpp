@@ -274,6 +274,7 @@ u64v.at(0,0)[0]--;
 return EM_TRUE;
 }
 
+#pragma omp declare simd
 void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
                               boost::container::vector<float>& pixel_buffer)
 {
