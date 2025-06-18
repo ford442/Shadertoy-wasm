@@ -1284,7 +1284,7 @@ function videoStart() {
     // Specifically, vvi.height might be h$ (cropped height before scaling if that's relevant).
     if (running == 0) {
         setTimeout(function() {
-            Module.ccall("startWebGPUi", null, ["number", "number", "number"], [h$, vsiz, srsiz]);
+            Module.ccall("startWebGPUi", null, ["number", "number", "number"], [cropSize, vsiz, srsiz]);
             console.log('Starting WebGPU (initial)...');
             frameBufferViewF32 = Module.getPixelBufferView(); // Get buffer for pixel data
             running = 1;
@@ -1297,7 +1297,7 @@ function videoStart() {
         }, 250);
     } else {
         setTimeout(function() {
-            Module.ccall("startWebGPUbi", null, ["number", "number", "number"], [h$, vsiz, srsiz]);
+            Module.ccall("startWebGPUbi", null, ["number", "number", "number"], [cropSize, vsiz, srsiz]);
             console.log('Starting WebGPU (re-init)...');
             frameBufferViewF32 = Module.getPixelBufferView(); // Re-get buffer if necessary
              // Start processing loop only after Wasm is initialized and buffer is ready
@@ -1313,25 +1313,25 @@ function videoStart() {
     function startProcessingLoop() {
         console.log("Source media dimensions (w,h): ", w$, ",", h$);
         console.log("Crop settings (sx,sy,cropSize): ", sx, ",", sy, ",", cropSize);
-        console.log("Target processing size (vsiz): ", vsiz);
+        console.log("Target processing size (cropSize): ", cropSize);
 
         // 2. OffscreenCanvas Creation:
         // Create the OffscreenCanvas with the target processing dimensions 'vsiz x vsiz'.
-        const cnvb = new OffscreenCanvas(vsiz, vsiz);
+        const cnvb = new OffscreenCanvas(cropSize, cropSize);
 
         // Setup for main display canvas (scanvas) and an intermediate canvas (bcanvas)
         const cnv = document.querySelector('#scanvas');  // Final display canvas
         const cnvc = document.querySelector('#bcanvas'); // Intermediate display canvas (shows what's on OffscreenCanvas)
 
-        cnv.height = SiZ;
-        cnv.width = SiZ;
+     //   cnv.height = SiZ;
+     //   cnv.width = SiZ;
 
         // Set bcanvas (presumably for debugging/previewing the OffscreenCanvas content)
         // to the same dimensions as the OffscreenCanvas.
-        cnvc.height = vsiz;
-        cnvc.width = vsiz;
-        cnvc.style.height = vsiz + 'px';
-        cnvc.style.width = vsiz + 'px';
+        cnvc.height = cropSize;
+        cnvc.width = cropSize;
+        cnvc.style.height = cropSize + 'px';
+        cnvc.style.width = cropSize + 'px';
 
         const gl3 = cnvb.getContext('2d', {
             // Note: 'colorType' is not a standard 2D context option.
@@ -1351,10 +1351,10 @@ function videoStart() {
         // Initial draw and data extraction (if needed immediately before interval)
         // This part is largely similar to what's in the interval, so you might only need the interval.
         // However, if the first frame is critical to be processed fast, keep it.
-        gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
-        let image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
+        gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, cropSize, cropSize);
+        let image = gl3.getImageData(0, 0, cropSize, cropSize); // 3. Corrected: Use vsiz
         let imageData = image.data;
-        const pixelCount = vsiz * vsiz * 4; // 4. Corrected: Use vsiz for pixel count
+        const pixelCount = cropSize * cropSize * 4; // 4. Corrected: Use vsiz for pixel count
 
         // Check if frameBufferViewF32 is valid and has enough space
         if (!frameBufferViewF32 || frameBufferViewF32.length < pixelCount) {
@@ -1370,15 +1370,15 @@ function videoStart() {
         // --- Animation Loop using setInterval ---
         animationIntervalId = setInterval(function() {
             // Clear the OffscreenCanvas for the new frame
-            gl3.clearRect(0, 0, vsiz, vsiz);
+            gl3.clearRect(0, 0, cropSize, cropSize);
 
             // Draw the current state of the video/image (cropped and scaled) onto the OffscreenCanvas
             // sx, sy, cropSize are from the source media (vvi)
             // 0, 0, vsiz, vsiz are for the destination (cnvb)
-            gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, vsiz, vsiz);
+            gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, cropSize, cropSize);
 
             // Get the pixel data from the OffscreenCanvas
-            image = gl3.getImageData(0, 0, vsiz, vsiz); // 3. Corrected: Use vsiz
+            image = gl3.getImageData(0, 0, cropSize, cropSize); // 3. Corrected: Use vsiz
             imageData = image.data;
             // pixelCount is already defined correctly based on vsiz
 
@@ -1394,8 +1394,8 @@ function videoStart() {
             // Optional: If you want to display the content of the OffscreenCanvas on 'bcanvas'
             const cnvcCtx = cnvc.getContext('2d');
             if (cnvcCtx) {
-                cnvcCtx.clearRect(0,0,vsiz,vsiz);
-                cnvcCtx.drawImage(cnvb, 0, 0, vsiz, vsiz);
+                cnvcCtx.clearRect(0,0,cropSize,cropSize);
+                cnvcCtx.drawImage(cnvb, 0, 0, cropSize, cropSize);
             }
 */
         }, 16.666); // Aim for roughly 60 FPS
