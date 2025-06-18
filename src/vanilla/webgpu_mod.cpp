@@ -37,15 +37,16 @@ void resizeInputTexture(emscripten_align1_int newSize) {
     //    A bind group holds a strong reference to its resources, so it must be
     //    released before the resources themselves can be released.
     if (WGPU_BindGroup.at(0,0,0)) {
-        wgpu_bind_group_release(WGPU_BindGroup.at(0,0,0));
+        wgpu_object_destroy(WGPU_BindGroup.at(0,0,0));
+
     }
     // 2. Release the old texture view.
-    if (wtv.at(6,6)) { // wtv.at(6,6) holds INVTextureView
-        wgpu_texture_view_release(wtv.at(6,6));
-    }
+  //  if (wtv.at(6,6)) { // wtv.at(6,6) holds INVTextureView
+  //      wgpu_object_destroy(wtv.at(6,6));
+ //   }
     // 3. Release the old texture.
     if (WGPU_Texture.at(0,0,3)) { // WGPU_Texture.at(0,0,3) holds textureInV
-        wgpu_texture_release(WGPU_Texture.at(0,0,3));
+        wgpu_object_destroy(WGPU_Texture.at(0,0,3));
     }
     // 4. Update the texture descriptor with the new size.
     szeV.at(7,7) = newSize; // Update the global size variable
