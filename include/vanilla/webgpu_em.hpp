@@ -120,7 +120,7 @@ using namespace std;
 
 template<class ArgumentType,class ResultType>
 
-#include <boost/function.hpp>
+// #include <boost/function.hpp>
 
 struct unary_function{
 typedef ArgumentType argument_type;
