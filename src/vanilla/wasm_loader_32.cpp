@@ -170,6 +170,10 @@ scr.text=jsCode;
 document.body.appendChild(scr);
 setTimeout(function(){
 const myAppModuleConfig = {
+getCanvasFramesForWasm: function() {
+
+        return;
+},
 getCanvasHandleForWasm: function(selector) {
         const canvas = document.querySelector(selector);
         if (!canvas) {
