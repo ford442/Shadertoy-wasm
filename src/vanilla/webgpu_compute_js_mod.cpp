@@ -1644,7 +1644,7 @@ const vsiz=document.querySelector('#vsiz');
 let menuSz=parseInt(window.innerWidth*.5,10);
 
 document.querySelector('#startBtn').addEventListener('click',function(){
-
+let vsiz=document.querySelector('#vsiz').innerHTML;
 var $h,$pt,slt,$ll,r$,$w,$r,$lt,$hg,$ls,lo,mv,he,wi;
 
 const $iwid=document.querySelector('#iwid');
@@ -1860,7 +1860,7 @@ if(media_mode=='img'){
 document.querySelector('#lvi').height=he;
 document.querySelector('#lvi').width=wi;
 }
-Module.sizeBuffer(he);
+Module.sizeBuffer(vsiz);
 
 document.querySelector('#di').click();
 // videoStart();
