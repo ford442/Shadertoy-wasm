@@ -1830,6 +1830,7 @@ const pnnl=document.body;
 pnnl.addEventListener('keydown',spKey);
 
 function loada(){
+console.log('starting media load');
 if(lockVid!=1){
 document.querySelector('#ldv').height=window.innerHeight;
 document.querySelector('#lvi').height=window.innerHeight;
@@ -1955,12 +1956,12 @@ scanVideos();
 setTimeout(function(){
 loada()},2200);
 setTimeout(function(){
-videoStartA()},4200);
+videoStart()},4200);
 }
 if(media_mode=='img'){
 scanImages();
 setTimeout(function(){
-imageStartHandle()},1200);
+imageStart()},1200);
 setTimeout(function(){
 loada()},2200);
 }
@@ -1989,7 +1990,7 @@ getShader(pth3,'frag2.wgsl');
 getShader(pth4,'vert.wgsl');
 setTimeout(function(){
 // initialize_video_capture();
-canvasStartSize();
+canvasStartEmbind();
 // After JS setup is successful, call the C++ function
 // that enables video mode in the render loop.
 // Module.frmsOn(); 
