@@ -74,7 +74,6 @@ async function drawFrameAsync() {
         const imageDrawWidth = currentW$;
         const imageDrawHeight = currentH$;
 
-
         // Recreate source texture if vvic dimensions for drawing changed or not initialized
         // (Assuming imageDrawWidth/Height are stable unless explicitly changed)
         if (!vvicGpuTexture || vvic_cached_width !== current_vvic_w || vvic_cached_height !== current_vvic_h) {
