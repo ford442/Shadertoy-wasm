@@ -23,6 +23,48 @@ pixel_buffer.resize(num_elements);
 return EM_TRUE;
 }
 
+/**
+ * @brief Resizes a specific input texture by recreating it and its associated resources.
+ * * In WebGPU, textures are immutable. To resize a texture, we must release the old
+ * texture and its view, update the texture's descriptor with the new size,
+ * and then recreate the texture, its view, and any bind groups that use it.
+ *
+ * @param newSize The new width and height for the texture. The texture is assumed to be square.
+ */
+void resizeInputTexture(emscripten_align1_int newSize) {
+    emscripten_log(EM_LOG_CONSOLE, "Resizing input texture to %dx%d", newSize, newSize);
+    // 1. Release the old bind group that uses the texture view.
+    //    A bind group holds a strong reference to its resources, so it must be
+    //    released before the resources themselves can be released.
+    if (WGPU_BindGroup.at(0,0,0)) {
+        wgpu_bind_group_release(WGPU_BindGroup.at(0,0,0));
+    }
+    // 2. Release the old texture view.
+    if (wtv.at(6,6)) { // wtv.at(6,6) holds INVTextureView
+        wgpu_texture_view_release(wtv.at(6,6));
+    }
+    // 3. Release the old texture.
+    if (WGPU_Texture.at(0,0,3)) { // WGPU_Texture.at(0,0,3) holds textureInV
+        wgpu_texture_release(WGPU_Texture.at(0,0,3));
+    }
+    // 4. Update the texture descriptor with the new size.
+    szeV.at(7,7) = newSize; // Update the global size variable
+    textureDescriptorInV.width = newSize;
+    textureDescriptorInV.height = newSize;
+    WGPU_TextureDescriptor.at(0,0,3) = textureDescriptorInV; // Store it back in the global array
+    // 5. Recreate the texture with the new descriptor.
+    textureInV = wgpu_device_create_texture(wd.at(0,0), &WGPU_TextureDescriptor.at(0,0,3));
+    WGPU_Texture.at(0,0,3) = textureInV;
+    // 6. Recreate the texture view for the new texture.
+    INVTextureView = wgpu_texture_create_view(WGPU_Texture.at(0,0,3), &WGPU_TextureViewDescriptor.at(0,0,3));
+    wtv.at(6,6) = INVTextureView;
+    // 7. Update the bind group entries to point to the new texture view.
+    //    The other entries remain valid, but we must update the one for our texture.
+    Compute_Bindgroup_Entries[8].resource = wtv.at(6,6); // wtv.at(6,6) is INVTextureView
+    // 8. Recreate the bind group with the updated entries.
+    WGPU_BindGroup.at(0,0,0) = wgpu_device_create_bind_group(wd.at(0,0), WGPU_BindGroupLayout.at(0,0,0), WGPU_BindGroupEntries.at(0,0,0), 10);
+    emscripten_log(EM_LOG_CONSOLE, "Input texture resize complete.");
+}
 
 emscripten::val getPixelBufferView() {
 return emscripten::val(emscripten::typed_memory_view(pixel_buffer.size(), pixel_buffer.data()));
@@ -146,6 +188,7 @@ emscripten::function("getPixelBufferView", &getPixelBufferView);
 emscripten::function("processCopiedDataVal", &process_copied_data_val);
 emscripten::function("get_buffer_ptr", &get_buffer_ptr);
 emscripten::function("sizeBuffer", &buffer_resize);
+emscripten::function("resizeInputTexture", &resizeInputTexture); 
 // emscripten::register_vector<float>("VectorFloat"); // Needed for vecFromJSArray
 }
 
