@@ -49,6 +49,7 @@ void resizeInputTexture(emscripten_align1_int newSize) {
     }
     // 4. Update the texture descriptor with the new size.
     szeV.at(7,7) = newSize; // Update the global size variable
+    sze.at(3,3)=static_cast<emscripten_align1_int>(newSize);
     textureDescriptorInV.width = newSize;
     textureDescriptorInV.height = newSize;
     WGPU_TextureDescriptor.at(0,0,3) = textureDescriptorInV; // Store it back in the global array
@@ -64,6 +65,7 @@ void resizeInputTexture(emscripten_align1_int newSize) {
     // 8. Recreate the bind group with the updated entries.
     wict.at(4,4).texture = WGPU_Texture.at(0,0,3);
     WGPU_BindGroup.at(0,0,0) = wgpu_device_create_bind_group(wd.at(0,0), WGPU_BindGroupLayout.at(0,0,0), WGPU_BindGroupEntries.at(0,0,0), 10);
+
     emscripten_log(EM_LOG_CONSOLE, "Input texture resize complete.");
 }
 
@@ -576,7 +578,7 @@ wgpu_encoder_set_bind_group(WGPU_ComputePassCommandEncoder.at(0,0,0),0,WGPU_Bind
 wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),compute_x,compute_y,compute_z);
 wgpu_encoder_end(WGPU_ComputePassCommandEncoder.at(0,0,0));
   //  Move resized texture
-wgpu_command_encoder_copy_texture_to_texture(WGPU_CommandEncoder.at(0,0,0),&wict.at(1,1),&wict.at(3,3),sze.at(7,7),sze.at(7,7),1);
+wgpu_command_encoder_copy_texture_to_texture(WGPU_CommandEncoder.at(0,0,0),&wict.at(1,1),&wict.at(3,3),sze.at(3,3),sze.at(3,3),1);
 /*  //  Buffer Data View
 if(WGPU_BufferStatus.at(0,0,0)!=3&&on.at(1,1)==0){
   // wgpu_queue_write_buffer(WGPU_Queue.at(0,0,0),WGPU_Buffers.at(1,1,1),0,&WGPU_InputBuffer.at(0,0,0),InputBufferBytes);
