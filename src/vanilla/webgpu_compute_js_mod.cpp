@@ -1201,8 +1201,6 @@ Module.frmOn();
 },16.666);
 }                 //  have gemini help crop to square
 
-
-
 // It's good practice to store the interval ID in a higher scope
 // so it can be cleared properly if videoStart is called again.
 let animationIntervalId = null;
@@ -1213,13 +1211,11 @@ function videoStart() {
         clearInterval(animationIntervalId);
         animationIntervalId = null;
     }
-
     let vvi, h$, w$, SiZ;
     const media_mode = document.querySelector('#media').value;
     let cropSize; // The side length of the square to cut from the source
     let sx = 0;   // Source X for cropping
     let sy = 0;   // Source Y for cropping
-
     if (media_mode == 'vid') {
         vvi = document.querySelector('#mvi');
         // Ensure video metadata is loaded to get correct dimensions
@@ -1227,7 +1223,6 @@ function videoStart() {
         w$ = parseInt(vvi.videoWidth || vvi.width);
         h$ = parseInt(vvi.videoHeight || vvi.height);
         SiZ = window.innerHeight;
-
         if (w$ > h$) {
             cropSize = h$;
             sx = (w$ - h$) / 2;
@@ -1242,7 +1237,6 @@ function videoStart() {
         w$ = parseInt(vvi.naturalWidth || vvi.width);
         h$ = parseInt(vvi.naturalHeight || vvi.height);
         SiZ = window.innerHeight;
-
         if (w$ > h$) {
             cropSize = h$;
             sx = (w$ - h$) / 2;
@@ -1254,7 +1248,6 @@ function videoStart() {
         console.error("Unknown media mode:", media_mode);
         return; // Exit if media_mode is not recognized
     }
-
     // Ensure w$ and h$ (and thus cropSize) are valid before proceeding
     if (!w$ || !h$ || !cropSize) {
         console.warn("Media dimensions are not available yet or are invalid. Retrying in 100ms.");
@@ -1262,12 +1255,10 @@ function videoStart() {
         setTimeout(videoStart, 100);
         return;
     }
-
     // Read target processing size (vsiz) and source size info (srsiz) from HTML
     // These are assumed to be set correctly in your HTML
     const srsiz = parseInt(document.querySelector('#srsiz').innerHTML);
     const vsiz = parseInt(document.querySelector('#vsiz').innerHTML);
-
     if (isNaN(vsiz) || vsiz <= 0) {
         console.error("#vsiz HTML element has invalid content. It should be a positive number.");
         return;
@@ -1276,8 +1267,6 @@ function videoStart() {
         console.error("#srsiz HTML element has invalid content.");
         // Decide if srsiz is critical and return if necessary
     }
-
-
     // Initialize or re-initialize WebAssembly Module
     // The parameters to ccall (vvi.height, vsiz, srsiz) are kept as in your original code.
     // Ensure these are the correct parameters your Wasm module expects.
@@ -1308,31 +1297,25 @@ function videoStart() {
             }
         }, 250);
     }
-
     // This function will contain the canvas operations and the setInterval
     function startProcessingLoop() {
         console.log("Source media dimensions (w,h): ", w$, ",", h$);
         console.log("Crop settings (sx,sy,cropSize): ", sx, ",", sy, ",", cropSize);
         console.log("Target processing size (cropSize): ", cropSize);
-
         // 2. OffscreenCanvas Creation:
         // Create the OffscreenCanvas with the target processing dimensions 'vsiz x vsiz'.
         const cnvb = new OffscreenCanvas(cropSize, cropSize);
-
         // Setup for main display canvas (scanvas) and an intermediate canvas (bcanvas)
         const cnv = document.querySelector('#scanvas');  // Final display canvas
         const cnvc = document.querySelector('#bcanvas'); // Intermediate display canvas (shows what's on OffscreenCanvas)
-
      //   cnv.height = SiZ;
      //   cnv.width = SiZ;
-
         // Set bcanvas (presumably for debugging/previewing the OffscreenCanvas content)
         // to the same dimensions as the OffscreenCanvas.
         cnvc.height = cropSize;
         cnvc.width = cropSize;
         cnvc.style.height = cropSize + 'px';
         cnvc.style.width = cropSize + 'px';
-
         const gl3 = cnvb.getContext('2d', {
             // Note: 'colorType' is not a standard 2D context option.
             // For standard 2D context, color space is managed differently.
@@ -1342,12 +1325,10 @@ function videoStart() {
             // desynchronized: true, // Consider for lower latency if supported and applicable
             // powerPreference: "high-performance", // Good choice
         });
-
         if (!gl3) {
             console.error("Failed to get 2D context from OffscreenCanvas.");
             return;
         }
-
         // Initial draw and data extraction (if needed immediately before interval)
         // This part is largely similar to what's in the interval, so you might only need the interval.
         // However, if the first frame is critical to be processed fast, keep it.
@@ -1355,39 +1336,32 @@ function videoStart() {
         let image = gl3.getImageData(0, 0, cropSize, cropSize); // 3. Corrected: Use vsiz
         let imageData = image.data;
         const pixelCount = cropSize * cropSize * 4; // 4. Corrected: Use vsiz for pixel count
-
         // Check if frameBufferViewF32 is valid and has enough space
         if (!frameBufferViewF32 || frameBufferViewF32.length < pixelCount) {
              console.error(`frameBufferViewF32 is not correctly initialized or is too small. Expected: ${pixelCount}, Got: ${frameBufferViewF32 ? frameBufferViewF32.length : 'null'}`);
              return; // Stop if buffer is not ready
         }
-
         for (let i = 0; i < pixelCount; ++i) {
             frameBufferViewF32[i] = imageData[i] / 255.0; // Normalize uint8 (0-255) to float (0.0-1.0)
         }
         Module.frmOn(); // Send the first frame to Wasm
-
         // --- Animation Loop using setInterval ---
         animationIntervalId = setInterval(function() {
             // Clear the OffscreenCanvas for the new frame
             gl3.clearRect(0, 0, cropSize, cropSize);
-
             // Draw the current state of the video/image (cropped and scaled) onto the OffscreenCanvas
             // sx, sy, cropSize are from the source media (vvi)
             // 0, 0, vsiz, vsiz are for the destination (cnvb)
             gl3.drawImage(vvi, sx, sy, cropSize, cropSize, 0, 0, cropSize, cropSize);
-
             // Get the pixel data from the OffscreenCanvas
             image = gl3.getImageData(0, 0, cropSize, cropSize); // 3. Corrected: Use vsiz
             imageData = image.data;
             // pixelCount is already defined correctly based on vsiz
-
             // Normalize and copy pixel data to the WebAssembly module's buffer
             for (let i = 0; i < pixelCount; ++i) {
                 const normalizedValue = imageData[i] / 255.0;
                 frameBufferViewF32[i] = normalizedValue;
             }
-
             // Notify the WebAssembly module that a new frame is ready
             Module.frmOn();
 /*
@@ -1858,10 +1832,10 @@ if(media_mode=='img'){
 // document.querySelector('#lvi').height=he;
 // document.querySelector('#lvi').width=wi;
 }
-
+if(he>1){
 Module.resizeInputTexture(he);
 Module.sizeBuffer(he);
-
+}
 document.querySelector('#di').click();
 // videoStart();
 // let srsiz=document.querySelector('#srsiz').innerHTML;
