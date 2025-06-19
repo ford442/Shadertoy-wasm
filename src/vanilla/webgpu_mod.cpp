@@ -38,7 +38,6 @@ void resizeInputTexture(emscripten_align1_int newSize) {
     //    released before the resources themselves can be released.
     if (WGPU_BindGroup.at(0,0,0)) {
         wgpu_object_destroy(WGPU_BindGroup.at(0,0,0));
-
     }
     // 2. Release the old texture view.
   //  if (wtv.at(6,6)) { // wtv.at(6,6) holds INVTextureView
