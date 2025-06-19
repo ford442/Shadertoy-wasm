@@ -40,9 +40,9 @@ void resizeInputTexture(emscripten_align1_int newSize) {
         wgpu_object_destroy(WGPU_BindGroup.at(0,0,0));
     }
     // 2. Release the old texture view.
-  //  if (wtv.at(6,6)) { // wtv.at(6,6) holds INVTextureView
-  //      wgpu_object_destroy(wtv.at(6,6));
- //   }
+    if (wtv.at(6,6)) { // wtv.at(6,6) holds INVTextureView
+        wgpu_object_destroy(wtv.at(6,6));
+    }
     // 3. Release the old texture.
     if (WGPU_Texture.at(0,0,3)) { // WGPU_Texture.at(0,0,3) holds textureInV
         wgpu_object_destroy(WGPU_Texture.at(0,0,3));
@@ -62,6 +62,7 @@ void resizeInputTexture(emscripten_align1_int newSize) {
     //    The other entries remain valid, but we must update the one for our texture.
     Compute_Bindgroup_Entries[8].resource = wtv.at(6,6); // wtv.at(6,6) is INVTextureView
     // 8. Recreate the bind group with the updated entries.
+    wict.at(4,4).texture = WGPU_Texture.at(0,0,3);
     WGPU_BindGroup.at(0,0,0) = wgpu_device_create_bind_group(wd.at(0,0), WGPU_BindGroupLayout.at(0,0,0), WGPU_BindGroupEntries.at(0,0,0), 10);
     emscripten_log(EM_LOG_CONSOLE, "Input texture resize complete.");
 }
