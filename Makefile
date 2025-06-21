@@ -346,7 +346,7 @@ loader_pm:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sWASM_LEGACY_EXCEPTIONS=0 -sAUDIO_WORKLET=1
 
 b3_wasm_loader_lto_3232_test3_thread:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp -o wasm_loader_32.o -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp -o wasm_loader_32.o -m32 -mtune=wasm32 -fopenmp -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
@@ -377,7 +377,7 @@ b3_wasm_loader_lto_3232_test3_thread:
 
 
 b3_wasm_loader_lto_32_test3_thread:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -pthread -openmp -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -pthread -fopenmp -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -sNO_DISABLE_EXCEPTION_CATCHING=1 \
@@ -811,7 +811,7 @@ b3_compute_handle:
 	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_compute_mod_test5_thread:
-	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp -o webgpu_thread.o -ffast-math -ffp-contract=fast \
+	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -fopenmp -o webgpu_thread.o -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
