@@ -80,14 +80,14 @@ cmake-build:
 
 b3_wasm_loader_lto_32_test3:
 	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
-	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
+	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 -fopenmp-simd \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSTRICT=1
 	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
-	 -pipe -DQUAD -DDOUBLE -fno-exceptions \
+	 -pipe -DQUAD -DDOUBLE -fno-exceptions -fopenmp-simd \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
 	 -freciprocal-math -fno-signed-zeros \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
@@ -109,7 +109,7 @@ b3_wasm_loader_lto_32_test3:
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_wasm_loader_lto_3232_test3_thread:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp -o wasm_loader_32.o -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -fopenmp -o wasm_loader_32.o -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
@@ -140,7 +140,7 @@ b3_wasm_loader_lto_3232_test3_thread:
 
 b3_wasm_loader_lto_32_test3_thread:
 	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -pthread -openmp -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
-	 -fexcess-precision=fast -fforce-enable-int128 \
+	 -fexcess-precision=fast -fforce-enable-int128 -fopenmp \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -sNO_DISABLE_EXCEPTION_CATCHING=1 \
 	 -O3 -fno-strict-aliasing $(SIMD_FLAGS_old) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range -sPTHREAD_POOL_SIZE=16 \
@@ -149,7 +149,7 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -sWASM_BIGINT=1 -dead_strip -mbulk-memory -matomics -sEXIT_RUNTIME=1 \
 	 -pipe -DQUAD -DDOUBLE -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 \
 	 -stdlib=libc++abi -fno-rounding-math -fassociative-math \
-	 -freciprocal-math -fno-signed-zeros \
+	 -freciprocal-math -fno-signed-zeros -openmp \
 	 --use-preload-plugins --closureFriendly \
 	 -fno-strict-aliasing \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
@@ -170,14 +170,14 @@ b3_wasm_loader_lto_32_test3_thread:
 
 b3_compute_mod_test5:
 	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -lembind -ffast-math -ffp-contract=fast \
-	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
+	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library -fopenmp-simd \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
 	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS) -sSTRICT=1
 	 em++ $(mLDFLAGS) -O3 --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
-	 -ffast-math -mextended-const -mbulk-memory -sEXIT_RUNTIME=0 \
+	 -ffast-math -mextended-const -mbulk-memory -sEXIT_RUNTIME=0 -fopenmp-simd \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
 	 -sUSE_GLFW=0 -sOFFSCREEN_FRAMEBUFFER=1 -sOFFSCREENCANVAS_SUPPORT=1 -stdlib=libc++ \
 	 --use-preload-plugins --closureFriendly --typed-function-references --enable-reference-types \
@@ -201,7 +201,7 @@ b3_compute_mod_test5:
 	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_compute_mod_test5_thread:
-	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp -o webgpu_thread.o -ffast-math -ffp-contract=fast \
+	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -fopenmp -o webgpu_thread.o -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
