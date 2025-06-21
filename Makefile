@@ -11,7 +11,7 @@ STDSb = -std=gnu17 -std=c2x -std=c++11 -std=c++14 -std=c++17 -std=gnu++17 -std=c
 	 -std=c++23 -std=gnu++23 -std=c++26 -std=gnu++26
 
 COMMON_FLAGS = -D__EMSCRIPTEN__ -sSUPPORT_LONGJMP=emscripten -pipe -mextended-const \
-	 -mbulk-memory -matomics -stdlib=libc++ \
+	 -mbulk-memory -matomics -stdlib=libc++ -fopenmp-simd \
 	 -sDISABLE_EXCEPTION_CATCHING=1 -fPIC -fPIE -finline-functions -funroll-loops \
 	 -m32 -fmerge-all-constants -fno-fast-math -ffinite-math-only -funsafe-math-optimizations \
 	 -fno-trapping-math -ffp-contract=on -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno \
@@ -41,7 +41,7 @@ GL_FLAGS = -sFULL_ES3=1 -lSDL -lGL -lEGL -sUSE_GLFW=0 -sUSE_REGAL=0 -sUSE_SDL=2 
 	 -sOFFSCREENCANVAS_SUPPORT=1 -sDISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1 -sUSE_WEBGL2=1 \
 	 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sGL_TRACK_ERRORS=0
 
-LINK_FLAGS = $(LDFLAGS) -sDEFAULT_TO_CXX=1 \
+LINK_FLAGS = $(LDFLAGS) -sDEFAULT_TO_CXX=1 -fopenmp-simd \
 	 -sTEXTDECODER=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 -sABORT_ON_WASM_EXCEPTIONS=0 \
 	 -sASSERTIONS=0 --typed-function-references --enable-reference-types \
