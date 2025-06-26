@@ -106,6 +106,12 @@ using namespace std;
 #include <emscripten/html5.h>
 #include <emscripten/html5_webgpu.h>
 #include <iostream>
+
+#include <boost/iostreams/stream.hpp>
+
+using namespace boost::iostreams;
+
+
 #include "../../lib/lib_webgpu.h"
 /*
 #include <thrust/host_vector.h>
