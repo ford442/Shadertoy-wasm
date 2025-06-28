@@ -3,6 +3,7 @@
 #include "../../src/vanilla/webgpu_compute_vars_em.cpp"
 
 // #include "/usr/include/eigen3/Eigen/Eigen"
+#include <omp.h>
 
 namespace stdx = std::experimental;
 
@@ -256,6 +257,7 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
     const uint8_t* data_ptr = data.data();
     float* buffer_ptr = pixel_buffer.data();
     // Main AVX2 loop (iterates processing 8 floats derived from 8 bytes)
+    #pragma omp simd
     for (; i + 8 <= num_elements; i += 8) {
          // Load 8 uint8_t values into the lower 64 bits of an SSE register
         __m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i)); // Loads lower 8 bytes
