@@ -235,6 +235,7 @@ EM_BOOL ZoomOut(){
 u64v.at(0,0)[0]--;
 return EM_TRUE;
 }
+
 /**
  * @brief Converts a vector of 8-bit unsigned integers to a vector of single-precision floats using AVX2 instructions.
  *
@@ -256,51 +257,47 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
 
     pixel_buffer.resize(num_elements);
     const float scale = 1.0f / 255.0f;
-
-    // Set up a 256-bit AVX register with the scaling factor (1.0f / 255.0f) broadcasted to all 8 float positions.
     const __m256 inv_255_ps_avx = _mm256_set1_ps(scale);
 
     const uint8_t* data_ptr = data.data();
     float* buffer_ptr = pixel_buffer.data();
 
-    // Declare the loop counter variable. It will be initialized and modified by the loops below.
     size_t i;
 
-    // Main AVX2 loop that processes 8 elements per iteration.
-    // The OpenMP simd directive requires the loop to be in canonical form.
+    // --- CORRECTION for OpenMP Loop Condition ---
+    // To satisfy the OpenMP canonical form, the loop condition must be a direct comparison of the loop variable.
+    // The expression 'i <= num_elements - 8' is unsafe due to potential unsigned integer underflow if num_elements < 8.
     //
-    // CORRECTION: The initialization 'i = 0' has been moved inside the loop statement
-    // to satisfy the OpenMP canonical form requirement: for(initialization; condition; increment).
+    // The safe and correct approach is to calculate the boundary before the loop.
+    // 'limit' will be the largest multiple of 8 that is less than or equal to num_elements.
+    // For example, if num_elements is 20, limit becomes 16. If num_elements is 7, limit becomes 0.
+    const size_t limit = (num_elements / 8) * 8;
+
     #pragma omp simd
-    for (i = 0; i + 8 <= num_elements; i += 8) {
+    for (i = 0; i < limit; i += 8) {
         // Load 8 uint8_t values into the lower 64 bits of a 128-bit SSE register.
         __m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i));
 
         // --- Conversion from uint8 to float ---
-        // Stage 1: Unpack and zero-extend 8 uint8_t values to 8 int16_t values.
         __m128i data_i16 = _mm_unpacklo_epi8(data_u8_sse, _mm_setzero_si128());
-
-        // Stage 2: Convert the 8 int16_t values to 8 int32_t values using an AVX2 instruction.
         __m256i data_i32_avx = _mm256_cvtepi16_epi32(data_i16);
-
-        // Stage 3: Convert the 8 int32_t values to 8 single-precision float values.
         __m256 data_f32_avx = _mm256_cvtepi32_ps(data_i32_avx);
 
         // --- Scaling (Normalization) ---
-        // Multiply the 8 float values by the scaling factor.
         data_f32_avx = _mm256_mul_ps(data_f32_avx, inv_255_ps_avx);
 
         // --- Storage ---
-        // Store the resulting 8 floats back into the output buffer. 'u' stands for unaligned.
         _mm256_storeu_ps(buffer_ptr + i, data_f32_avx);
     }
 
     // Process any remaining elements (less than 8) with a standard scalar loop.
-    // This loop correctly starts from the value of 'i' where the main AVX2 loop left off.
+    // This loop correctly starts from 'limit' (the value of 'i' where the main loop left off).
     for (; i < num_elements; ++i) {
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
 }
+
+
 /*
 void convert_u8_to_float_wasm_simd(const emscripten::typed_memory_view<uint8_t>& u8_view,
 std::vector<float>& pixel_buffer){
