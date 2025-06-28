@@ -235,46 +235,68 @@ EM_BOOL ZoomOut(){
 u64v.at(0,0)[0]--;
 return EM_TRUE;
 }
-
+/**
+ * @brief Converts a vector of 8-bit unsigned integers to a vector of single-precision floats using AVX2 instructions.
+ *
+ * This function is optimized for performance by processing data in chunks using SIMD (Single Instruction, Multiple Data)
+ * instructions provided by the AVX2 instruction set. An OpenMP simd pragma is used to assist the compiler
+ * in vectorizing the main loop.
+ *
+ * @param data The input vector of uint8_t values (0-255).
+ * @param pixel_buffer The output vector where the converted float values (0.0-1.0) will be stored.
+ */
 void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
                               boost::container::vector<float>& pixel_buffer)
 {
     size_t num_elements = data.size();
-     if (num_elements == 0) {
+    if (num_elements == 0) {
         pixel_buffer.clear();
         return;
     }
+
     pixel_buffer.resize(num_elements);
     const float scale = 1.0f / 255.0f;
-    // AVX version: 8 floats
+
+    // Set up a 256-bit AVX register with the scaling factor (1.0f / 255.0f) broadcasted to all 8 float positions.
     const __m256 inv_255_ps_avx = _mm256_set1_ps(scale);
-    size_t i = 0;
-    // Process 32 elements (bytes) at a time with AVX2 (load 32 uint8_t)
-    // Although we load 32 bytes, the conversion path easily yields 8 floats,
-    // so we process 8 elements per main SIMD step inside the loop.
-    const size_t avx_bytes_load = 32; // Load 32 bytes (__m256i)
-    const size_t sse_floats_process = 4; // Process 4 floats at a time from the loaded data
+
     const uint8_t* data_ptr = data.data();
     float* buffer_ptr = pixel_buffer.data();
-    // Main AVX2 loop (iterates processing 8 floats derived from 8 bytes)
+
+    // Declare the loop counter variable. It will be initialized and modified by the loops below.
+    size_t i;
+
+    // Main AVX2 loop that processes 8 elements per iteration.
+    // The OpenMP simd directive requires the loop to be in canonical form.
+    //
+    // CORRECTION: The initialization 'i = 0' has been moved inside the loop statement
+    // to satisfy the OpenMP canonical form requirement: for(initialization; condition; increment).
     #pragma omp simd
-    for (; i + 8 <= num_elements; i += 8) {
-         // Load 8 uint8_t values into the lower 64 bits of an SSE register
-        __m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i)); // Loads lower 8 bytes
-        // --- Convert uint8 to float (using SSE/AVX steps) ---
-        // Stage 1: Zero-extend 8x uint8_t to 8x int16_t (in one SSE register)
+    for (i = 0; i + 8 <= num_elements; i += 8) {
+        // Load 8 uint8_t values into the lower 64 bits of a 128-bit SSE register.
+        __m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i));
+
+        // --- Conversion from uint8 to float ---
+        // Stage 1: Unpack and zero-extend 8 uint8_t values to 8 int16_t values.
         __m128i data_i16 = _mm_unpacklo_epi8(data_u8_sse, _mm_setzero_si128());
-        // Stage 2: Zero-extend 8x int16_t to 8x int32_t (in one AVX register)
-        __m256i data_i32_avx = _mm256_cvtepi16_epi32(data_i16); // AVX2 instruction
-        // Stage 3: Convert 8x int32_t to 8x float (in one AVX register)
-        __m256 data_f32_avx = _mm256_cvtepi32_ps(data_i32_avx); // AVX instruction
-        // --- Scale (normalize) floats ---
-        data_f32_avx = _mm256_mul_ps(data_f32_avx, inv_255_ps_avx); // AVX instruction
-        // --- Store results back to memory ---
-        // Store 8 floats (256 bits)
-        _mm256_storeu_ps(buffer_ptr + i, data_f32_avx); // AVX instruction (u for unaligned)
+
+        // Stage 2: Convert the 8 int16_t values to 8 int32_t values using an AVX2 instruction.
+        __m256i data_i32_avx = _mm256_cvtepi16_epi32(data_i16);
+
+        // Stage 3: Convert the 8 int32_t values to 8 single-precision float values.
+        __m256 data_f32_avx = _mm256_cvtepi32_ps(data_i32_avx);
+
+        // --- Scaling (Normalization) ---
+        // Multiply the 8 float values by the scaling factor.
+        data_f32_avx = _mm256_mul_ps(data_f32_avx, inv_255_ps_avx);
+
+        // --- Storage ---
+        // Store the resulting 8 floats back into the output buffer. 'u' stands for unaligned.
+        _mm256_storeu_ps(buffer_ptr + i, data_f32_avx);
     }
-    // Process remaining elements (< 8) using a standard loop.
+
+    // Process any remaining elements (less than 8) with a standard scalar loop.
+    // This loop correctly starts from the value of 'i' where the main AVX2 loop left off.
     for (; i < num_elements; ++i) {
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
