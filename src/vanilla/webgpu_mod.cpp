@@ -236,12 +236,13 @@ u64v.at(0,0)[0]--;
 return EM_TRUE;
 }
 
+
 /**
- * @brief Converts a vector of 8-bit unsigned integers to a vector of single-precision floats using AVX2 instructions.
+ * @brief Converts a vector of 8-bit unsigned integers to a vector of single-precision floats.
  *
- * This function is optimized for performance by processing data in chunks using SIMD (Single Instruction, Multiple Data)
- * instructions provided by the AVX2 instruction set. An OpenMP simd pragma is used to assist the compiler
- * in vectorizing the main loop.
+ * This version is written in portable C++ and uses the #pragma omp simd directive
+ * to instruct the compiler to auto-vectorize the loops for the target architecture
+ * (in this case, WebAssembly SIMD128). This avoids architecture-specific intrinsics.
  *
  * @param data The input vector of uint8_t values (0-255).
  * @param pixel_buffer The output vector where the converted float values (0.0-1.0) will be stored.
@@ -257,43 +258,15 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
 
     pixel_buffer.resize(num_elements);
     const float scale = 1.0f / 255.0f;
-    const __m256 inv_255_ps_avx = _mm256_set1_ps(scale);
 
     const uint8_t* data_ptr = data.data();
     float* buffer_ptr = pixel_buffer.data();
 
-    size_t i;
-
-    // --- CORRECTION for OpenMP Loop Condition ---
-    // To satisfy the OpenMP canonical form, the loop condition must be a direct comparison of the loop variable.
-    // The expression 'i <= num_elements - 8' is unsafe due to potential unsigned integer underflow if num_elements < 8.
-    //
-    // The safe and correct approach is to calculate the boundary before the loop.
-    // 'limit' will be the largest multiple of 8 that is less than or equal to num_elements.
-    // For example, if num_elements is 20, limit becomes 16. If num_elements is 7, limit becomes 0.
-    const size_t limit = (num_elements / 8) * 8;
-
+    // The #pragma omp simd directive advises the compiler to vectorize this loop
+    // using the target's native SIMD capabilities (e.g., WASM SIMD128).
+    // The compiler is now responsible for unrolling and processing elements in chunks.
     #pragma omp simd
-    for (i = 0; i < limit; i += 8) {
-        // Load 8 uint8_t values into the lower 64 bits of a 128-bit SSE register.
-        __m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i));
-
-        // --- Conversion from uint8 to float ---
-        __m128i data_i16 = _mm_unpacklo_epi8(data_u8_sse, _mm_setzero_si128());
-        __m256i data_i32_avx = _mm256_cvtepi16_epi32(data_i16);
-        __m256 data_f32_avx = _mm256_cvtepi32_ps(data_i32_avx);
-
-        // --- Scaling (Normalization) ---
-        data_f32_avx = _mm256_mul_ps(data_f32_avx, inv_255_ps_avx);
-
-        // --- Storage ---
-        _mm256_storeu_ps(buffer_ptr + i, data_f32_avx);
-    }
-
-    // Process any remaining elements (less than 8) with a standard scalar loop.
-    // This loop correctly starts from 'limit' (the value of 'i' where the main loop left off).
-        #pragma omp simd
-    for (i = 0; i < num_elements; ++i) {
+    for (size_t i = 0; i < num_elements; ++i) {
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
 }
