@@ -292,7 +292,8 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
 
     // Process any remaining elements (less than 8) with a standard scalar loop.
     // This loop correctly starts from 'limit' (the value of 'i' where the main loop left off).
-    for (; i < num_elements; ++i) {
+        #pragma omp simd
+    for (i = 0; i < num_elements; ++i) {
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
 }
