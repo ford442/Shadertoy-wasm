@@ -237,6 +237,58 @@ return EM_TRUE;
 }
 
 /**
+ * @brief Converts a vector of 8-bit unsigned integers to a vector of single-precision floats using 128-bit SSE instructions.
+ *
+ * This function is optimized for Emscripten by using 128-bit SSE intrinsics which translate
+ * directly to WebAssembly's 128-bit SIMD instructions. It processes 4 elements per iteration.
+ *
+ * @param data The input vector of uint8_t values (0-255).
+ * @param pixel_buffer The output vector where the converted float values (0.0-1.0) will be stored.
+ */
+void convert_u8_to_float_sse(const boost::container::vector<uint8_t>& data, boost::container::vector<float>& pixel_buffer) {
+    size_t num_elements = data.size();
+    if (num_elements == 0) {
+        pixel_buffer.clear();
+        return;
+    }
+    pixel_buffer.resize(num_elements);
+
+    const float scale = 1.0f / 255.0f;
+    const __m128 inv_255_ps_sse = _mm_set1_ps(scale); // 128-bit scaling vector
+
+    const uint8_t* data_ptr = data.data();
+    float* buffer_ptr = pixel_buffer.data();
+    
+    // Process 4 elements at a time
+    const size_t limit = (num_elements / 4) * 4;
+
+    for (size_t i = 0; i < limit; i += 4) {
+        // Load 4 uint8_t values (32 bits) into a 128-bit register.
+        // The upper 96 bits will be zero.
+        __m128i data_u8_sse = _mm_loadu_si32(data_ptr + i);
+
+        // Convert the 4 uint8_t values to 4 int32_t values.
+        // SSE4.1's _mm_cvtepu8_epi32 is perfect for this.
+        __m128i data_i32_sse = _mm_cvtepu8_epi32(data_u8_sse);
+
+        // Convert the 4 int32_t values to 4 single-precision floats.
+        __m128 data_f32_sse = _mm_cvtepi32_ps(data_i32_sse);
+
+        // Scale the float values to the 0.0-1.0 range.
+        data_f32_sse = _mm_mul_ps(data_f32_sse, inv_255_ps_sse);
+
+        // Store the 4 resulting floats in the output buffer.
+        _mm_storeu_ps(buffer_ptr + i, data_f32_sse);
+    }
+
+    // --- CORRECTED REMAINDER LOOP ---
+    // Process any remaining elements (less than 4) with a standard scalar loop.
+    for (size_t i = limit; i < num_elements; ++i) {
+        buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
+    }
+}
+
+/**
  * @brief Converts a vector of 8-bit unsigned integers to a vector of single-precision floats using AVX2 instructions.
  *
  * This function is optimized for performance by processing data in chunks using SIMD (Single Instruction, Multiple Data)
@@ -448,7 +500,8 @@ boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(st
 fram.close();
       
  // AVX 2
-convert_u8_to_float_avx2(data, pixel_buffer);
+// convert_u8_to_float_avx2(data, pixel_buffer);
+convert_u8_to_float_sse(data, pixel_buffer);
 const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
 
 /*      // regular
