@@ -1417,7 +1417,7 @@ if(on.at(0,0)!=0){emscripten_cancel_main_loop();}
 // emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);  //  60hz
 // emscripten_set_main_loop_timing(EM_TIMING_RAF, 2);  //  30hz
 emscripten_set_main_loop((void(*)())raf,0,0);
-emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);  // ??
+// emscripten_set_main_loop_timing(EM_TIMING_RAF, 1);  // ??
 on.at(0,0)=1;
 }
 
