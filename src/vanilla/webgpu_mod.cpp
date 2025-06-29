@@ -285,6 +285,7 @@ if (num_elements == 0) {
     for (i = 0; i < num_elements; ++i) {
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
+    _mm256_zeroupper();
 }
 
 /*
