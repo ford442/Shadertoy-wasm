@@ -273,7 +273,7 @@ void convert_u8_to_float_avx2(const boost::container::vector<uint8_t>& data,
     // For example, if num_elements is 20, limit becomes 16. If num_elements is 7, limit becomes 0.
     const size_t limit = (num_elements / 8) * 8;
 
-    // #pragma omp simd
+    #pragma omp simd
     for (i = 0; i < limit; i += 8) {
         // Load 8 uint8_t values into the lower 64 bits of a 128-bit SSE register.
         __m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i));
