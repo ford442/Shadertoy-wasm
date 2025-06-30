@@ -202,11 +202,11 @@ b3_compute_mod_m32_test5: # Renamed for clarity and to avoid conflict
 
 b3_compute_mod_test5_thread:
 	 em++ src/vanilla/webgpu_thread.cpp $(STDS) $(COMMON_FLAGS) -lembind -o webgpu_thread.o -ffp-contract=fast \
-	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
+	 -fexcess-precision=fast -fexperimental-library \
 	 -O3 -mtune=wasm32 $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ -sNO_DISABLE_EXCEPTION_CATCHING=1 \
 	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(SIMD_FLAGS_old)
-	 em++ $(mLDFLAGS) -O3 -pthread -openmp --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
+	 em++ $(mLDFLAGS) -O3 -pthread -openmp --bind -lembind -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library -sOFFSCREENCANVASES_TO_PTHREAD="#scanvas" -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	 -sUSE_GLFW=0 -sOFFSCREENCANVAS_SUPPORT=1 -sOFFSCREEN_FRAMEBUFFER=0 -sPROXY_TO_PTHREAD=0 -stdlib=libc++ \
