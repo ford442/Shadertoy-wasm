@@ -78,14 +78,14 @@ NAMESTAMP := $(subst DTE,$(TIMESTAMP),$(NAMESTAMP))
 cmake-build:
 	mkdir -p build && cd build && emcmake cmake .. && emmake make -j8
 
-b3_wasm_loader_lto_32_test3:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
+b3_wasm_loader_lto_32_test3_nothread_m32: # Renamed target for clarity and to avoid conflict
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 -fopenmp-simd \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
-	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSTRICT=1
-	 em++ -O3 -sEVAL_CTORS=0 -m64 -sMALLOC=mimalloc -sWASMFS=1 \
+	 -mextended-const -O3 -fno-strict-aliasing $(SIMD_FLAGS) -c -fno-rounding-math -fcx-limited-range \
+	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm32 -sSTRICT=1 -o wasm_loader_32_m32_nothread.o
+	 em++ -O3 -sEVAL_CTORS=0 -m32 -sMALLOC=mimalloc -sWASMFS=1 \
 	 -sWASM_BIGINT=1 -mextended-const -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions -fopenmp-simd \
 	 -stdlib=libc++abi-noexcept -fno-rounding-math -fassociative-math \
@@ -94,27 +94,25 @@ b3_wasm_loader_lto_32_test3:
 	 -fno-strict-aliasing \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fcx-limited-range -fno-trapping-math \
 	 -ffp-contract=fast -fexcess-precision=fast -sENVIRONMENT=web \
-	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-32.js -sSTRICT=1 -sSTRICT_JS=0 \
-	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 -sMEMORY64 \
-	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
+	 -DCOMPUTE -o $(BETA_BIN_NAME)-load-32-nothread.js -sSTRICT=1 -sSTRICT_JS=0 \
+	 $(LINK_SIMD_FLAGS) -sUSE_GLFW=0 -sASSERTIONS=0 \
+	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
-	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm64 \
+	 -fwhole-program-vtables -polly -polly-position=before-vectorizer -mtune=wasm32 \
 	 -sALLOW_MEMORY_GROWTH=0 -sINITIAL_MEMORY=1024mb -ffunction-sections -fdata-sections \
 	 -sABORT_ON_WASM_EXCEPTIONS=0 -sEMULATE_FUNCTION_POINTER_CASTS=0 \
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sAUTO_NATIVE_LIBRARIES=0 -sDISABLE_EXCEPTION_THROWING=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
-	 wasm_loader_32.o --output_eol linux -rtlib=compiler-rt --closure 0 --closureFriendly \
-	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
+	 wasm_loader_32_m32_nothread.o --output_eol linux -rtlib=compiler-rt --closure 0 --closureFriendly \
+	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload_nothread' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
-b3_wasm_loader_lto_3232_test3_thread:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp -o wasm_loader_32.o -m32 -mtune=wasm32 -flto -flto=thin -pipe -ffp-contract=fast \
+b3_wasm_loader_lto_32_test3_thread_m32: # Corrected typo and renamed target
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) $(COMMON_FLAGS) -o wasm_loader_32_m32.o -mtune=wasm32 -flto -flto=thin -ffp-contract=fast \
 	 -fexcess-precision=fast -fno-exceptions -fforce-enable-int128 \
-	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
-	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -O3 -fno-strict-aliasing $(SIMD_FLAGS) -c -fno-rounding-math -fcx-limited-range \
-	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm32 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1
+	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm32 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1
 	 em++ -O3 -sEVAL_CTORS=0 -m32 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
 	 -sWASM_BIGINT=1 -dead_strip -mbulk-memory -matomics \
 	 -pipe -DQUAD -DDOUBLE -fno-exceptions -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 \
@@ -134,18 +132,20 @@ b3_wasm_loader_lto_3232_test3_thread:
 	 -sUSE_SDL=0 -sFORCE_FILESYSTEM=1 -sAUTO_JS_LIBRARIES=0 -sAUTO_NATIVE_LIBRARIES=0 -sDISABLE_EXCEPTION_THROWING=1 \
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=0 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
+	 -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency \
 	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
-	 wasm_loader_32.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 --closureFriendly \
+	 wasm_loader_32_m32.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 --closureFriendly \
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
-b3_wasm_loader_lto_32_test3_thread:
-	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -pthread -openmp -o wasm_loader_32.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
+b3_wasm_loader_lto_32_test3_thread_m64: # Renamed target for clarity
+	 em++ src/vanilla/wasm_loader_32.cpp $(STDS) -pthread -openmp -o wasm_loader_32_m64.o -m64 -mtune=wasm64 -flto -flto=thin -pipe -ffp-contract=fast \
 	 -fexcess-precision=fast -fforce-enable-int128 -openmp \
 	 -ffast-math -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext -sNO_DISABLE_EXCEPTION_CATCHING=1 \
-	 -O3 -fno-strict-aliasing $(SIMD_FLAGS_old) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range -sPTHREAD_POOL_SIZE=16 \
+	 -O3 -fno-strict-aliasing $(SIMD_FLAGS_old) -sMEMORY64 -c -fno-rounding-math -fcx-limited-range \
 	 -fassociative-math -freciprocal-math -fno-signed-zeros --target=wasm64 -sSHARED_MEMORY=1 -sWASM_WORKERS=1 -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1
 	 em++ -O3 -sEVAL_CTORS=0 -Wl,-O3,--lto-O3,-lc++,-lpthread,-lc++abi,-lm,-lrt,-ldl -m64 -sMALLOC=mimalloc -sWASMFS=1 -pthread -openmp -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
+	 -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency \
 	 -sWASM_BIGINT=1 -dead_strip -mbulk-memory -matomics -sEXIT_RUNTIME=1 \
 	 -pipe -DQUAD -DDOUBLE -DBOOST_HAS_THREADS=1 -DBOOST_UBLAS_USE_LONG_DOUBLE=1 -DBOOST_UBLAS_NDEBUG=1 \
 	 -stdlib=libc++abi -fno-rounding-math -fassociative-math \
@@ -165,17 +165,17 @@ b3_wasm_loader_lto_32_test3_thread:
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
 	 -sASYNCIFY=1 -sEXPORTED_FUNCTIONS='["_main"]' -sEXPORTED_RUNTIME_METHODS='["ccall"]' \
 	 --pre-js js/rSlider.js --pre-js js/slideOut.js --pre-js js/pyodide.js \
-	 wasm_loader_32.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 --closureFriendly \
+	 wasm_loader_32_m64.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 --closureFriendly \
 	 -sMODULARIZE=1 -sEXPORT_ES6=0 -sEXPORT_NAME='libload' -sNO_DISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
-b3_compute_mod_test5:
+b3_compute_mod_m32_test5: # Renamed for clarity and to avoid conflict
 	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -lembind -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -fexperimental-library -fopenmp-simd \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS) -sSTRICT=1
+	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS) -sSTRICT=1 -o webgpu_mod_m32.o
 	 em++ $(mLDFLAGS) -O3 --bind -lembind -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mextended-const -mbulk-memory -sEXIT_RUNTIME=0 -fopenmp-simd \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library \
@@ -184,7 +184,7 @@ b3_compute_mod_test5:
 	 -fno-strict-aliasing \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
 	 -fexcess-precision=fast -sENVIRONMENT=web \
-	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
+	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod-m32.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
 	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 -mtune=wasm32 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm32 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext \
@@ -197,17 +197,15 @@ b3_compute_mod_test5:
 	 -sASYNCIFY=1 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='emmalloc' \
 	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
-	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
-	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sWASM_LEGACY_EXCEPTIONS=0
+	 webgpu_mod_m32.o --output_eol linux -rtlib=compiler-rt --closure 0 \
+	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink_m32' -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_compute_mod_test5_thread:
-	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp -o webgpu_thread.o -ffast-math -ffp-contract=fast \
+	 em++ src/vanilla/webgpu_thread.cpp $(STDS) $(COMMON_FLAGS) -lembind -o webgpu_thread.o -ffp-contract=fast \
 	 -fexcess-precision=fast -flto -flto=thin -fexperimental-library \
-	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
-	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
-	 -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
+	 -O3 -mtune=wasm32 $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ -sNO_DISABLE_EXCEPTION_CATCHING=1 \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(SIMD_FLAGS_old) -sSHARED_MEMORY=1 -sWASM_WORKERS=1
+	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(SIMD_FLAGS_old)
 	 em++ $(mLDFLAGS) -O3 -pthread -openmp --bind -lembind -flto -flto=thin -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE -fexperimental-library -sOFFSCREENCANVASES_TO_PTHREAD="#scanvas" -sSHARED_MEMORY=1 -sWASM_WORKERS=1 \
@@ -227,19 +225,20 @@ b3_compute_mod_test5_thread:
 	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 -sIGNORE_MISSING_MAIN=0 \
 	 -sEXPORTED_FUNCTIONS='["_main","_startWebGPUi","_startWebGPUbi","_startWebGPUC","_frmsOff","_frmsOn","_zoomIn","_zoomOut","_panRight","_panLeft","_panUp","_panDown"]' \
 	 -sASYNCIFY=0 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS='["wgpu_buffer_map_sync"]' -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
+	 -sPTHREAD_POOL_SIZE=navigator.hardwareConcurrency \
 	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
 	 webgpu_thread.o --output_eol linux -rtlib=compiler-rt-mt --closure 0 \
-	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sNO_DISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
+	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink_m32' -sWASM_LEGACY_EXCEPTIONS=0
 
-b3_compute_mod_test64:
+b3_compute_mod_m64_test5: # Renamed for clarity and to avoid conflict
 	 em++ src/vanilla/webgpu_mod.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
 	 -fexcess-precision=fast -m64 -mtune=wasm64 -sMEMORY64 -fexperimental-library --target=wasm64 -lembind \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -fno-math-errno \
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
-	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old)
+	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS_old) -o webgpu_mod_m64.o
 	 em++ $(mLDFLAGS) -O3 -m64 --bind -lembind -fexperimental-library -sMEMORY64 -sLEGALIZE_JS_FFI=1 -sEVAL_CTORS=2 \
 	 -sEXIT_RUNTIME=0 -ffast-math -mextended-const -mbulk-memory \
 	 -matomics -pipe -DQUAD -DDOUBLE \
@@ -248,7 +247,7 @@ b3_compute_mod_test64:
 	 -fno-strict-aliasing \
 	 -ffinite-math-only -funsafe-math-optimizations -fno-trapping-math -ffp-contract=fast \
 	 -fexcess-precision=fast -sENVIRONMENT=web \
-	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
+	 -DCOMPUTE -o $(BETA_BIN_NAME)-mod-m64.js -sSTRICT_JS=0 -sSTRICT=1 -ffunction-sections -fdata-sections \
 	 $(nBOOST_FLAGS) $(LINK_SIMD_FLAGS) $(xGL_FLAGS) -sASSERTIONS=0 \
 	 -ftree-vectorize -fstrict-vtable-pointers -fno-math-errno --target=wasm64 -DNDEBUG=1 \
 	 -mmutable-globals -mnontrapping-fptoint -msign-ext  \
@@ -261,8 +260,8 @@ b3_compute_mod_test64:
 	 -sEXPORTED_RUNTIME_METHODS='["ccall","FS"]' -sMALLOC='mimalloc' \
 	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
-	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
-	 -sMODULARIZE -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
+	 webgpu_mod_m64.o --output_eol linux -rtlib=compiler-rt --closure 0 \
+	 -sMODULARIZE -sEXPORT_NAME='lib1ink_m64' -sDISABLE_EXCEPTION_CATCHING=1 -sWASM_LEGACY_EXCEPTIONS=0
 
 b3_compute_mod_test6:
 	 em++ src/vanilla/webgpu_mod_b3.cpp $(STDS) -pipe -ffast-math -ffp-contract=fast \
@@ -297,5 +296,5 @@ b3_compute_mod_test6:
 	 webgpu_mod_b3.o --output_eol linux -rtlib=compiler-rt --closure 0 \
 	 -sMODULARIZE -sEXPORT_NAME='lib1ink' -sDISABLE_EXCEPTION_CATCHING=1
 
-all: b3_compute_mod_test5
+all: b3_compute_mod_m32_test5
 	echo 'Built 1ink.us Shaders.'
