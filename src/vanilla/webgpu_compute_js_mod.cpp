@@ -1604,6 +1604,10 @@ bufferView[i] = flDat.charCodeAt(i);
 // console.log(bufferView);
 FS.writeFile('/shader/shader.wgsl',bufferView);
 // document.querySelector('#startBtn').click();
+
+  Module.ccall('reload_shaders', null, [], []);
+
+
 setTimeout(function(){
 document.querySelector('#di').click();
 document.querySelector('#status').style.backgroundColor="green";
