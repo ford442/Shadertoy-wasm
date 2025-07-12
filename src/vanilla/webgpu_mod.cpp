@@ -690,10 +690,12 @@ on.at(3,3)=1;
 js_data_pointer.at(0,0)=0;
 fjs_data_pointer.at(0,0)=0;
 wcc.at(0,0)=wgpu_canvas_get_webgpu_context("#scanvas");
-const char * frag_body=(char*)rd_fl(Fnm);
-const char * comp_body=(char*)rd_fl(FnmC);
-const char * frag_body3=(char*)rd_fl(FnmF2);
-const char * vert_body=(char*)rd_fl(FnmV);
+    
+    const char * vert_body = rd_fl(FnmV);
+    const char * frag_body_main = rd_fl(Fnm); // Your main shader
+    const char * frag_body_sampler = rd_fl(FnmF2); // Your sampler shader
+    const char * comp_body = rd_fl(FnmC);
+
 // canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
@@ -1180,13 +1182,15 @@ multiSamp2.count=1;
 multiSamp2.mask=0xFFFFFFFF;
 shaderModuleDescV.code=vert_body;
 vs=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescV);
-shaderModuleDescF.code=frag_body;
-shaderModuleDescF2.code=frag_body3;
+shaderModuleDescF.code=frag_body_main;
+shaderModuleDescF2.code=frag_body_sampler;
 fs=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF);
 fs2=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF2);
 
-    free((void*)frag_body);
-
+   free((void*)vert_body);
+    free((void*)frag_body_main);
+    free((void*)frag_body_sampler);
+    free((void*)comp_body);
     
 colorTarget32.format=wtf.at(2,2); // wtf.at(0,0);
 colorTarget32.writeMask=15;
