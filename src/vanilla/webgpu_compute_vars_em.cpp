@@ -135,7 +135,7 @@ fn main(vertexInput : VertexInput) -> VertexOutput {
 }
   //   //  
 )delimiter";
-
+/*
 //  single threaded
 char wgl_cmp_srcA[2000]=
 // "@group(0)@binding(0)var <storage,read> inputBuffer: array<f32,64>;\n"
@@ -211,7 +211,6 @@ char wgl_cmp_src[2000]=
 // "outputBuffer[2]=f32(textureDimensions(textureIN).x);\n"
 // "outputBuffer[3]=f32(textureDimensions(textureOUT).x);\n"
 "}";
-
 
 const char * frag_body2 = R"delimiter(
   //   //
@@ -319,7 +318,7 @@ return main_out(fragColor_1, iPosition);
 }
   //   //
 )delimiter";
-
+*/
      // non vertex index / indice index shader
 const char * vertexShader=
 "struct VertexOutput{\n"
