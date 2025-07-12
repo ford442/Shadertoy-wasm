@@ -1578,6 +1578,7 @@ for (var i = 0; i < flDat.length; i++) {
 bufferView[i] = flDat.charCodeAt(i);
 }
 // console.log(bufferView);
+FS.unlink('/shader/shader.wgsl');
 FS.writeFile('/shader/shader.wgsl',bufferView);
 // document.querySelector('#startBtn').click();
 setTimeout(function(){
@@ -1602,6 +1603,8 @@ for (var i = 0; i < flDat.length; i++) {
 bufferView[i] = flDat.charCodeAt(i);
 }
 // console.log(bufferView);
+
+FS.unlink('/shader/shader.wgsl');
 FS.writeFile('/shader/shader.wgsl',bufferView);
 // document.querySelector('#startBtn').click();
 
