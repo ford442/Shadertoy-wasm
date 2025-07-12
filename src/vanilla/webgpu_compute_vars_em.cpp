@@ -363,9 +363,6 @@ const char * frag_body=
 
 WGpuVertexAttribute atts[2];
 
-WGpuRenderPipelineDescriptor renderPipelineDesc = {};
-WGpuRenderPipelineDescriptor renderPipelineDesc2 = {};
-
 WGpuRenderPassTimestampWrites renderTimestampWrites={};
 WGPU_TEXTURE_FORMAT canvasFormat;
 WGPU_TEXTURE_FORMAT canvasViewFormat[1];
