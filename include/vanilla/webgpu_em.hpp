@@ -182,9 +182,11 @@ WGpuTexture textureInV;
 WGpuTexture textureOut;
 WGpuTexture textureOut2;
 WGpuTexture __128bit_Texture__;
-WGpuShaderModule vs;
-WGpuShaderModule fs;
-WGpuShaderModule fs2;
+
+extern WGpuRenderPipelineDescriptor renderPipelineDesc;
+extern WGpuRenderPipelineDescriptor renderPipelineDesc2;
+extern WGpuShaderModule vs, fs, fs2;
+
 WGpuBindGroup bindgroup;
 WGpuBindGroup bindgroup_2;
 WGpuRenderBundleEncoder renderBundleEncoder;
