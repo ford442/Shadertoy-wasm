@@ -97,6 +97,47 @@ return true;
 }
 */
 
+
+
+extern "C" {
+  void EMSCRIPTEN_KEEPALIVE reload_shaders();
+}
+
+
+void reload_shaders() {
+  // 1. Destroy old objects to prevent resource leaks and conflicts
+  if (fs) wgpu_object_destroy(fs);
+  if (fs2) wgpu_object_destroy(fs2);
+  if (wrp.at(0,0)) wgpu_object_destroy(wrp.at(0,0));
+  if (wrp.at(1,1)) wgpu_object_destroy(wrp.at(1,1));
+
+  // 2. Read the new shader files
+  const char * frag_body = rd_fl(Fnm);
+  const char * frag_body3 = rd_fl(FnmF2);
+
+  // 3. Re-create the shader modules
+  shaderModuleDescF.code = frag_body;
+  fs = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF);
+
+  shaderModuleDescF2.code = frag_body3;
+  fs2 = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF2);
+
+  // 4. Re-create the render pipelines
+  // Ensure renderPipelineDesc and renderPipelineDesc2 are accessible here
+  // or reconstruct them.
+  fragState.module = fs;
+  wrp.at(0,0) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc);
+
+  fragState2.module = fs2;
+  wrp.at(1,1) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc2);
+
+  // Free the memory allocated by rd_fl
+  free((void*)frag_body);
+  free((void*)frag_body3);
+}
+
+
+
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
 if(eventType==EMSCRIPTEN_EVENT_MOUSEDOWN&&e->buttons!=0){
@@ -1182,6 +1223,10 @@ shaderModuleDescF.code=frag_body;
 shaderModuleDescF2.code=frag_body3;
 fs=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF);
 fs2=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF2);
+
+    free((void*)frag_body);
+
+    
 colorTarget32.format=wtf.at(2,2); // wtf.at(0,0);
 colorTarget32.writeMask=15;
 colorTarget.format=wtf.at(0,0);
