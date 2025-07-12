@@ -238,55 +238,6 @@ u64v.at(0,0)[0]--;
 return EM_TRUE;
 }
 
-
-
-void setup_pipelines_from_files() {
-    // 1. Destroy old objects if they exist to prevent leaks
-    if (fs) wgpu_object_destroy(fs);
-    if (fs2) wgpu_object_destroy(fs2);
-    if (wrp.at(0,0)) wgpu_object_destroy(wrp.at(0,0));
-    if (wrp.at(1,1)) wgpu_object_destroy(wrp.at(1,1));
-
-    // 2. Read the current shader files from the virtual filesystem
-    const char * frag_body = rd_fl(Fnm);       // Path to your main shader file
-    const char * frag_body3 = rd_fl(FnmF2);    // Path to your sampler/utility shader
-    const char * comp_body = rd_fl(FnmC);      // Path to compute shader
-    const char * vert_body = rd_fl(FnmV);      // Path to vertex shader
-
-    // Check if files were loaded successfully
-    if (!frag_body || !frag_body3 || !comp_body || !vert_body) {
-        emscripten_log(EM_LOG_ERROR, "Failed to load one or more shader files.");
-        return;
-    }
-
-    // 3. Re-create the shader modules
-    shaderModuleDescF.code = frag_body;
-    fs = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF);
-
-    shaderModuleDescF2.code = frag_body3;
-    fs2 = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF2);
-    
-    // Assuming 'vs' is your vertex shader module, create it here as well
-    shaderModuleDescV.code = vert_body;
-    vs = wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescV);
-
-    // 4. Re-create the render pipelines using the new modules
-    fragState.module = fs;
-    renderPipelineDesc.vertex = vertState; // Make sure vertState is configured correctly
-    wrp.at(0,0) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc);
-
-    fragState2.module = fs2;
-    renderPipelineDesc2.vertex = vertState; // Make sure vertState is configured correctly
-    wrp.at(1,1) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc2);
-
-    // 5. IMPORTANT: Free the memory allocated by rd_fl
-    free((void*)frag_body);
-    free((void*)frag_body3);
-    free((void*)comp_body);
-    free((void*)vert_body);
-}
-
-
 /**
  * @brief Converts a vector of 8-bit unsigned integers to a vector of single-precision floats using 128-bit SSE instructions.
  *
@@ -1229,22 +1180,17 @@ multiSamp.count=1;
 multiSamp.mask=0xFFFFFFFF;
 multiSamp2.count=1;
 multiSamp2.mask=0xFFFFFFFF;
-
-    /*
 shaderModuleDescV.code=vert_body;
 vs=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescV);
 shaderModuleDescF.code=frag_body_main;
 shaderModuleDescF2.code=frag_body_sampler;
 fs=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF);
 fs2=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF2);
+
    free((void*)vert_body);
     free((void*)frag_body_main);
     free((void*)frag_body_sampler);
     free((void*)comp_body);
-
-*/
-    setup_pipelines_from_files();
-
     
 colorTarget32.format=wtf.at(2,2); // wtf.at(0,0);
 colorTarget32.writeMask=15;
@@ -1595,13 +1541,46 @@ navigator_gpu_request_adapter_async(&wao.at(0,0),ObtainedWebGpuAdapterStart,0);
 return EM_TRUE;
 }
 
-// Your reload function now just calls the setup function
+
+
 extern "C" {
-  void EMSCRIPTEN_KEEPALIVE reload_shaders() {
-    emscripten_log(EM_LOG_CONSOLE, "Reloading shaders...");
-    setup_pipelines_from_files();
-  }
+  void EMSCRIPTEN_KEEPALIVE reload_shaders();
 }
+
+
+void reload_shaders() {
+  // 1. Destroy old objects to prevent resource leaks and conflicts
+  if (fs) wgpu_object_destroy(fs);
+  if (fs2) wgpu_object_destroy(fs2);
+  if (wrp.at(0,0)) wgpu_object_destroy(wrp.at(0,0));
+  if (wrp.at(1,1)) wgpu_object_destroy(wrp.at(1,1));
+
+  // 2. Read the new shader files
+  const char * frag_body = rd_fl(Fnm);
+  const char * frag_body3 = rd_fl(FnmF2);
+
+  // 3. Re-create the shader modules
+  shaderModuleDescF.code = frag_body;
+  fs = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF);
+
+  shaderModuleDescF2.code = frag_body3;
+  fs2 = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF2);
+
+  // 4. Re-create the render pipelines
+  // Ensure renderPipelineDesc and renderPipelineDesc2 are accessible here
+  // or reconstruct them.
+  fragState.module = fs;
+  wrp.at(0,0) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc);
+
+  fragState2.module = fs2;
+  wrp.at(1,1) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc2);
+
+  // Free the memory allocated by rd_fl
+  free((void*)frag_body);
+  free((void*)frag_body3);
+}
+
+
 
 #include "../../src/vanilla/webgpu_compute_js_mod.cpp"
 
