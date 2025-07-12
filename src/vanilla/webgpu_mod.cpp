@@ -1546,8 +1546,6 @@ navigator_gpu_request_adapter_async(&wao.at(0,0),ObtainedWebGpuAdapterStart,0);
 return EM_TRUE;
 }
 
-
-
 void setup_pipelines_from_files() {
     // 1. Destroy old objects if they exist to prevent leaks
     if (fs) wgpu_object_destroy(fs);
@@ -1601,41 +1599,6 @@ extern "C" {
     setup_pipelines_from_files();
   }
 }
-
-
-void reload_shaders() {
-  // 1. Destroy old objects to prevent resource leaks and conflicts
-  if (fs) wgpu_object_destroy(fs);
-  if (fs2) wgpu_object_destroy(fs2);
-  if (wrp.at(0,0)) wgpu_object_destroy(wrp.at(0,0));
-  if (wrp.at(1,1)) wgpu_object_destroy(wrp.at(1,1));
-
-  // 2. Read the new shader files
-  const char * frag_body = rd_fl(Fnm);
-  const char * frag_body3 = rd_fl(FnmF2);
-
-  // 3. Re-create the shader modules
-  shaderModuleDescF.code = frag_body;
-  fs = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF);
-
-  shaderModuleDescF2.code = frag_body3;
-  fs2 = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF2);
-
-  // 4. Re-create the render pipelines
-  // Ensure renderPipelineDesc and renderPipelineDesc2 are accessible here
-  // or reconstruct them.
-  fragState.module = fs;
-  wrp.at(0,0) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc);
-
-  fragState2.module = fs2;
-  wrp.at(1,1) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc2);
-
-  // Free the memory allocated by rd_fl
-  free((void*)frag_body);
-  free((void*)frag_body3);
-}
-
-
 
 #include "../../src/vanilla/webgpu_compute_js_mod.cpp"
 
