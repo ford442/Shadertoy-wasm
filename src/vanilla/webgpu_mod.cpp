@@ -34,39 +34,27 @@ return EM_TRUE;
  */
 void resizeInputTexture(emscripten_align1_int newSize) {
     emscripten_log(EM_LOG_CONSOLE, "Resizing input texture to %dx%d", newSize, newSize);
-    // 1. Release the old bind group that uses the texture view.
-    //    A bind group holds a strong reference to its resources, so it must be
-    //    released before the resources themselves can be released.
     if (WGPU_BindGroup.at(0,0,0)) {
         wgpu_object_destroy(WGPU_BindGroup.at(0,0,0));
     }
-    // 2. Release the old texture view.
     if (wtv.at(6,6)) { // wtv.at(6,6) holds INVTextureView
         wgpu_object_destroy(wtv.at(6,6));
     }
-    // 3. Release the old texture.
     if (WGPU_Texture.at(0,0,3)) { // WGPU_Texture.at(0,0,3) holds textureInV
         wgpu_object_destroy(WGPU_Texture.at(0,0,3));
     }
-    // 4. Update the texture descriptor with the new size.
     szeV.at(7,7) = newSize; // Update the global size variable
     sze.at(3,3)=static_cast<emscripten_align1_int>(newSize);
     textureDescriptorInV.width = newSize;
     textureDescriptorInV.height = newSize;
     WGPU_TextureDescriptor.at(0,0,3) = textureDescriptorInV; // Store it back in the global array
-    // 5. Recreate the texture with the new descriptor.
     textureInV = wgpu_device_create_texture(wd.at(0,0), &WGPU_TextureDescriptor.at(0,0,3));
     WGPU_Texture.at(0,0,3) = textureInV;
-    // 6. Recreate the texture view for the new texture.
     INVTextureView = wgpu_texture_create_view(WGPU_Texture.at(0,0,3), &WGPU_TextureViewDescriptor.at(0,0,3));
     wtv.at(6,6) = INVTextureView;
-    // 7. Update the bind group entries to point to the new texture view.
-    //    The other entries remain valid, but we must update the one for our texture.
     Compute_Bindgroup_Entries[8].resource = wtv.at(6,6); // wtv.at(6,6) is INVTextureView
-    // 8. Recreate the bind group with the updated entries.
     wict.at(4,4).texture = WGPU_Texture.at(0,0,3);
     WGPU_BindGroup.at(0,0,0) = wgpu_device_create_bind_group(wd.at(0,0), WGPU_BindGroupLayout.at(0,0,0), WGPU_BindGroupEntries.at(0,0,0), 10);
-
     emscripten_log(EM_LOG_CONSOLE, "Input texture resize complete.");
 }
 
@@ -87,17 +75,6 @@ if(on.at(3,3)==1){
 on_b.at(4,4)=1;
 }
 }
-
-/*
-bool processFrameAndConvert(emscripten::val uint8_pixel_data_val) {
-// emscripten::typed_memory_view<uint8_t> u8_view(uint8_pixel_data_val);
-//  convert_u8_to_float_wasm_simd(u8_view, pixel_buffer);
-convert_u8_to_float_wasm_simd(emscripten::typed_memory_view(pixel_buffer.size(),&uint8_pixel_data_val), pixel_buffer);
-return true;
-}
-*/
-
-
 
 EM_BOOL ms_clk(int32_t eventType,const EmscriptenMouseEvent * e,void * userData){
 if(e->screenX!=0&&e->screenY!=0&&e->clientX!=0&&e->clientY!=0&&e->targetX!=0&&e->targetY!=0){
@@ -254,36 +231,24 @@ void convert_u8_to_float_sse(const boost::container::vector<uint8_t>& data, boos
         return;
     }
     pixel_buffer.resize(num_elements);
-
     const float scale = 1.0f / 255.0f;
     const __m128 inv_255_ps_sse = _mm_set1_ps(scale); // 128-bit scaling vector
-
     const uint8_t* data_ptr = data.data();
     float* buffer_ptr = pixel_buffer.data();
-    
-    // Process 4 elements at a time
     const size_t limit = (num_elements / 4) * 4;
-
     for (size_t i = 0; i < limit; i += 4) {
-        // Load 4 uint8_t values (32 bits) into a 128-bit register.
         // The upper 96 bits will be zero.
         __m128i data_u8_sse = _mm_loadu_si32(data_ptr + i);
-
         // Convert the 4 uint8_t values to 4 int32_t values.
         // SSE4.1's _mm_cvtepu8_epi32 is perfect for this.
         __m128i data_i32_sse = _mm_cvtepu8_epi32(data_u8_sse);
-
         // Convert the 4 int32_t values to 4 single-precision floats.
         __m128 data_f32_sse = _mm_cvtepi32_ps(data_i32_sse);
-
         // Scale the float values to the 0.0-1.0 range.
         data_f32_sse = _mm_mul_ps(data_f32_sse, inv_255_ps_sse);
-
         // Store the 4 resulting floats in the output buffer.
         _mm_storeu_ps(buffer_ptr + i, data_f32_sse);
     }
-
-    // --- CORRECTED REMAINDER LOOP ---
     // Process any remaining elements (less than 4) with a standard scalar loop.
     for (size_t i = limit; i < num_elements; ++i) {
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
@@ -312,13 +277,6 @@ if (num_elements == 0) {
     const uint8_t* data_ptr = data.data();
     float* buffer_ptr = pixel_buffer.data();
     size_t i;
-    // --- CORRECTION for OpenMP Loop Condition ---
-    // To satisfy the OpenMP canonical form, the loop condition must be a direct comparison of the loop variable.
-    // The expression 'i <= num_elements - 8' is unsafe due to potential unsigned integer underflow if num_elements < 8.
-    //
-    // The safe and correct approach is to calculate the boundary before the loop.
-    // 'limit' will be the largest multiple of 8 that is less than or equal to num_elements.
-    // For example, if num_elements is 20, limit becomes 16. If num_elements is 7, limit becomes 0.
     const size_t limit = (num_elements / 8) * 8;
     #pragma omp simd
     for (i = 0; i < limit; i += 8) {
@@ -333,57 +291,11 @@ if (num_elements == 0) {
         // --- Storage ---
         _mm256_storeu_ps(buffer_ptr + i, data_f32_avx);
     }
-    // Process any remaining elements (less than 8) with a standard scalar loop.
-    // This loop correctly starts from 'limit' (the value of 'i' where the main loop left off).
     #pragma omp simd
     for (i = 0; i < num_elements; ++i) {
         buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
     }
 }
-
-/*
-void convert_u8_to_float_wasm_simd(const emscripten::typed_memory_view<uint8_t>& u8_view,
-std::vector<float>& pixel_buffer){
-size_t num_elements = data.size();
-if (num_elements == 0) {
-pixel_buffer.clear();
-return;
-}
-pixel_buffer.resize(num_elements);
-const float scale = 1.0f / 255.0f;
-    // AVX version: 8 floats
-const __m256 inv_255_ps_avx = _mm256_set1_ps(scale);
-size_t i = 0;
-    // Process 32 elements (bytes) at a time with AVX2 (load 32 uint8_t)
-    // Although we load 32 bytes, the conversion path easily yields 8 floats,
-    // so we process 8 elements per main SIMD step inside the loop.
-const size_t avx_bytes_load = 32; // Load 32 bytes (__m256i)
-const size_t sse_floats_process = 4; // Process 4 floats at a time from the loaded data
-const uint8_t* data_ptr = data.data();
-float* buffer_ptr = pixel_buffer.data();
-    // Main AVX2 loop (iterates processing 8 floats derived from 8 bytes)
-for (; i + 8 <= num_elements; i += 8) {
-         // Load 8 uint8_t values into the lower 64 bits of an SSE register
-__m128i data_u8_sse = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(data_ptr + i)); // Loads lower 8 bytes
-        // --- Convert uint8 to float (using SSE/AVX steps) ---
-        // Stage 1: Zero-extend 8x uint8_t to 8x int16_t (in one SSE register)
-__m128i data_i16 = _mm_unpacklo_epi8(data_u8_sse, _mm_setzero_si128());
-        // Stage 2: Zero-extend 8x int16_t to 8x int32_t (in one AVX register)
-__m256i data_i32_avx = _mm256_cvtepi16_epi32(data_i16); // AVX2 instruction
-        // Stage 3: Convert 8x int32_t to 8x float (in one AVX register)
-__m256 data_f32_avx = _mm256_cvtepi32_ps(data_i32_avx); // AVX instruction
-        // --- Scale (normalize) floats ---
-data_f32_avx = _mm256_mul_ps(data_f32_avx, inv_255_ps_avx); // AVX instruction
-        // --- Store results back to memory ---
-        // Store 8 floats (256 bits)
-_mm256_storeu_ps(buffer_ptr + i, data_f32_avx); // AVX instruction (u for unaligned)
-}
-    // Process remaining elements (< 8) using a standard loop.
-for (; i < num_elements; ++i) {
-buffer_ptr[i] = static_cast<float>(data_ptr[i]) * scale;
-}
-}
-*/
 
 boost::function<EM_BOOL()>render=[](){
 u64_uni.at(3,3)++; 
@@ -448,39 +360,8 @@ videoAttachment.clearValue=clearC.at(0,0);
 wrpca.at(1,1)=videoAttachment;
 videoTextureView=wgpu_texture_create_view(wt.at(2,2),&wtvd.at(2,2));
 wtv.at(2,2)=videoTextureView;
-/*
-depthTextureView=wgpu_texture_create_view(wt.at(0,0),&wtvd.at(0,0));
-wtv.at(0,0)=depthTextureView;
-depthAttachment.view=wtv.at(0,0);
-depthAttachment.depthClearValue=1.0f;
-depthAttachment.depthReadOnly=EM_TRUE;
-depthAttachment.depthLoadOp=WGPU_LOAD_OP_LOAD;
-// depthAttachment.depthLoadOp=WGPU_LOAD_OP_CLEAR;
-depthAttachment.depthStoreOp=WGPU_STORE_OP_DISCARD; // WGPU_STORE_OP_UNDEFINED;
-depthAttachment.stencilClearValue=0u;
-depthAttachment.stencilReadOnly=EM_TRUE;
-depthAttachment.stencilLoadOp=WGPU_LOAD_OP_LOAD;
-// depthAttachment.stencilLoadOp=WGPU_LOAD_OP_CLEAR;
-depthAttachment.stencilStoreOp=WGPU_STORE_OP_UNDEFINED;
-wrpdsa.at(0,0)=depthAttachment;
-depthTextureView2=wgpu_texture_create_view(wt.at(5,5),&wtvd.at(3,3));
-wtv.at(5,5)=depthTextureView2;
-depthAttachment2.view=wtv.at(5,5);
-depthAttachment2.depthClearValue=1.0f;
-depthAttachment2.depthReadOnly=EM_TRUE;
-depthAttachment2.depthLoadOp=WGPU_LOAD_OP_LOAD;
-// depthAttachment2.depthLoadOp=WGPU_LOAD_OP_CLEAR;
-depthAttachment2.depthStoreOp=WGPU_STORE_OP_DISCARD; // WGPU_STORE_OP_UNDEFINED;
-depthAttachment2.stencilClearValue=0u;
-depthAttachment2.stencilReadOnly=EM_TRUE;
-// depthAttachment2.stencilLoadOp=WGPU_LOAD_OP_LOAD;
-depthAttachment2.stencilLoadOp=WGPU_LOAD_OP_CLEAR;
-depthAttachment2.stencilStoreOp=WGPU_STORE_OP_UNDEFINED;
-wrpdsa.at(1,1)=depthAttachment2;
-*/
 passDesc.numColorAttachments=1;
 passDesc.colorAttachments=&wrpca.at(1,1); // &wrpca.at(0,0); // 
-// passDesc.depthStencilAttachment=wrpdsa.at(1,1);  //  wrpdsa.at(0,0); //
 passDesc.occlusionQuerySet=0;
 // passDesc.maxDrawCount=6;
 renderTimestampWrites.querySet=0;
@@ -490,7 +371,6 @@ passDesc.timestampWrites=renderTimestampWrites;
 wrpd.at(0,0)=passDesc;
 passDesc2.numColorAttachments=1;
 passDesc2.colorAttachments=&wrpca.at(0,0); // &wrpca.at(1,1); //
-// passDesc2.depthStencilAttachment=wrpdsa.at(0,0);
 passDesc2.occlusionQuerySet=0;
 // passDesc2.maxDrawCount=6;
 passDesc2.timestampWrites=renderTimestampWrites;
@@ -541,13 +421,12 @@ if(on_b.at(4,4)==1){
 
 INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
 wtv.at(6,6)=INVTextureView;
-
       
       //  Frame Data 
-  // std::ifstream fram(Fnm2,std::ios::binary);
+// std::ifstream fram(Fnm2,std::ios::binary);
 // fsm::ifstream fram(Fnm2,std::ios::binary);
 
-  // boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
+// boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
 // boost::container::vector<emscripten_align1_float>floatData(data.size());
 // boost::container::vector<emscripten_align1_float>floatData(pixel_buffer.size());
     
@@ -559,10 +438,8 @@ wtv.at(6,6)=INVTextureView;
 // for (Eigen::Index i = 0; i < data.size(); ++i) {
 // floatData(i) = static_cast<float>(data[i]) / 255.0f;
 // }
-
   /*    
     size_t num_to_print = std::min((size_t)16, pixel_buffer.size()); // Print max 16 floats
-
     for (size_t i = 0; i < num_to_print; ++i) {
         // Print index and value, format float to a few decimal places
         printf("pixel_buffer[%zu] = %.4f\n", i, pixel_buffer[i]);
@@ -612,7 +489,6 @@ wgpu_render_pass_encoder_set_index_buffer(wrpe.at(0,0),wb.at(7,7),WGPU_INDEX_FOR
 wgpu_render_pass_encoder_set_vertex_buffer(wrpe.at(0,0),0,wb.at(6,6),0,sizeof(vertices));
 wgpu_render_pass_encoder_set_viewport(wrpe.at(0,0),0.0f,0.0f,szef.at(1,1),szef.at(1,1),0.0f,1.0f);
 wgpu_render_pass_encoder_set_scissor_rect(wrpe.at(0,0),0.0f,0.0f,sze.at(1,1),sze.at(1,1));
-// wgpu_render_pass_encoder_draw(wrpe.at(0,0),6,1,0,0);
 wgpu_render_pass_encoder_draw_indexed(wrpe.at(0,0),36,1,0,0,0);
 wgpu_render_pass_encoder_end(wrpe.at(0,0));
 wcb.at(0,0)=wgpu_command_encoder_finish(wce.at(0,0));
@@ -630,7 +506,6 @@ wgpu_render_pass_encoder_set_index_buffer(wrpe.at(1,1),wb.at(7,7),WGPU_INDEX_FOR
 wgpu_render_pass_encoder_set_vertex_buffer(wrpe.at(1,1),0,wb.at(6,6),0,sizeof(vertices));
 wgpu_render_pass_encoder_set_viewport(wrpe.at(1,1),0.0f,0.0f,szef.at(0,0),szef.at(0,0),0.0f,1.0f);
 wgpu_render_pass_encoder_set_scissor_rect(wrpe.at(1,1),0.0f,0.0f,sze.at(0,0),sze.at(0,0));
-//  wgpu_render_pass_encoder_draw(wrpe.at(1,1),6,1,0,0);
 wgpu_render_pass_encoder_draw_indexed(wrpe.at(1,1),36,1,0,0,0);
 wgpu_render_pass_encoder_end(wrpe.at(1,1));
 wcb.at(1,1)=wgpu_command_encoder_finish(wce.at(1,1));
@@ -642,7 +517,6 @@ wgpu_compute_pass_encoder_set_pipeline(WGPU_ComputePassCommandEncoder.at(0,0,0),
 wgpu_encoder_set_bind_group(WGPU_ComputePassCommandEncoder.at(0,0,0),0,WGPU_BindGroup.at(0,0,0),0,0);
 wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),compute_x,compute_y,compute_z);
 wgpu_encoder_end(WGPU_ComputePassCommandEncoder.at(0,0,0));
-  //  Move resized texture
 wgpu_command_encoder_copy_texture_to_texture(WGPU_CommandEncoder.at(0,0,0),&wict.at(1,1),&wict.at(3,3),sze.at(3,3),sze.at(3,3),1);
 /*  //  Buffer Data View
 if(WGPU_BufferStatus.at(0,0,0)!=3&&on.at(1,1)==0){
@@ -690,12 +564,10 @@ on.at(3,3)=1;
 js_data_pointer.at(0,0)=0;
 fjs_data_pointer.at(0,0)=0;
 wcc.at(0,0)=wgpu_canvas_get_webgpu_context("#scanvas");
-    
-    const char * vert_body = rd_fl(FnmV);
-    const char * frag_body_main = rd_fl(Fnm); // Your main shader
-    const char * frag_body_sampler = rd_fl(FnmF2); // Your sampler shader
-    const char * comp_body = rd_fl(FnmC);
-
+const char * vert_body = rd_fl(FnmV);
+const char * frag_body_main = rd_fl(Fnm); // Your main shader
+const char * frag_body_sampler = rd_fl(FnmF2); // Your sampler shader
+const char * comp_body = rd_fl(FnmC);
 // canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
@@ -730,20 +602,18 @@ emscripten_get_canvas_element_size("canvas",&szwI,&szhI);
 emscripten_get_element_css_size("#scanvas",&szw,&szh);
 // u64_siz.at(3,3)=sze.at(1,1);
 sze.at(0,0)=static_cast<emscripten_align1_int>(szhI);
-                        emscripten_log(EM_LOG_CONSOLE,"C got canvas size: %d", sze.at(0,0));
+emscripten_log(EM_LOG_CONSOLE,"C got canvas size: %d", sze.at(0,0));
 sze.at(3,3)=static_cast<emscripten_align1_int>(std::max(sze.at(0,0),sze.at(1,1))*(float(u64_uni.at(4,4)/1000.0f)));
-                  emscripten_log(EM_LOG_CONSOLE,"C setting main texture size: %d", sze.at(3,3));
-                  emscripten_log(EM_LOG_CONSOLE,"C got secondary size: %d", szh);
-
-      // u64_siz.at(2,2)=static_cast<emscripten_align1_int>(szhI);
+emscripten_log(EM_LOG_CONSOLE,"C setting main texture size: %d", sze.at(3,3));
+emscripten_log(EM_LOG_CONSOLE,"C got secondary size: %d", szh);
+// u64_siz.at(2,2)=static_cast<emscripten_align1_int>(szhI);
 f32_uniform.at(1,1)=static_cast<emscripten_align1_float>(sze.at(1,1));
 f32_uniform.at(2,2)=static_cast<emscripten_align1_float>(sze.at(1,1));
 szef.at(0,0)=static_cast<emscripten_align1_float>(szhI);
 szef.at(1,1)=static_cast<emscripten_align1_float>(sze.at(1,1));
-  
-clk_l=true;
 
      //  mouse setup
+clk_l=true;
 mms.at(0,0)=0.5*szef.at(0,0);
 mms.at(0,1)=0.5*(mms2.at(0,1)-szef.at(0,0));
 mms.at(1,0)=0.5*szef.at(0,0);
@@ -785,8 +655,7 @@ textureDescriptorInV.format=wtf.at(1,1);
 textureDescriptorInV.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST;
 textureDescriptorInV.width=szeV.at(7,7);
 textureDescriptorInV.height=szeV.at(7,7); // default = 1;
-            emscripten_log(EM_LOG_CONSOLE,"Input texture size: %d", szeV.at(7,7));
-
+emscripten_log(EM_LOG_CONSOLE,"Input texture size: %d", szeV.at(7,7));
 textureDescriptorInV.depthOrArrayLayers=1;
 textureDescriptorInV.mipLevelCount=1;
 textureDescriptorInV.sampleCount=1;
@@ -1186,12 +1055,10 @@ shaderModuleDescF.code=frag_body_main;
 shaderModuleDescF2.code=frag_body_sampler;
 fs=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF);
 fs2=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescF2);
-
-   free((void*)vert_body);
-    free((void*)frag_body_main);
-    free((void*)frag_body_sampler);
-    free((void*)comp_body);
-    
+free((void*)vert_body);
+free((void*)frag_body_main);
+free((void*)frag_body_sampler);
+free((void*)comp_body);
 colorTarget32.format=wtf.at(2,2); // wtf.at(0,0);
 colorTarget32.writeMask=15;
 colorTarget.format=wtf.at(0,0);
@@ -1504,14 +1371,13 @@ wgpu_adapter_request_device_async(wa.at(0,0),&wdd.at(0,0),ObtainedWebGpuDeviceSt
 EM_BOOL WGPU_Start(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
 size_t num_elements = (size_t)vsz * vsz * 4;
 pixel_buffer.resize(num_elements);
-      
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
 u64_uni.at(4,4)=sr;  //  texture resize amount
-                  emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
-                  emscripten_log(EM_LOG_CONSOLE,"C input texture size: %d", szeV.at(7,7));
-                  emscripten_log(EM_LOG_CONSOLE,"C super res size: %d", u64_uni.at(4,4));
+emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
+emscripten_log(EM_LOG_CONSOLE,"C input texture size: %d", szeV.at(7,7));
+emscripten_log(EM_LOG_CONSOLE,"C super res size: %d", u64_uni.at(4,4));
 f32_uniform.at(2,2)=static_cast<emscripten_align1_float>(sze.at(1,1));
 szef.at(1,1)=static_cast<emscripten_align1_float>(sze.at(1,1));
 options.powerPreference=WGPU_POWER_PREFERENCE_HIGH_PERFORMANCE;
@@ -1524,14 +1390,13 @@ return EM_TRUE;
 EM_BOOL WGPU_StartC(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
 size_t num_elements = (size_t)vsz * vsz * 4;
 pixel_buffer.resize(num_elements);
-      
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
 u64_uni.at(4,4)=sr;  //  texture resize amount
-                  emscripten_log(EM_LOG_CONSOLE,"C input texture sizes: %d", szeV.at(7,7));
-                  emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
-                  emscripten_log(EM_LOG_CONSOLE,"C super res size: %d",u64_uni.at(4,4));
+emscripten_log(EM_LOG_CONSOLE,"C input texture sizes: %d", szeV.at(7,7));
+emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
+emscripten_log(EM_LOG_CONSOLE,"C super res size: %d",u64_uni.at(4,4));
 f32_uniform.at(2,2)=static_cast<emscripten_align1_float>(sze.at(1,1));
 szef.at(1,1)=static_cast<emscripten_align1_float>(sze.at(1,1));
 options.powerPreference=WGPU_POWER_PREFERENCE_HIGH_PERFORMANCE;
@@ -1541,46 +1406,28 @@ navigator_gpu_request_adapter_async(&wao.at(0,0),ObtainedWebGpuAdapterStart,0);
 return EM_TRUE;
 }
 
-
-
 extern "C" {
   void EMSCRIPTEN_KEEPALIVE reload_shaders();
 }
 
-
 void reload_shaders() {
-  // 1. Destroy old objects to prevent resource leaks and conflicts
-  if (fs) wgpu_object_destroy(fs);
-  if (fs2) wgpu_object_destroy(fs2);
-  if (wrp.at(0,0)) wgpu_object_destroy(wrp.at(0,0));
-  if (wrp.at(1,1)) wgpu_object_destroy(wrp.at(1,1));
-
-  // 2. Read the new shader files
-  const char * frag_body = rd_fl(Fnm);
-  const char * frag_body3 = rd_fl(FnmF2);
-
-  // 3. Re-create the shader modules
-  shaderModuleDescF.code = frag_body;
-  fs = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF);
-
-  shaderModuleDescF2.code = frag_body3;
-  fs2 = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF2);
-
-  // 4. Re-create the render pipelines
-  // Ensure renderPipelineDesc and renderPipelineDesc2 are accessible here
-  // or reconstruct them.
-  fragState.module = fs;
-  wrp.at(0,0) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc);
-
-  fragState2.module = fs2;
-  wrp.at(1,1) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc2);
-
-  // Free the memory allocated by rd_fl
-  free((void*)frag_body);
-  free((void*)frag_body3);
+if (fs) wgpu_object_destroy(fs);
+if (fs2) wgpu_object_destroy(fs2);
+if (wrp.at(0,0)) wgpu_object_destroy(wrp.at(0,0));
+if (wrp.at(1,1)) wgpu_object_destroy(wrp.at(1,1));
+const char * frag_body = rd_fl(Fnm);
+const char * frag_body3 = rd_fl(FnmF2);
+shaderModuleDescF.code = frag_body;
+fs = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF);
+shaderModuleDescF2.code = frag_body3;
+fs2 = wgpu_device_create_shader_module(wd.at(0,0), &shaderModuleDescF2);
+fragState.module = fs;
+wrp.at(0,0) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc);
+fragState2.module = fs2;
+wrp.at(1,1) = wgpu_device_create_render_pipeline(wd.at(0,0), &renderPipelineDesc2);
+free((void*)frag_body);
+free((void*)frag_body3);
 }
-
-
 
 #include "../../src/vanilla/webgpu_compute_js_mod.cpp"
 
