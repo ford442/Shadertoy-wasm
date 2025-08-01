@@ -335,6 +335,7 @@ static js_data_tensorf frame_tensorf=js_data_tensorf{2,2};
 static js_data_tensor64 frame_tensor64=js_data_tensor64{2,2};
 static js_data_tensorGL frame_tensorGL=js_data_tensorGL{2,2};
 static u64_tensor u64_bfrSze=u64_tensor{4,4};
+static u64_tensor compute_xyz=u64_tensor{1,3};
 static uniform_vector_tensor u64v=uniform_vector_tensor{4,4};
 static wict_tensor wict=wict_tensor{8,8};
 static wictt_tensor wictt=wictt_tensor{3,3};
