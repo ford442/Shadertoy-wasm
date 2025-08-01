@@ -21,8 +21,8 @@ static boost::container::vector<emscripten_align1_float> pixel_buffer;
 EM_BOOL buffer_resize(emscripten_align1_int sz){
 size_t num_elements = (size_t)sz * sz * 4;
 pixel_buffer.resize(num_elements);
-   compute_xyz.at(0,0)=std::max(1,(sz+15)/16);
-   compute_xyz.at(0,1)=std::max(1,(sz+15)/16);
+   compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
+   compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
     compute_xyz.at(0,2)=2;
 return EM_TRUE;
 }
@@ -572,7 +572,11 @@ const char * vert_body = rd_fl(FnmV);
 const char * frag_body_main = rd_fl(Fnm); // Your main shader
 const char * frag_body_sampler = rd_fl(FnmF2); // Your sampler shader
 const char * comp_body = rd_fl(FnmC);
-// canvasFormat=navigator_gpu_get_preferred_canvas_format();
+canvasFormat=navigator_gpu_get_preferred_canvas_format();
+
+WGPUTextureFormat hdrFormat = WGPU_TEXTURE_FORMAT_RGBA16FLOAT;
+WGPUTextureFormat viewFormats[] = { hdrFormat }; // Create the view formats array
+
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA8UNORM;
@@ -587,9 +591,9 @@ wtf.at(5,5)=WGPU_TEXTURE_FORMAT_DEPTH16UNORM;
 // wtf.at(0,0)=canvasFormat;
 canvasViewFormat[0]={wtf.at(0,0)};
 config.device=wd.at(0,0);
-config.format=wtf.at(0,0);
+config.format=viewFormats; // wtf.at(0,0);
 config.usage=WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
-// config.numViewFormats=1;
+config.numViewFormats=1;
 config.viewFormats=&canvasViewFormat[0];
 config.alphaMode=WGPU_CANVAS_ALPHA_MODE_PREMULTIPLIED;
 // config.alphaMode=WGPU_CANVAS_ALPHA_MODE_OPAQUE;
@@ -656,12 +660,14 @@ textureDescriptorIn.numViewFormats=0;
 textureDescriptorIn.viewFormats=nullptr; // &textureAviewFormats[0];
 textureDescriptorInV.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorInV.format=wtf.at(1,1);
-textureDescriptorInV.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST;
+textureDescriptorInV.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST|WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
 textureDescriptorInV.width=szeV.at(7,7);
 textureDescriptorInV.height=szeV.at(7,7); // default = 1;
 emscripten_log(EM_LOG_CONSOLE,"Input texture size: %d", szeV.at(7,7));
 textureDescriptorInV.depthOrArrayLayers=1;
-textureDescriptorInV.mipLevelCount=1;
+    
+textureDescriptorInV.mipLevelCount=(std::floor(std::log2(szeV.at(7,7)))) + 1;
+   
 textureDescriptorInV.sampleCount=1;
 textureDescriptorInV.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorInV.numViewFormats=0;
@@ -679,11 +685,11 @@ textureDescriptorOut.numViewFormats=0;
 textureDescriptorOut.viewFormats=nullptr;
 textureDescriptorOut2.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorOut2.format=wtf.at(2,2);
-textureDescriptorOut2.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST;
+textureDescriptorOut2.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST|WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
 textureDescriptorOut2.width=sze.at(3,3);
 textureDescriptorOut2.height=sze.at(3,3); // default = 1;
 textureDescriptorOut2.depthOrArrayLayers=1;
-textureDescriptorOut2.mipLevelCount=1;
+textureDescriptorOut2.mipLevelCount==(std::floor(std::log2(szeV.at(3,3)))) + 1;
 textureDescriptorOut2.sampleCount=1;
 textureDescriptorOut2.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorOut2.numViewFormats=0;
@@ -834,7 +840,7 @@ resizeSamplerDescriptor.mipmapFilter=WGPU_MIPMAP_FILTER_MODE_LINEAR;
 resizeSamplerDescriptor.lodMinClamp=0;
 resizeSamplerDescriptor.lodMaxClamp=0;
 // resizeSamplerDescriptor.compare;  // default = WGPU_COMPARE_FUNCTION_INVALID (not used)
-resizeSamplerDescriptor.maxAnisotropy=8;
+resizeSamplerDescriptor.maxAnisotropy=16;
 wsd.at(1,1)=resizeSamplerDescriptor;
 resizeSampler=wgpu_device_create_sampler(wd.at(0,0),&wsd.at(1,1));
 wsmp.at(3,3)=resizeSampler;
@@ -1107,7 +1113,7 @@ videoSamplerDescriptor.mipmapFilter=WGPU_MIPMAP_FILTER_MODE_LINEAR;
 videoSamplerDescriptor.lodMinClamp=0;
 videoSamplerDescriptor.lodMaxClamp=0;  //  default=32
 // videoSamplerDescriptor.compare;  // default = WGPU_COMPARE_FUNCTION_INVALID (not used)
-videoSamplerDescriptor.maxAnisotropy=8;
+videoSamplerDescriptor.maxAnisotropy=16;
 wsd.at(0,0)=videoSamplerDescriptor;
 videoSampler=wgpu_device_create_sampler(wd.at(0,0),&wsd.at(0,0));
 wsmp.at(0,0)=videoSampler;
@@ -1355,6 +1361,10 @@ emscripten_set_main_loop((void(*)())raf,0,0);
 on.at(0,0)=1;
 }
 
+uint32_t calculateMipLevelCount(uint32_t width, uint32_t height) {
+    return static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
+}
+
 static void ObtainedWebGpuAdapterStart(WGpuAdapter result, void *userData){
 wa.at(0,0)=result;
 // deviceDesc.requiredFeatures=WGPU_FEATURE_DEPTH32FLOAT_STENCIL8;
@@ -1381,8 +1391,8 @@ pixel_buffer.resize(num_elements);
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
-        compute_xyz.at(0,0)=std::max(1,(vsz+15)/16);
-    compute_xyz.at(0,1)=std::max(1,(vsz+15)/16);
+        compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
+    compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
     compute_xyz.at(0,2)=2;
 u64_uni.at(4,4)=sr;  //  texture resize amount
 emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
