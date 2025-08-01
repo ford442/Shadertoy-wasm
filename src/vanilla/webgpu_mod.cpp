@@ -575,7 +575,7 @@ const char * comp_body = rd_fl(FnmC);
 canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA16FLOAT;
 
-WGPUTextureFormat viewFormats[] = { wtf.at(0,0) }; // Create the view formats array
+WGPUTextureFormat viewFormats[] = { WGPU_TEXTURE_FORMAT_RGBA16FLOAT };
 
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
