@@ -2,9 +2,6 @@
 #include "../../include/vanilla/webgpu_em.hpp"
 #include "../../src/vanilla/webgpu_compute_vars_em.cpp"
 
-// #include "/usr/include/eigen3/Eigen/Eigen"
-#include <omp.h>
-
 namespace stdx = std::experimental;
 
 namespace bfs = boost::filesystem;
