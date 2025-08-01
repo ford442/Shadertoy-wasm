@@ -2,6 +2,9 @@
 // #include <stdfloat.hpp>  // wait for clang 16
 #include <emscripten/bind.h>
 
+// #include "/usr/include/eigen3/Eigen/Eigen"
+#include <omp.h>
+
 #include "../../include/vanilla/avx.hpp"
 #include "../../include/vanilla/defs.hpp"
 #include "../../include/vanilla/gl.hpp"
