@@ -21,9 +21,6 @@ static boost::container::vector<emscripten_align1_float> pixel_buffer;
 EM_BOOL buffer_resize(emscripten_align1_int sz){
 size_t num_elements = (size_t)sz * sz * 4;
 pixel_buffer.resize(num_elements);
-   compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
-   compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
-    compute_xyz.at(0,2)=2;
 return EM_TRUE;
 }
 
@@ -518,8 +515,7 @@ WGPU_CommandEncoder.at(0,0,0)=wgpu_device_create_command_encoder_simple(wd.at(0,
 WGPU_ComputePassCommandEncoder.at(0,0,0)=wgpu_command_encoder_begin_compute_pass(WGPU_CommandEncoder.at(0,0,0),&WGPU_ComputePassDescriptor.at(0,0,0));
 wgpu_compute_pass_encoder_set_pipeline(WGPU_ComputePassCommandEncoder.at(0,0,0),WGPU_ComputePipeline.at(0,0,0));
 wgpu_encoder_set_bind_group(WGPU_ComputePassCommandEncoder.at(0,0,0),0,WGPU_BindGroup.at(0,0,0),0,0);
-// wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),compute_x,compute_y,compute_z);
-wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),compute_xyz.at(0,0),compute_xyz.at(0,1),compute_xyz.at(0,2));
+wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),compute_x,compute_y,compute_z);
 wgpu_encoder_end(WGPU_ComputePassCommandEncoder.at(0,0,0));
 wgpu_command_encoder_copy_texture_to_texture(WGPU_CommandEncoder.at(0,0,0),&wict.at(1,1),&wict.at(3,3),sze.at(3,3),sze.at(3,3),1);
 /*  //  Buffer Data View
@@ -572,14 +568,11 @@ const char * vert_body = rd_fl(FnmV);
 const char * frag_body_main = rd_fl(Fnm); // Your main shader
 const char * frag_body_sampler = rd_fl(FnmF2); // Your sampler shader
 const char * comp_body = rd_fl(FnmC);
-canvasFormat=navigator_gpu_get_preferred_canvas_format();
-wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA16FLOAT;
-
-// WGPUTextureFormat viewFormats[1] = { WGPU_TEXTURE_FORMAT_RGBA16FLOAT };
-
+// canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA8UNORM;
+wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA16FLOAT;
 wtf.at(1,1)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RG11B10UFLOAT;
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA8UNORM;
@@ -592,7 +585,7 @@ canvasViewFormat[0]={wtf.at(0,0)};
 config.device=wd.at(0,0);
 config.format=wtf.at(0,0);
 config.usage=WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
-config.numViewFormats=1;
+// config.numViewFormats=1;
 config.viewFormats=&canvasViewFormat[0];
 config.alphaMode=WGPU_CANVAS_ALPHA_MODE_PREMULTIPLIED;
 // config.alphaMode=WGPU_CANVAS_ALPHA_MODE_OPAQUE;
@@ -659,14 +652,12 @@ textureDescriptorIn.numViewFormats=0;
 textureDescriptorIn.viewFormats=nullptr; // &textureAviewFormats[0];
 textureDescriptorInV.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorInV.format=wtf.at(1,1);
-textureDescriptorInV.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST|WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
+textureDescriptorInV.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST;
 textureDescriptorInV.width=szeV.at(7,7);
 textureDescriptorInV.height=szeV.at(7,7); // default = 1;
 emscripten_log(EM_LOG_CONSOLE,"Input texture size: %d", szeV.at(7,7));
 textureDescriptorInV.depthOrArrayLayers=1;
-    
-textureDescriptorInV.mipLevelCount=(std::floor(std::log2(szeV.at(7,7)))) + 1;
-   
+textureDescriptorInV.mipLevelCount=1;
 textureDescriptorInV.sampleCount=1;
 textureDescriptorInV.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorInV.numViewFormats=0;
@@ -684,11 +675,11 @@ textureDescriptorOut.numViewFormats=0;
 textureDescriptorOut.viewFormats=nullptr;
 textureDescriptorOut2.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorOut2.format=wtf.at(2,2);
-textureDescriptorOut2.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST|WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
+textureDescriptorOut2.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST;
 textureDescriptorOut2.width=sze.at(3,3);
 textureDescriptorOut2.height=sze.at(3,3); // default = 1;
 textureDescriptorOut2.depthOrArrayLayers=1;
-textureDescriptorOut2.mipLevelCount=(std::floor(std::log2(szeV.at(3,3)))) + 1;
+textureDescriptorOut2.mipLevelCount=1;
 textureDescriptorOut2.sampleCount=1;
 textureDescriptorOut2.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorOut2.numViewFormats=0;
@@ -839,7 +830,7 @@ resizeSamplerDescriptor.mipmapFilter=WGPU_MIPMAP_FILTER_MODE_LINEAR;
 resizeSamplerDescriptor.lodMinClamp=0;
 resizeSamplerDescriptor.lodMaxClamp=0;
 // resizeSamplerDescriptor.compare;  // default = WGPU_COMPARE_FUNCTION_INVALID (not used)
-resizeSamplerDescriptor.maxAnisotropy=16;
+resizeSamplerDescriptor.maxAnisotropy=8;
 wsd.at(1,1)=resizeSamplerDescriptor;
 resizeSampler=wgpu_device_create_sampler(wd.at(0,0),&wsd.at(1,1));
 wsmp.at(3,3)=resizeSampler;
@@ -1112,7 +1103,7 @@ videoSamplerDescriptor.mipmapFilter=WGPU_MIPMAP_FILTER_MODE_LINEAR;
 videoSamplerDescriptor.lodMinClamp=0;
 videoSamplerDescriptor.lodMaxClamp=0;  //  default=32
 // videoSamplerDescriptor.compare;  // default = WGPU_COMPARE_FUNCTION_INVALID (not used)
-videoSamplerDescriptor.maxAnisotropy=16;
+videoSamplerDescriptor.maxAnisotropy=8;
 wsd.at(0,0)=videoSamplerDescriptor;
 videoSampler=wgpu_device_create_sampler(wd.at(0,0),&wsd.at(0,0));
 wsmp.at(0,0)=videoSampler;
@@ -1383,9 +1374,6 @@ pixel_buffer.resize(num_elements);
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
-        compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
-    compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
-    compute_xyz.at(0,2)=2;
 u64_uni.at(4,4)=sr;  //  texture resize amount
 emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
 emscripten_log(EM_LOG_CONSOLE,"C input texture size: %d", szeV.at(7,7));
@@ -1405,9 +1393,6 @@ pixel_buffer.resize(num_elements);
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
-    compute_xyz.at(0,0)=std::max(1,(vsz+15)/16);
-    compute_xyz.at(0,1)=std::max(1,(vsz+15)/16);
-    compute_xyz.at(0,2)=2;
 u64_uni.at(4,4)=sr;  //  texture resize amount
 emscripten_log(EM_LOG_CONSOLE,"C input texture sizes: %d", szeV.at(7,7));
 emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
