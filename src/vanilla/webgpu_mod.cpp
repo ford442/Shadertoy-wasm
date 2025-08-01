@@ -575,7 +575,7 @@ const char * comp_body = rd_fl(FnmC);
 canvasFormat=navigator_gpu_get_preferred_canvas_format();
 wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA16FLOAT;
 
-WGPUTextureFormat viewFormats[1] = { WGPU_TEXTURE_FORMAT_RGBA16FLOAT };
+// WGPUTextureFormat viewFormats[1] = { WGPU_TEXTURE_FORMAT_RGBA16FLOAT };
 
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
@@ -593,7 +593,7 @@ config.device=wd.at(0,0);
 config.format=canvasFormat; // wtf.at(0,0);
 config.usage=WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
 config.numViewFormats=1;
-config.viewFormats=&viewFormats;
+config.viewFormats=&canvasViewFormat[0];
 config.alphaMode=WGPU_CANVAS_ALPHA_MODE_PREMULTIPLIED;
 // config.alphaMode=WGPU_CANVAS_ALPHA_MODE_OPAQUE;
 config.colorSpace=HTML_PREDEFINED_COLOR_SPACE_DISPLAY_P3;
