@@ -689,7 +689,7 @@ textureDescriptorOut2.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAG
 textureDescriptorOut2.width=sze.at(3,3);
 textureDescriptorOut2.height=sze.at(3,3); // default = 1;
 textureDescriptorOut2.depthOrArrayLayers=1;
-textureDescriptorOut2.mipLevelCount==(std::floor(std::log2(szeV.at(3,3)))) + 1;
+textureDescriptorOut2.mipLevelCount=(std::floor(std::log2(szeV.at(3,3)))) + 1;
 textureDescriptorOut2.sampleCount=1;
 textureDescriptorOut2.dimension=WGPU_TEXTURE_DIMENSION_2D;
 textureDescriptorOut2.numViewFormats=0;
