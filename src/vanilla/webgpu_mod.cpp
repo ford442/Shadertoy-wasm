@@ -716,7 +716,7 @@ textureViewDescriptorInV.format=wtf.at(1,1);
 textureViewDescriptorInV.dimension=WGPU_TEXTURE_VIEW_DIMENSION_2D;
 textureViewDescriptorInV.aspect=WGPU_TEXTURE_ASPECT_ALL;
 textureViewDescriptorInV.baseMipLevel=0; // default = 0
-textureViewDescriptorInV.mipLevelCount=(std::floor(std::log2(szeV.at(7,7)))) + 1;
+textureViewDescriptorInV.mipLevelCount=1; // (std::floor(std::log2(szeV.at(7,7)))) + 1;
 textureViewDescriptorInV.baseArrayLayer=0; // default = 0
 textureViewDescriptorInV.arrayLayerCount=1;
 textureViewDescriptorOut.format=wtf.at(2,2);
@@ -730,7 +730,7 @@ textureViewDescriptorOut2.format=wtf.at(2,2);
 textureViewDescriptorOut2.dimension=WGPU_TEXTURE_VIEW_DIMENSION_2D;
 textureViewDescriptorOut2.aspect=WGPU_TEXTURE_ASPECT_ALL;
 textureViewDescriptorOut2.baseMipLevel=0; // default = 0
-textureViewDescriptorOut2.mipLevelCount=(std::floor(std::log2(sze.at(3,3)))) + 1;
+textureViewDescriptorOut2.mipLevelCount=1; // (std::floor(std::log2(sze.at(3,3)))) + 1;
 textureViewDescriptorOut2.baseArrayLayer=0; // default = 0
 textureViewDescriptorOut2.arrayLayerCount=1;
 WGPU_TextureViewDescriptor.at(0,0,0)=textureViewDescriptorIn;
