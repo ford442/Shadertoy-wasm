@@ -1360,10 +1360,6 @@ emscripten_set_main_loop((void(*)())raf,0,0);
 on.at(0,0)=1;
 }
 
-uint32_t calculateMipLevelCount(uint32_t width, uint32_t height) {
-    return static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
-}
-
 static void ObtainedWebGpuAdapterStart(WGpuAdapter result, void *userData){
 wa.at(0,0)=result;
 // deviceDesc.requiredFeatures=WGPU_FEATURE_DEPTH32FLOAT_STENCIL8;
@@ -1384,9 +1380,6 @@ wgpu_adapter_request_device_async(wa.at(0,0),&wdd.at(0,0),ObtainedWebGpuDeviceSt
 EM_BOOL WGPU_Start(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
 size_t num_elements = (size_t)vsz * vsz * 4;
 pixel_buffer.resize(num_elements);
-   //         compute_xyz.at(0,0)=240;
- //   compute_xyz.at(0,1)=135;
-//    compute_xyz.at(0,2)=2;
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
@@ -1409,9 +1402,6 @@ return EM_TRUE;
 EM_BOOL WGPU_StartC(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
 size_t num_elements = (size_t)vsz * vsz * 4;
 pixel_buffer.resize(num_elements);
-  //      compute_xyz.at(0,0)=240;
-//    compute_xyz.at(0,1)=135;
-//    compute_xyz.at(0,2)=2;
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
