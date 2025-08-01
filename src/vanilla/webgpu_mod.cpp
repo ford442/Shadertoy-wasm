@@ -19,6 +19,9 @@ namespace fsm = boost::filesystem;
 static boost::container::vector<emscripten_align1_float> pixel_buffer;
 
 EM_BOOL buffer_resize(emscripten_align1_int sz){
+       compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
+   compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
+    compute_xyz.at(0,2)=2;
 size_t num_elements = (size_t)sz * sz * 4;
 pixel_buffer.resize(num_elements);
 return EM_TRUE;
@@ -515,7 +518,7 @@ WGPU_CommandEncoder.at(0,0,0)=wgpu_device_create_command_encoder_simple(wd.at(0,
 WGPU_ComputePassCommandEncoder.at(0,0,0)=wgpu_command_encoder_begin_compute_pass(WGPU_CommandEncoder.at(0,0,0),&WGPU_ComputePassDescriptor.at(0,0,0));
 wgpu_compute_pass_encoder_set_pipeline(WGPU_ComputePassCommandEncoder.at(0,0,0),WGPU_ComputePipeline.at(0,0,0));
 wgpu_encoder_set_bind_group(WGPU_ComputePassCommandEncoder.at(0,0,0),0,WGPU_BindGroup.at(0,0,0),0,0);
-wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),compute_x,compute_y,compute_z);
+wgpu_compute_pass_encoder_dispatch_workgroups(WGPU_ComputePassCommandEncoder.at(0,0,0),compute_xyz.at(0,0),compute_xyz.at(0,1),compute_xyz.at(0,2));
 wgpu_encoder_end(WGPU_ComputePassCommandEncoder.at(0,0,0));
 wgpu_command_encoder_copy_texture_to_texture(WGPU_CommandEncoder.at(0,0,0),&wict.at(1,1),&wict.at(3,3),sze.at(3,3),sze.at(3,3),1);
 /*  //  Buffer Data View
@@ -1374,6 +1377,9 @@ pixel_buffer.resize(num_elements);
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
+       compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
+   compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
+    compute_xyz.at(0,2)=2;
 u64_uni.at(4,4)=sr;  //  texture resize amount
 emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
 emscripten_log(EM_LOG_CONSOLE,"C input texture size: %d", szeV.at(7,7));
@@ -1393,6 +1399,9 @@ pixel_buffer.resize(num_elements);
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
+       compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
+   compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
+    compute_xyz.at(0,2)=2;
 u64_uni.at(4,4)=sr;  //  texture resize amount
 emscripten_log(EM_LOG_CONSOLE,"C input texture sizes: %d", szeV.at(7,7));
 emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
