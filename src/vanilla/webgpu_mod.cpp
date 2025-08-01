@@ -21,8 +21,8 @@ static boost::container::vector<emscripten_align1_float> pixel_buffer;
 EM_BOOL buffer_resize(emscripten_align1_int sz){
 size_t num_elements = (size_t)sz * sz * 4;
 pixel_buffer.resize(num_elements);
-    compute_xyz.at(0,0)=std::max(1,(sz+15)/16);
-    compute_xyz.at(0,1)=std::max(1,(sz+15)/16);
+   compute_xyz.at(0,0)=std::max(1,(sz+15)/16);
+   compute_xyz.at(0,1)=std::max(1,(sz+15)/16);
     compute_xyz.at(0,2)=2;
 return EM_TRUE;
 }
@@ -1375,9 +1375,15 @@ wgpu_adapter_request_device_async(wa.at(0,0),&wdd.at(0,0),ObtainedWebGpuDeviceSt
 EM_BOOL WGPU_Start(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
 size_t num_elements = (size_t)vsz * vsz * 4;
 pixel_buffer.resize(num_elements);
+   //         compute_xyz.at(0,0)=240;
+ //   compute_xyz.at(0,1)=135;
+//    compute_xyz.at(0,2)=2;
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
+        compute_xyz.at(0,0)=std::max(1,(vsz+15)/16);
+    compute_xyz.at(0,1)=std::max(1,(vsz+15)/16);
+    compute_xyz.at(0,2)=2;
 u64_uni.at(4,4)=sr;  //  texture resize amount
 emscripten_log(EM_LOG_CONSOLE,"C main size: %d", sze.at(1,1));
 emscripten_log(EM_LOG_CONSOLE,"C input texture size: %d", szeV.at(7,7));
@@ -1394,6 +1400,9 @@ return EM_TRUE;
 EM_BOOL WGPU_StartC(emscripten_align1_int vsz,emscripten_align1_int sz,emscripten_align1_int sr){
 size_t num_elements = (size_t)vsz * vsz * 4;
 pixel_buffer.resize(num_elements);
+  //      compute_xyz.at(0,0)=240;
+//    compute_xyz.at(0,1)=135;
+//    compute_xyz.at(0,2)=2;
 sze.at(1,1)=sz;
 sze.at(6,6)=sz;
 szeV.at(7,7)=vsz;
