@@ -7,7 +7,28 @@ FS.writeFile('/video/frame.gl',blank);
 FS.writeFile('/video/frameBFR.gl',blank);
 let running=0;
 
+// Global WebGPU objects, managed by JS initially
+let gpuAdapter = null;
+let gpuDevice = null;
 
+// --- 1. A new async function to get the device early ---
+async function initWebGPU() {
+    if (gpuDevice) return; // Already initialized
+    try {
+        if (!navigator.gpu) throw new Error("WebGPU not supported.");
+        gpuAdapter = await navigator.gpu.requestAdapter();
+        if (!gpuAdapter) throw new Error("Failed to get GPU adapter.");
+        gpuDevice = await gpuAdapter.requestDevice();
+        if (!gpuDevice) throw new Error("Failed to get GPU device.");
+        console.log("WebGPU device initialized successfully.");
+    } catch (e) {
+        console.error("WebGPU Initialization Error:", e);
+        alert(e.message);
+    }
+}
+
+// Call this function once when the page loads
+initWebGPU();
 
 
 // Keep these at a higher scope to manage the animation loop
@@ -48,7 +69,11 @@ function videoStart() {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
     }
-
+ if (!gpuDevice) {
+        console.log("Waiting for WebGPU device...");
+        await initWebGPU();
+        if (!gpuDevice) return; // Exit if init failed
+    }
     // 2. Get media elements and calculate source dimensions
     const media_mode = document.querySelector('#media').value;
     const vvi = document.querySelector(media_mode === 'vid' ? '#mvi' : '#ivi');
@@ -76,7 +101,6 @@ function videoStart() {
         console.error("Invalid #vsiz value in HTML.");
         return;
     }
-const processingSize = parseInt(document.querySelector('#vsiz').innerHTML); // e.g., 1024
 
     // 4. Initialize or Re-initialize C++ WebGPU context
     // This call should ensure C++ resizes its textures and buffers to `vsiz`.
