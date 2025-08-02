@@ -76,11 +76,12 @@ function videoStart() {
         console.error("Invalid #vsiz value in HTML.");
         return;
     }
-    
+const processingSize = parseInt(document.querySelector('#vsiz').innerHTML); // e.g., 1024
+
     // 4. Initialize or Re-initialize C++ WebGPU context
     // This call should ensure C++ resizes its textures and buffers to `vsiz`.
     if (window.running == 0) {
-        Module.ccall("startWebGPUi", null, ["number", "number", "number"], [vsiz, vsiz, srsiz]);
+        Module.ccall("startWebGPUi", null, ["number", "number", "number"], [processingSize, processingSize, srsiz]);
         window.running = 1;
     } else {
         // If running again, tell C++ to resize its resources
