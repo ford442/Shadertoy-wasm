@@ -386,103 +386,25 @@ passDesc2.occlusionQuerySet=0;
 passDesc2.timestampWrites=renderTimestampWrites;
 wrpd.at(1,1)=passDesc2;
       
-if(on_b.at(5,5)==1){
-fsm::ifstream fram(Fnm2,std::ios::binary);
-boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
-fram.close();
       
- // AVX 2
-// convert_u8_to_float_avx2(data, pixel_buffer);
-convert_u8_to_float_sse(data, pixel_buffer);
-const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
-
-/*      // regular
-std::transform(data.begin(),data.end(),pixel_buffer.begin(),[](uint8_t val){return val/255.0f;});
-const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
-      
-    //  SIMD
-size_t num_elements = data.size();
-pixel_buffer.resize(num_elements); // Resize pixel_buffer to hold floats
-const size_t simd_size = float_simd::size(); // How many floats fit in one SIMD register
-const size_t vec_size = data.size();
-size_t i = 0;
-float_simd inv_255(1.0f / 255.0f);
-for (; i + simd_size <= vec_size; i += simd_size) {
-    alignas(float_simd) std::array<uint8_t, simd_size> temp_u8;
-    std::copy(data.begin() + i, data.begin() + i + simd_size, temp_u8.begin());
-    float_simd data_chunk_f;
-    for(size_t k=0; k < simd_size; ++k) {
-        data_chunk_f[k] = static_cast<float>(temp_u8[k]); // Element-wise assignment for conversion
+if(on_b.at(4,4) == 1){
+    if (!uint8_pixel_buffer.empty()) {
+        // Calculate bytes per row for the uint8 data.
+        const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(uint8_t); // 4 bytes per RGBA pixel
+        wgpu_queue_write_texture(
+            WGPU_Queue.at(0,0,0),
+            &wict.at(4,4), // Destination texture copy info
+            uint8_pixel_buffer.data(),
+            uint8_pixel_buffer.size(), // Total size of data to write
+            bytesPerRow,
+            szeV.at(7,7) // Number of rows
+        );
     }
-    auto result_chunk = data_chunk_f * inv_255; // SIMD multiplication
-    result_chunk.copy_to(pixel_buffer.data() + i, std::experimental::element_aligned);
-}
-for (; i < vec_size; ++i) {
-    pixel_buffer[i] = static_cast<float>(data[i]) / 255.0f;
-}
-const size_t bytesPerRow = szeV.at(7,7) * 4 * sizeof(emscripten_align1_float); // Should this be pixel_buffer.size() * sizeof(float) / height? Or width*4*sizeof(float)? Check calculation.
-*/
-      
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
-on_b.at(5,5)=0;
-}
-      
-if(on_b.at(4,4)==1){
+    on_b.at(4,4) = 0;
+}  // end if on 4,4
 
-INVTextureView=wgpu_texture_create_view(WGPU_Texture.at(0,0,3),&WGPU_TextureViewDescriptor.at(0,0,3));
-wtv.at(6,6)=INVTextureView;
-      
-      //  Frame Data 
-// std::ifstream fram(Fnm2,std::ios::binary);
-// fsm::ifstream fram(Fnm2,std::ios::binary);
-
-// boost::container::vector<uint8_t>data((std::istreambuf_iterator<char>(fram)),(std::istreambuf_iterator<char>()));
-// boost::container::vector<emscripten_align1_float>floatData(data.size());
-// boost::container::vector<emscripten_align1_float>floatData(pixel_buffer.size());
     
-// std::vector<float> outputData(data.size()); // Pre-allocate output data
-// std::transform(data.begin(),data.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
-// std::transform(pixel_buffer.begin(),pixel_buffer.end(),floatData.begin(),[](uint8_t val){return val/255.0f;});  // for RGBA32FLOAT
-
-// Eigen::VectorXf floatData(data.size());
-// for (Eigen::Index i = 0; i < data.size(); ++i) {
-// floatData(i) = static_cast<float>(data[i]) / 255.0f;
-// }
-  /*    
-    size_t num_to_print = std::min((size_t)16, pixel_buffer.size()); // Print max 16 floats
-    for (size_t i = 0; i < num_to_print; ++i) {
-        // Print index and value, format float to a few decimal places
-        printf("pixel_buffer[%zu] = %.4f\n", i, pixel_buffer[i]);
-    }
-*/
-      
-const size_t bytesPerRow=szeV.at(7,7)*4*sizeof(emscripten_align1_float);
-// frame_tensor.at(0,0)=data;
-// fjs_data_pointer.at(0,0)=floatData.data();
-// fjsv_data_pointer.at(0,0)=&floatData; // (std::vector<float*>)
-//     frame_tensorf.at(0,0)=floatData;
-// frame_tensorGL.at(0,0)=data;
-// wetd.at(0,0).source=texid.at(0,0);
-//   wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),&frame_tensor.at(0,0),bytesPerRow,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
-wgpu_queue_write_texture(WGPU_Queue.at(0,0,0),&wict.at(4,4),pixel_buffer.data(),bytesPerRow,szeV.at(7,7),szeV.at(7,7),szeV.at(7,7),1);
-
-/*    //  highway way
-const HWY_FULL(uint8_t) d;
-const size_t N = data.size();  
-std::vector<emscripten_align1_float> floatData(4 * N); 
-    // SIMD conversion loop
-for (size_t i = 0; i < N; i += 1) {
-const auto v = Load(d, &data[i]); 
-const HWY_FULL(float) f = v / Set(d, 255.0f); // Divide as before
-Store(f, d, &floatData[i]); 
-}
-*/
-
-on_b.at(4,4)=0;
-}   // end if on 4,4
-// void wgpu_queue_copy_external_image_to_texture(WGpuQueue queue, const WGpuImageCopyExternalImage *source NOTNULL, const WGpuImageCopyTextureTagged *destination NOTNULL, uint32_t copyWidth, uint32_t copyHeight _WGPU_DEFAULT_VALUE(1), uint32_t copyDepthOrArrayLayers _WGPU_DEFAULT_VALUE(1));
-// wgpu_queue_copy_external_image_to_texture(WGPU_Queue.at(0,0,0), ,&wictt.at(0,0) ,szeV.at(7,7),sze.at(6,6),szeV.at(7,7),1);
- //  Render Pass
+    //  Render Pass
 wceA=wgpu_device_create_command_encoder(wd.at(0,0),0);
 wce.at(0,0)=wceA;
 wrpe.at(0,0)=wgpu_command_encoder_begin_render_pass(wce.at(0,0),&wrpd.at(0,0));
@@ -585,7 +507,7 @@ wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA16FLOAT;
 wtf.at(1,1)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RG11B10UFLOAT;
-// wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA8UNORM;
+wtf.at(6,6)=WGPU_TEXTURE_FORMAT_RGBA8UNORM;
 wtf.at(4,4)=WGPU_TEXTURE_FORMAT_INVALID;
 // wtf.at(5,5)=WGPU_TEXTURE_FORMAT_DEPTH32FLOAT_STENCIL8;
 // wtf.at(5,5)=WGPU_TEXTURE_FORMAT_DEPTH24PLUS_STENCIL8;
@@ -661,7 +583,7 @@ textureAviewFormats[0]={wtf.at(2,2)};
 textureDescriptorIn.numViewFormats=0;
 textureDescriptorIn.viewFormats=nullptr; // &textureAviewFormats[0];
 textureDescriptorInV.dimension=WGPU_TEXTURE_DIMENSION_2D;
-textureDescriptorInV.format=wtf.at(1,1);
+textureDescriptorInV.format=wtf.at(6,6);
 textureDescriptorInV.usage=WGPU_TEXTURE_USAGE_TEXTURE_BINDING|WGPU_TEXTURE_USAGE_COPY_DST;
 textureDescriptorInV.width=szeV.at(7,7);
 textureDescriptorInV.height=szeV.at(7,7); // default = 1;
@@ -722,7 +644,7 @@ textureViewDescriptorIn.baseMipLevel=0; // default = 0
 textureViewDescriptorIn.mipLevelCount=1;
 textureViewDescriptorIn.baseArrayLayer=0; // default = 0
 textureViewDescriptorIn.arrayLayerCount=1;
-textureViewDescriptorInV.format=wtf.at(1,1);
+textureViewDescriptorInV.format=wtf.at(6,6);
 textureViewDescriptorInV.dimension=WGPU_TEXTURE_VIEW_DIMENSION_2D;
 textureViewDescriptorInV.aspect=WGPU_TEXTURE_ASPECT_ALL;
 textureViewDescriptorInV.baseMipLevel=0; // default = 0
