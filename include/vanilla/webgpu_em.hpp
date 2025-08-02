@@ -174,6 +174,8 @@ WGpuTextureView INVTextureView;
 WGpuTextureView OUTTextureView;
 WGpuTextureView OUTTexture2View;
 WGpuTextureView MSTextureView;
+  WGpuTextureView msaaTextureView;
+
 WGpuTexture depthTexture;
 WGpuTexture depthTexture2;
 WGpuTexture colorTexture;
@@ -185,6 +187,7 @@ WGpuTexture textureInV;
 WGpuTexture textureOut;
 WGpuTexture textureOut2;
 WGpuTexture __128bit_Texture__;
+  WGpuTexture msaaTextureView;
 
  WGpuRenderPipelineDescriptor renderPipelineDesc;
  WGpuRenderPipelineDescriptor renderPipelineDesc2;
