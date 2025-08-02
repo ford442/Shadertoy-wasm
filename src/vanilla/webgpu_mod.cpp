@@ -338,9 +338,10 @@ colorTexture=wgpu_canvas_context_get_current_texture(wcc.at(0,0));
 wt.at(1,1)=colorTexture;
 colorTextureView=wgpu_texture_create_view(wt.at(1,1),&wtvd.at(1,1));
 wtv.at(1,1)=colorTextureView;
-colorAttachment.view=wtv.at(1,1);
+  colorAttachment.view=wtv.at(7,7);
+  colorAttachment.resolveTarget=wtv.at(1,1);        // <-- RESOLVE to the canvas texture
 colorAttachment.depthSlice=-1;
-colorAttachment.storeOp=WGPU_STORE_OP_STORE; // WGPU_STORE_OP_DISCARD; 
+colorAttachment.storeOp=WGPU_STORE_OP_DISCARD; // WGPU_STORE_OP_DISCARD; 
 // colorAttachment.loadOp=WGPU_LOAD_OP_LOAD;
 colorAttachment.loadOp=WGPU_LOAD_OP_CLEAR;
 colorAttachment.clearValue=clearC.at(0,0);
@@ -929,6 +930,38 @@ videoTextureViewDescriptor.arrayLayerCount=1;
 wtvd.at(2,2)=videoTextureViewDescriptor;
 videoTextureView=wgpu_texture_create_view(wt.at(2,2),&wtvd.at(2,2));
 wtv.at(2,2)=videoTextureView;
+
+
+msaaTextureDesc.dimension=WGPU_TEXTURE_DIMENSION_2D;
+msaaTextureDesc.format=wtf.at(0,0);
+msaaTextureDesc.usage=WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
+msaaTextureDesc.width=sze.at(0,0);
+msaaTextureDesc.height=sze.at(0,0); // default = 1;
+msaaTextureDesc.depthOrArrayLayers=1;
+msaaTextureDesc.mipLevelCount=1;
+msaaTextureDesc.sampleCount=4;
+msaaTextureDesc.dimension=WGPU_TEXTURE_DIMENSION_2D;
+// videoViewFormats[0]={wtf.at(0,0)};
+msaaTextureDesc.numViewFormats=0; // &videoViewFormats[0];
+msaaTextureDesc.viewFormats=nullptr; // &videoViewFormats[0];
+wtd.at(3,3)=msaaTextureDesc;
+msaaTexture=wgpu_device_create_texture(wd.at(0,0),&wtd.at(3,3));
+wt.at(3,3)=msaaTexture;
+       /*
+textureViewDescriptorMSAA.format=wtf.at(2,2);
+textureViewDescriptorMSAA.dimension=WGPU_TEXTURE_VIEW_DIMENSION_2D;
+textureViewDescriptorMSAA.aspect=WGPU_TEXTURE_ASPECT_ALL;
+textureViewDescriptorMSAA.baseMipLevel=0; // default = 0
+textureViewDescriptorMSAA.mipLevelCount=1;
+textureViewDescriptorMSAA.baseArrayLayer=0; // default = 0
+textureViewDescriptorMSAA.arrayLayerCount=1;
+wtvd.at(3,3)=textureViewDescriptorMSAA;
+*/
+msaaTextureView=wgpu_texture_create_view(wt.at(3,3),nullptr);
+wtv.at(7,7)=msaaTextureView;
+
+       
+       
       // Compute Input Buffer
 Compute_Bindgroup_Layout_Entries[0].binding=0;
 Compute_Bindgroup_Layout_Entries[0].visibility=WGPU_SHADER_STAGE_COMPUTE;
@@ -1047,7 +1080,7 @@ WGPU_ComputePassDescriptor.at(0,0,0)=computePassDescriptor;
 WGPU_Queue.at(0,0,0)=wgpu_device_get_queue(wd.at(0,0));
 multiSamp.count=1;
 multiSamp.mask=0xFFFFFFFF;
-multiSamp2.count=1;
+multiSamp2.count=4;
 multiSamp2.mask=0xFFFFFFFF;
 shaderModuleDescV.code=vert_body;
 vs=wgpu_device_create_shader_module(wd.at(0,0),&shaderModuleDescV);
