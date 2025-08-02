@@ -14,13 +14,21 @@ using uint32_simd = stdx::native_simd<uint32_t>;
 namespace fsm = boost::filesystem;
 
 static boost::container::vector<emscripten_align1_float> pixel_buffer;
+static boost::container::vector<uint8_t> uint8_pixel_buffer;
+
+void processImageData(emscripten::val js_typed_array_val) {
+    uint8_pixel_buffer = emscripten::vecFromJSArray<uint8_t>(js_typed_array_val);
+    if(on.at(3,3) == 1){
+        on_b.at(4,4) = 1; // We'll reuse this flag.
+    }
+}
 
 EM_BOOL buffer_resize(emscripten_align1_int sz){
        compute_xyz.at(0,0)=std::max(1,(sze.at(1,1)+15)/16);
    compute_xyz.at(0,1)=std::max(1,(sze.at(1,1)+15)/16);
     compute_xyz.at(0,2)=2;
-size_t num_elements = (size_t)sz * sz * 4;
-pixel_buffer.resize(num_elements);
+    size_t num_elements = (size_t)sz * sz * 4; // 4 components (R,G,B,A)
+    uint8_pixel_buffer.resize(num_elements);
 return EM_TRUE;
 }
 
@@ -172,6 +180,7 @@ emscripten::function("processCopiedDataVal", &process_copied_data_val);
 emscripten::function("get_buffer_ptr", &get_buffer_ptr);
 emscripten::function("sizeBuffer", &buffer_resize);
 emscripten::function("resizeInputTexture", &resizeInputTexture); 
+           emscripten::function("processImageData", &processImageData); 
 // emscripten::register_vector<float>("VectorFloat"); // Needed for vecFromJSArray
 }
 
