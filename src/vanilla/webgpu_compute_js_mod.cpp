@@ -7,6 +7,97 @@ FS.writeFile('/video/frame.gl',blank);
 FS.writeFile('/video/frameBFR.gl',blank);
 let running=0;
 
+
+
+
+// Keep these at a higher scope to manage the animation loop
+let animationFrameId = null;
+
+// The main loop that will run every frame
+function animationLoop(vvi, sx, sy, cropW, cropH, ctx, vsiz) {
+    // Draw the source media with padding
+    // 1. Clear canvas with black for padding
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, vsiz, vsiz);
+
+    // 2. Calculate padded dimensions
+    const scale = Math.min(vsiz / cropW, vsiz / cropH);
+    const paddedW = cropW * scale;
+    const paddedH = cropH * scale;
+    const drawX = (vsiz - paddedW) / 2;
+    const drawY = (vsiz - paddedH) / 2;
+
+    // 3. Draw image centered on the canvas
+    ctx.drawImage(vvi, sx, sy, cropW, cropH, drawX, drawY, paddedW, paddedH);
+    
+    // 4. Get pixel data (this is the main sync point)
+    const imageData = ctx.getImageData(0, 0, vsiz, vsiz);
+
+    // 5. Send raw Uint8Array to C++ for processing
+    // This is our new, highly efficient bridge.
+    Module.processImageData(imageData.data);
+
+    // 6. Request the next frame
+    animationFrameId = requestAnimationFrame(() => animationLoop(vvi, sx, sy, cropW, cropH, ctx, vsiz));
+}
+
+
+function videoStart() {
+    // 1. Stop any previous animation loop
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+    }
+
+    // 2. Get media elements and calculate source dimensions
+    const media_mode = document.querySelector('#media').value;
+    const vvi = document.querySelector(media_mode === 'vid' ? '#mvi' : '#ivi');
+    
+    const w_orig = parseInt(media_mode === 'vid' ? vvi.videoWidth : vvi.naturalWidth);
+    const h_orig = parseInt(media_mode === 'vid' ? vvi.videoHeight : vvi.naturalHeight);
+
+    if (!w_orig || !h_orig) {
+        console.warn("Media dimensions not ready. Retrying in 100ms.");
+        setTimeout(videoStart, 100);
+        return;
+    }
+    
+    // The source rect is simply the full media dimensions
+    const sx = 0;
+    const sy = 0;
+    const cropW = w_orig;
+    const cropH = h_orig;
+
+    // 3. Get target processing size from HTML
+    const vsiz = parseInt(document.querySelector('#vsiz').innerHTML);
+    const srsiz = parseInt(document.querySelector('#srsiz').innerHTML);
+
+    if (isNaN(vsiz) || vsiz <= 0) {
+        console.error("Invalid #vsiz value in HTML.");
+        return;
+    }
+    
+    // 4. Initialize or Re-initialize C++ WebGPU context
+    // This call should ensure C++ resizes its textures and buffers to `vsiz`.
+    if (window.running == 0) {
+        Module.ccall("startWebGPUi", null, ["number", "number", "number"], [vsiz, vsiz, srsiz]);
+        window.running = 1;
+    } else {
+        // If running again, tell C++ to resize its resources
+        Module.resizeInputTexture(vsiz);
+        Module.sizeBuffer(vsiz);
+    }
+    
+    // 5. Create OffscreenCanvas for transforming the media
+    const offscreenCanvas = new OffscreenCanvas(vsiz, vsiz);
+    const ctx = offscreenCanvas.getContext('2d', { alpha: false, willReadFrequently: true });
+    
+    // 6. Start the animation loop!
+    animationLoop(vvi, sx, sy, cropW, cropH, ctx, vsiz);
+}
+
+
+
 // WebGPU globals
 let device = null;
 let webgpu_sampler = null;
@@ -1205,7 +1296,7 @@ Module.frmOn();
 // so it can be cleared properly if videoStart is called again.
 let animationIntervalId = null;
 
-function videoStart() {
+function videoStart3() {
     // 1. Interval Management: Clear any existing animation interval
     if (animationIntervalId) {
         clearInterval(animationIntervalId);
