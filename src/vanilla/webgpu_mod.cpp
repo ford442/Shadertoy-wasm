@@ -17,9 +17,14 @@ static boost::container::vector<emscripten_align1_float> pixel_buffer;
 static boost::container::vector<uint8_t> uint8_pixel_buffer;
 
 void processImageData(emscripten::val js_typed_array_val) {
-    uint8_pixel_buffer = emscripten::vecFromJSArray<uint8_t>(js_typed_array_val);
+    // 1. Get the data from JS into a temporary std::vector, which is the correct return type.
+    std::vector<uint8_t> temp_js_vector = emscripten::vecFromJSArray<uint8_t>(js_typed_array_val);
+    // 2. Use the .assign() method to efficiently copy the contents from the std::vector 
+    //    into your global boost::container::vector.
+    uint8_pixel_buffer.assign(temp_js_vector.begin(), temp_js_vector.end());
+    // 3. Signal to the C++ render loop that a new uint8 frame is ready.
     if(on.at(3,3) == 1){
-        on_b.at(4,4) = 1; // We'll reuse this flag.
+        on_b.at(4,4) = 1; 
     }
 }
 
