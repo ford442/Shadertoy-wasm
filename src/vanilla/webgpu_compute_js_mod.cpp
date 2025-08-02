@@ -105,7 +105,7 @@ function videoStart() {
     // 4. Initialize or Re-initialize C++ WebGPU context
     // This call should ensure C++ resizes its textures and buffers to `vsiz`.
     if (window.running == 0) {
-        Module.ccall("startWebGPUi", null, ["number", "number", "number"], [processingSize, processingSize, srsiz]);
+        Module.ccall("startWebGPUi", null, ["number", "number", "number"], [vsiz, vsiz, srsiz]);
         window.running = 1;
     } else {
         // If running again, tell C++ to resize its resources
