@@ -63,7 +63,7 @@ function animationLoop(vvi, sx, sy, cropW, cropH, ctx, vsiz) {
 }
 
 
-function videoStart() {
+async function videoStart() {
     // 1. Stop any previous animation loop
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
