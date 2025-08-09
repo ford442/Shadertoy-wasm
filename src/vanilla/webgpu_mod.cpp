@@ -573,7 +573,7 @@ const char * comp_body = rd_fl(FnmC);
 wtf.at(2,2)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=navigator_gpu_get_preferred_canvas_format();
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA8UNORM;
-wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
+wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA16FLOAT;
 wtf.at(1,1)=WGPU_TEXTURE_FORMAT_RGBA32FLOAT;
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RG11B10UFLOAT;
 // wtf.at(0,0)=WGPU_TEXTURE_FORMAT_RGBA8UNORM;
@@ -590,8 +590,8 @@ config.usage=WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
 config.viewFormats=&canvasViewFormat[0];
 config.alphaMode=WGPU_CANVAS_ALPHA_MODE_PREMULTIPLIED;
 // config.alphaMode=WGPU_CANVAS_ALPHA_MODE_OPAQUE;
-//config.colorSpace=HTML_PREDEFINED_COLOR_SPACE_DISPLAY_P3;
-config.colorSpace=HTML_PREDEFINED_COLOR_SPACE_SRGB;
+config.colorSpace=HTML_PREDEFINED_COLOR_SPACE_DISPLAY_P3;
+// config.colorSpace=HTML_PREDEFINED_COLOR_SPACE_SRGB;
 wccf.at(0,0)=config;
 clearColor.r=0.5;
 clearColor.g=0.5;
@@ -933,7 +933,7 @@ wtv.at(2,2)=videoTextureView;
 
 
 msaaTextureDesc.dimension=WGPU_TEXTURE_DIMENSION_2D;
-msaaTextureDesc.format=wtf.at(0,0);
+msaaTextureDesc.format=wtf.at(1,1);
 msaaTextureDesc.usage=WGPU_TEXTURE_USAGE_RENDER_ATTACHMENT;
 msaaTextureDesc.width=sze.at(0,0);
 msaaTextureDesc.height=sze.at(0,0); // default = 1;
@@ -1094,7 +1094,7 @@ free((void*)frag_body_sampler);
 free((void*)comp_body);
 colorTarget32.format=wtf.at(2,2); // wtf.at(0,0);
 colorTarget32.writeMask=15;
-colorTarget.format=wtf.at(0,0);
+colorTarget.format=wtf.at(1,1);
 colorTarget.writeMask=15;
 depthState2.format=wtf.at(4,4);
 depthState2.depthWriteEnabled=0;
@@ -1386,7 +1386,9 @@ on.at(0,0)=1;
 
 static void ObtainedWebGpuAdapterStart(WGpuAdapter result, void *userData){
 wa.at(0,0)=result;
-deviceDesc.requiredFeatures=WGPU_FEATURE_FLOAT32_FILTERABLE|WGPU_FEATURE_RG11B10UFLOAT_RENDERABLE;
+// deviceDesc.requiredFeatures=WGPU_FEATURE_DEPTH32FLOAT_STENCIL8;
+deviceDesc.requiredFeatures=WGPU_FEATURE_FLOAT32_FILTERABLE;
+// deviceDesc.requiredFeatures=WGPU_FEATURE_RG11B10UFLOAT_RENDERABLE;
 // WGPU_FEATURES_BITFIELD ftr=wgpu_adapter_or_device_get_features(wa.at(0,0));
 // deviceDesc.requiredFeatures=ftr;
 WGpuSupportedLimits lmts;
