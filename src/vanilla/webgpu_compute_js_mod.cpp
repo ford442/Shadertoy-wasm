@@ -6,6 +6,7 @@ let blank=new Float32Array();
 FS.writeFile('/video/frame.gl',blank);
 FS.writeFile('/video/frameBFR.gl',blank);
 let running=0;
+window.paddedCanvas = null;
 
 // WebGPU globals
 let device = null;
@@ -74,17 +75,27 @@ async function drawFrameAsync() {
         const imageDrawWidth = currentW$;
         const imageDrawHeight = currentH$;
 
-        // Recreate source texture if vvic dimensions for drawing changed or not initialized
-        // (Assuming imageDrawWidth/Height are stable unless explicitly changed)
-        if (!vvicGpuTexture || vvic_cached_width !== current_vvic_w || vvic_cached_height !== current_vvic_h) {
+        const padded_size = Math.max(current_vvic_w, current_vvic_h);
+        if (!window.paddedCanvas || window.paddedCanvas.width !== padded_size) {
+            window.paddedCanvas = new OffscreenCanvas(padded_size, padded_size);
+        }
+        const ctx = window.paddedCanvas.getContext('2d');
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, padded_size, padded_size);
+        const pad_drawX = (padded_size - current_vvic_w) / 2;
+        const pad_drawY = (padded_size - current_vvic_h) / 2;
+        ctx.drawImage(vvic_elem, pad_drawX, pad_drawY, current_vvic_w, current_vvic_h);
+
+        // Recreate source texture if padded size changed or not initialized
+        if (!vvicGpuTexture || vvic_cached_width !== padded_size || vvic_cached_height !== padded_size) {
             if (vvicGpuTexture) {
                 vvicGpuTexture.destroy();
             }
-            vvic_cached_width = current_vvic_w;
-            vvic_cached_height = current_vvic_h;
+            vvic_cached_width = padded_size;
+            vvic_cached_height = padded_size;
 
             vvicGpuTexture = device.createTexture({
-                size: [vvic_cached_width, vvic_cached_height], // Use actual current dimensions of media
+                size: [padded_size, padded_size], // Use padded size
                 format: 'rgba8unorm',
                 usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
             });
@@ -98,18 +109,15 @@ async function drawFrameAsync() {
             });
         }
 
-        // Copy vvic content to vvicGpuTexture
-        // This uses the full vvic_elem (current_vvic_w x current_vvic_h) as source
+        // Copy padded canvas content to vvicGpuTexture
         device.queue.copyExternalImageToTexture(
-            { source: vvic_elem, flipY: false }, // flipY might be needed based on source and coordinate system expectations
+            { source: window.paddedCanvas, flipY: false }, // Use paddedCanvas as source
             { texture: vvicGpuTexture, premultipliedAlpha: true },
-            [vvic_cached_width, vvic_cached_height]
+            [padded_size, padded_size] // Use padded size
         );
 
-        // Update transform uniform buffer (drawX, drawY, imageDrawWidth, imageDrawHeight)
-        // currentDrawX, currentDrawY are offsets in keepSize texture
-        // imageDrawWidth, imageDrawHeight are dimensions of the image being drawn
-        device.queue.writeBuffer(transformUniformBuffer, 0, new Float32Array([currentDrawX, currentDrawY, imageDrawWidth, imageDrawHeight]));
+        // Update transform uniform buffer to scale the padded texture to the full render target
+        device.queue.writeBuffer(transformUniformBuffer, 0, new Float32Array([0, 0, currentKeepSize, currentKeepSize]));
 
         // Render vvicGpuTexture to renderTargetTexture
         const renderPassDescriptor = {
