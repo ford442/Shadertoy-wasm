@@ -18378,7 +18378,8 @@ class WebGL2Kernel extends WebGLKernel {
     const settings = {
       alpha: true,
       depth: false,
-      antialias: true
+      antialias: true,
+      powerPreference:'high-performance'
     };
     return this.canvas.getContext('webgl2', settings);
   }
