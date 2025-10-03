@@ -261,7 +261,7 @@ agav.fill(min,100,33);
 agav.fill(max,200,33);
 const bcanvas=document.querySelector("#bcanvas");
 const contx=bcanvas.getContext("webgl2",{
-colorType:'float32',
+colorType:'float16',
 precision:'highp',
 colorSpace:'display-p3',
 alpha:true,
