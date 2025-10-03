@@ -178,8 +178,8 @@ video_resurection_webgpuc3:
 video_resurection_webgpuc4:
 	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static
 	 em++ lib/lib_webgpu.cpp $(STDS) -static
-	 em++ src/video/video_jebusc3.cpp -O0 -I/content/RAMDRIVE2/b3/include/vanilla/ -c -pipe -flto -flto=thin $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
-	 em++ video_jebusc3.o -O0 -sSTRICT_JS=1 $(LDFLAGSb) $(STDS) --bind -flto -flto=thin -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS_strict) $(LINK_SIMD_FLAGS) \
+	 em++ src/video/video_jebusc3.cpp -O3 -I/content/RAMDRIVE2/b3/include/vanilla/ -c -pipe -flto -flto=thin $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
+	 em++ video_jebusc3.o -O3 -sSTRICT_JS=1 $(LDFLAGSb) $(STDS) --bind -flto -flto=thin -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS_strict) $(LINK_SIMD_FLAGS) \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -sFORCE_FILESYSTEM=1 -sUSE_SDL=2 -sMALLOC=mimalloc -sWASMFS=1 -pipe -dead_strip \
 	 -sASYNCIFY=0 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
 	 -sEXPORTED_FUNCTIONS='["_main","_str","_pl","_b3"]' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF64"]' \
