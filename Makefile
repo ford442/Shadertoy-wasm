@@ -60,7 +60,7 @@ LINK_FLAGS_strict += -DQUAD -DDOUBLE $(LDFLAGS) -sWASM_BIGINT=0 -sDEFAULT_TO_CXX
 	 -sWASM=1 -sENVIRONMENT='web,worker' -sSTRICT_JS=0 \
 	 -sGLOBAL_BASE=352321536 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
 	 -sALLOW_MEMORY_GROWTH=0 -sMAXIMUM_MEMORY=4gb -sINITIAL_HEAP=1024mb --output_eol linux -mllvm -mtune=wasm32 -wasm-enable-eh \
-	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
+	 -rtlib=compiler-rt
 
 LINK_FLAGS_safe += $(LDFLAGS) \
 	 --use-preload-plugins --closure 0 --closureFriendly \
