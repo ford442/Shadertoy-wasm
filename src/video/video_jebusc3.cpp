@@ -261,12 +261,12 @@ agav.fill(min,100,33);
 agav.fill(max,200,33);
 const bcanvas=document.querySelector("#bcanvas");
 const contx=bcanvas.getContext("webgl2",{
-// colorType:'float32',
+colorType:'float64',
 precision:'highp',
 colorSpace:'display-p3',
 alpha:true,
-depth:true,
-stencil:true,
+depth:false,
+stencil:false,
 preserveDrawingBuffer:false,
 premultipliedAlpha:false,
 desynchronized:false,
@@ -1056,8 +1056,8 @@ EGL_NONE
   
 emscripten_webgl_init_context_attributes(&attr);
 attr.alpha=EM_TRUE;
-attr.stencil=EM_TRUE;
-attr.depth=EM_TRUE;
+attr.stencil=EM_FALSE;
+attr.depth=EM_FALSE;
 attr.antialias=EM_TRUE;
 attr.premultipliedAlpha=EM_FALSE;
 attr.preserveDrawingBuffer=EM_FALSE;
