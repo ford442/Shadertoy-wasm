@@ -52,6 +52,16 @@ LINK_FLAGS += -DQUAD -DDOUBLE $(LDFLAGS) -sWASM_BIGINT=0 -sDEFAULT_TO_CXX=1 -sOF
 	 -sALLOW_MEMORY_GROWTH=0 -sMAXIMUM_MEMORY=4gb -sINITIAL_HEAP=1024mb --output_eol linux -mllvm -mtune=wasm32 -wasm-enable-eh \
 	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
 
+LINK_FLAGS_strict += -DQUAD -DDOUBLE $(LDFLAGS) -sWASM_BIGINT=0 -sDEFAULT_TO_CXX=1 -sOFFSCREENCANVAS_SUPPORT=1 \
+	 -sTEXTDECODER=1 -sALLOW_TABLE_GROWTH=1 \
+	 -sTRUSTED_TYPES=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=0 -sIGNORE_MISSING_MAIN=0 -sABORT_ON_WASM_EXCEPTIONS=0 \
+	 -sASSERTIONS=0 \
+	 --use-preload-plugins --closure 0 --closureFriendly --typed-function-references --enable-reference-types \
+	 -sWASM=1 -sENVIRONMENT='web,worker' -sSTRICT_JS=0 \
+	 -sGLOBAL_BASE=352321536 -DNDEBUG=1 -polly -polly-position=before-vectorizer \
+	 -sALLOW_MEMORY_GROWTH=0 -sMAXIMUM_MEMORY=4gb -sINITIAL_HEAP=1024mb --output_eol linux -mllvm -mtune=wasm32 -wasm-enable-eh \
+	 -rtlib=compiler-rt -sAUTO_ARCHIVE_INDEXES=0
+
 LINK_FLAGS_safe += $(LDFLAGS) \
 	 --use-preload-plugins --closure 0 --closureFriendly \
 	 -sTOTAL_STACK=65536 -sENVIRONMENT='web,worker' \
@@ -169,7 +179,7 @@ video_resurection_webgpuc4:
 	 em++ lib/lib_webgpu_cpp20.cpp $(STDS) -static
 	 em++ lib/lib_webgpu.cpp $(STDS) -static
 	 em++ src/video/video_jebusc3.cpp -O3 -sSTRICT=1 -I/content/RAMDRIVE2/b3/include/vanilla/ -c -pipe -flto -flto=thin $(STDS) $(BOOST_FLAGS) $(SIMD_FLAGS)
-	 em++ video_jebusc3.o -O3 -sSTRICT=1 -sSTRICT_JS=0 $(LDFLAGSb) $(STDS) --bind -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS) $(LINK_SIMD_FLAGS) \
+	 em++ video_jebusc3.o -O3 -sSTRICT=1 -sSTRICT_JS=0 $(LDFLAGSb) $(STDS) --bind -lembind -fPIC -DLIB_WEBGPU -DLIB_WEBGPU_CPP20 -o $(BIN_NAME)-resC2.js $(GL_FLAGS) $(BOOST_FLAGS) $(LINK_FLAGS_strict) $(LINK_SIMD_FLAGS) \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -sFORCE_FILESYSTEM=1 -sUSE_SDL=2 -sMALLOC=mimalloc -sWASMFS=1 -pipe -flto -flto=thin -dead_strip \
 	 -sASYNCIFY=0 -sASYNCIFY_STACK_SIZE=81920 -sASYNCIFY_IMPORTS=['wgpu_buffer_map_sync','navigator_gpu_request_adapter_sync','wgpu_adapter_request_device_sync'] \
 	 -sEXPORTED_FUNCTIONS='["_main","_str","_pl","_b3"]' -sEXPORTED_RUNTIME_METHODS='["ccall","HEAPF64"]' \
