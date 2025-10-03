@@ -18376,6 +18376,7 @@ class WebGL2Kernel extends WebGLKernel {
 
   initContext() {
     const settings = {
+      colorType: 'float16',
       alpha: true,
       depth: false,
       powerPreference:'high-performance',
