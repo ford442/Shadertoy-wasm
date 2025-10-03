@@ -11,7 +11,7 @@
  * The MIT License
  *
  * Copyright (c) 2025 gpu.js Team
- */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.GPU = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+ */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.GPUX = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -18869,11 +18869,11 @@ module.exports = {
 };
 },{}],107:[function(require,module,exports){
 const lib = require('./index');
-const GPU = lib.GPU;
+const GPUX = lib.GPUX;
 for (const p in lib) {
   if (!lib.hasOwnProperty(p)) continue;
   if (p === 'GPU') continue; 
-  GPU[p] = lib[p];
+  GPUX[p] = lib[p];
 }
 
 if (typeof window !== 'undefined') {
@@ -18884,10 +18884,10 @@ if (typeof self !== 'undefined') {
 }
 
 function bindTo(target) {
-  if (target.GPU) return;
+  if (target.GPUX) return;
   Object.defineProperty(target, 'GPU', {
     get() {
-      return GPU;
+      return GPUX;
     }
   });
 }
@@ -18916,7 +18916,7 @@ const internalKernels = {
 
 let validate = true;
 
-class GPU {
+class GPUX {
   static disableValidation() {
     validate = false;
   }
@@ -19345,12 +19345,12 @@ function upgradeDeprecatedCreateKernelSettings(settings) {
 }
 
 module.exports = {
-  GPU,
+  GPUX,
   kernelOrder,
   kernelTypes
 };
 },{"./backend/cpu/kernel":8,"./backend/headless-gl/kernel":34,"./backend/kernel":36,"./backend/web-gl/kernel":70,"./backend/web-gl2/kernel":105,"./kernel-run-shortcut":111,"./utils":114,"gpu-mock.js":4}],109:[function(require,module,exports){
-const { GPU } = require('./gpu');
+const { GPUX } = require('./gpu');
 const { alias } = require('./alias');
 const { utils } = require('./utils');
 const { Input, input } = require('./input');
@@ -19382,7 +19382,7 @@ module.exports = {
   alias,
   CPUFunctionNode,
   CPUKernel,
-  GPU,
+  GPUX,
   FunctionBuilder,
   FunctionNode,
   HeadlessGLKernel,
