@@ -646,7 +646,7 @@ sz=(h$*h$)/8;
 pointa=77*la;
 // agav=new Float32Array($H,pointa,300);
 R.setOutput([sz]);
-for(i=0;i<65;i++){
+for(var i=0;i<65;i++){
 var j=i+1;
 eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
 }
@@ -672,7 +672,7 @@ sz=(h$*h$)/8;
 pointa=77*la;
 // var agav=new Float32Array($H,pointa,300);
 R.setOutput([sz]);
-for(i=0;i<65;i++){
+for(var i=0;i<65;i++){
 var j=i+1;
 eval("var point"+j+"="+i+"*la;var $"+j+"=new Float64Array($H,point"+j+",la);");
 }
@@ -686,7 +686,7 @@ vv=document.querySelector("#mv");
 r.setConstants({nblnk:nblank$,blnk:blank$$,favg:agav[$F],fmin:agav[$F+100],fmax:agav[$F+200],amin:agav[100],amax:agav[200],aavg:agav[0]});
 t.setConstants({nblnk:nblank$,blnk:blank$$});
 if(T){return;}
-for(i=64;i>0;i--){
+for(var i=64;i>0;i--){
 var loca=$F+1;if(loca>64){loca=1;}
 var locb=$Bu+1;if(locb>64){locb=1;}
 eval("if ($F==="+i+"){var $r"+i+"=t($"+i+");r($r"+i+");var $$"+$Bu+"=t(vv);$"+$Bu+".set($$"+$Bu+");$F="+loca+";$Bu="+locb+";}");
