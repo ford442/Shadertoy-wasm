@@ -540,7 +540,7 @@ OffscCnv.width=keepSize;
 bcnv.width=keepSize;
 bcnv.style.width=keepSize+'px';
 const gl3=OffscCnv.getContext('2d',{
-// colorType:'float32',
+colorType:'float16',
 alpha:true,
 willReadFrequently:true,
 stencil:false,
