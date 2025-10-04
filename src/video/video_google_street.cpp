@@ -790,13 +790,13 @@ let blank$=Math.max((((w$-h$)*1.0)/8.0),0);
 let nblank$=Math.max((((h$-w$)*1.0)/8.0),0);
 let bCan=document.getElementById("bcanvas");
 let gl=bCan.getContext("webgl2",{
-colorType:'float32',
+colorType:'float16',
 preferLowPowerToHighPerformance:false,
 // logarithmicDepthBuffer:false,
-// colorSpace:'display-p3',
+colorSpace:'display-p3',
 alpha:true,
-depth:true,
-stencil:true,
+depth:false,
+stencil:false,
 // precision:'highp',
 // imageSmoothingEnabled:false,
 // imageSmoothingQuality:'medium',
