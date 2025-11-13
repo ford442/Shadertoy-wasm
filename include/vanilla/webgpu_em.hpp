@@ -108,6 +108,7 @@ using namespace std;
 // #include <emscripten/wasmfs.h>
 #include <emscripten/html5.h>
 // #include <emscripten/html5_webgpu.h>  //  depreceted out of emscripten
+#include <webgpu/webgpu_cpp.h>
 #include <iostream>
 #include "../../lib/lib_webgpu.h"
 /*
