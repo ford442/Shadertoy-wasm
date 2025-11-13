@@ -198,7 +198,7 @@ b3_compute_mod_test5:
 	 --js-library lib/lib_webgpu.js --js-library lib/lib_demo.js -sWASMFS=1 \
 	 --js-library lib/library_miniprintf.js --closure-args=--externs=lib/webgpu-closure-externs.js \
 	 webgpu_mod.o --output_eol linux -rtlib=compiler-rt --closure 0 \
-	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sWASM_LEGACY_EXCEPTIONS=0
+	 -sMODULARIZE=1 -sEXPORT_NAME='lib1ink' -sWASM_LEGACY_EXCEPTIONS=0 --use-port=emdawnwebgpu
 
 b3_compute_mod_test5_thread:
 	 em++ src/vanilla/webgpu_thread.cpp $(STDS) -pipe -lembind -pthread -openmp -o webgpu_thread.o -ffast-math -ffp-contract=fast \
