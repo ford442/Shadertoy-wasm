@@ -175,6 +175,7 @@ b3_compute_mod_test5:
 	 -mmutable-globals -mbulk-memory -matomics -mnontrapping-fptoint -msign-ext  \
 	 -mextended-const -O3 -m32 -mtune=wasm32 $(STDS) $(xGL_FLAGS) -fno-strict-aliasing \
 	 -I/content/RAMDRIVE2/b3/include/vanilla/ -I/content/RAMDRIVE2/b3/highway/ \
+	 -I/content/RAMDRIVE2/emsdk/upstream/emscripten/cache/ports/emdawnwebgpu/emdawnwebgpu_pkg/webgpu_cpp/include\ \
 	 -I/content/RAMDRIVE2/b3/boost_1_88_0/ -c $(nBOOST_FLAGS) $(SIMD_FLAGS) -sSTRICT=1
 	 em++ $(mLDFLAGS) -O3 --bind -lembind -sWASM_BIGINT=1 -sEVAL_CTORS=0 \
 	 -ffast-math -mextended-const -mbulk-memory -sEXIT_RUNTIME=0 -fopenmp-simd \
